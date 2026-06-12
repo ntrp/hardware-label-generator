@@ -1,0 +1,138 @@
+import { standardsCatalog } from '../data/catalog';
+import type { HardwareCategory, HardwareItem, HardwareSpecKey, StandardCatalogEntry, UnitSystem } from '../types';
+import { defaultLengthUnit, defaultThreadPitchUnit, formatLength, splitLengthAndUnit, splitThreadPitchAndUnit } from './format';
+
+export interface SpecDefinition {
+  key: HardwareSpecKey;
+  label: string;
+  placeholder: string;
+  isLength?: boolean;
+}
+
+export const specDefinitions: Record<HardwareSpecKey, SpecDefinition> = {
+  size: { key: 'size', label: 'Size', placeholder: 'size' },
+  length: { key: 'length', label: 'Length', placeholder: 'length', isLength: true },
+  threadPitch: { key: 'threadPitch', label: 'Thread pitch', placeholder: 'threadPitch' },
+  threadPitchUnit: { key: 'threadPitchUnit', label: 'Pitch unit', placeholder: 'threadPitchUnit' },
+  material: { key: 'material', label: 'Material', placeholder: 'material' },
+  thickness: { key: 'thickness', label: 'Thickness', placeholder: 'thickness' },
+  innerDiameter: { key: 'innerDiameter', label: 'ID', placeholder: 'innerDiameter' },
+  outerDiameter: { key: 'outerDiameter', label: 'OD', placeholder: 'outerDiameter' },
+  gripRange: { key: 'gripRange', label: 'Grip range', placeholder: 'gripRange' }
+};
+
+export const categorySpecKeys: Record<HardwareCategory, HardwareSpecKey[]> = {
+  screw: ['size', 'length', 'threadPitch', 'threadPitchUnit', 'material'],
+  bolt: ['size', 'length', 'threadPitch', 'threadPitchUnit', 'material'],
+  nut: ['size', 'threadPitch', 'threadPitchUnit', 'material'],
+  washer: ['size', 'thickness', 'innerDiameter', 'outerDiameter', 'material'],
+  rivet: ['size', 'length', 'gripRange', 'material'],
+  pin: ['size', 'length', 'material'],
+  anchor: ['size', 'length', 'material'],
+  insert: ['size', 'length', 'threadPitch', 'threadPitchUnit', 'material'],
+  clip: ['size', 'material'],
+  custom: ['size', 'length', 'material']
+};
+
+export const categoryDefaultPreset: Record<HardwareCategory, string> = {
+  screw: 'qr-sidecar',
+  bolt: 'qr-sidecar',
+  nut: 'compact',
+  washer: 'washer',
+  rivet: 'compact',
+  pin: 'large-size',
+  anchor: 'compact',
+  insert: 'qr-sidecar',
+  clip: 'large-size',
+  custom: 'compact'
+};
+
+export const getCategorySpecDefinitions = (category: HardwareCategory) => categorySpecKeys[category].map((key) => specDefinitions[key]);
+
+const uniqueValues = (values: string[]) => Array.from(new Set(values)).filter(Boolean);
+
+const catalogSpecValues = (entry: StandardCatalogEntry | undefined, key: HardwareSpecKey, unitSystem: UnitSystem) => {
+  const fromSpecs = entry?.specs?.[key];
+  if (Array.isArray(fromSpecs)) return fromSpecs;
+  if (fromSpecs) return fromSpecs[unitSystem];
+  if (entry && key === 'size') return entry.sizes[unitSystem];
+  if (entry && key === 'length') return entry.lengths[unitSystem];
+  if (entry && key === 'threadPitch') {
+    return entry.pitches[unitSystem]
+      .map((value) => splitThreadPitchAndUnit(value, defaultThreadPitchUnit(unitSystem)).threadPitch)
+      .filter(Boolean);
+  }
+  if (entry && key === 'threadPitchUnit') {
+    return entry.pitches[unitSystem]
+      .map((value) => splitThreadPitchAndUnit(value, defaultThreadPitchUnit(unitSystem)).threadPitchUnit)
+      .filter(Boolean);
+  }
+  if (entry && key === 'material') return entry.materials;
+  return undefined;
+};
+
+export const getCatalogSpecOptions = (
+  entry: StandardCatalogEntry | undefined,
+  category: HardwareCategory,
+  key: HardwareSpecKey,
+  unitSystem: UnitSystem
+) => {
+  const direct = catalogSpecValues(entry, key, unitSystem);
+  if (direct) return uniqueValues(direct);
+
+  return uniqueValues(
+    standardsCatalog
+      .filter((candidate) => candidate.category === category)
+      .flatMap((candidate) => catalogSpecValues(candidate, key, unitSystem) ?? [])
+  );
+};
+
+export const getItemSpecValue = (item: HardwareItem, key: HardwareSpecKey) => {
+  if (key === 'size') return item.specs?.size ?? item.size;
+  if (key === 'length') return item.specs?.length ?? item.length;
+  if (key === 'threadPitch') return item.specs?.threadPitch ?? item.threadPitch;
+  if (key === 'threadPitchUnit') return item.specs?.threadPitchUnit ?? item.threadPitchUnit;
+  if (key === 'material') return item.specs?.material ?? item.material;
+  return item.specs?.[key] ?? '';
+};
+
+export const syncHardwareSpecs = (item: HardwareItem): HardwareItem => ({
+  ...item,
+  size: getItemSpecValue(item, 'size'),
+  length: getItemSpecValue(item, 'length'),
+  threadPitch: getItemSpecValue(item, 'threadPitch'),
+  threadPitchUnit: getItemSpecValue(item, 'threadPitchUnit'),
+  material: getItemSpecValue(item, 'material'),
+  specs: {
+    ...item.specs,
+    size: getItemSpecValue(item, 'size'),
+    length: getItemSpecValue(item, 'length'),
+    threadPitch: getItemSpecValue(item, 'threadPitch'),
+    threadPitchUnit: getItemSpecValue(item, 'threadPitchUnit'),
+    material: getItemSpecValue(item, 'material')
+  }
+});
+
+export const patchItemSpec = (item: HardwareItem, key: HardwareSpecKey, value: string): Partial<HardwareItem> => {
+  const specs = { ...item.specs, [key]: value };
+  const patch: Partial<HardwareItem> = { specs };
+  if (key === 'size') patch.size = value;
+  if (key === 'threadPitch') patch.threadPitch = value;
+  if (key === 'threadPitchUnit') patch.threadPitchUnit = value;
+  if (key === 'material') patch.material = value;
+  if (key === 'length') patch.length = value;
+  return patch;
+};
+
+export const firstSpecValue = (entry: StandardCatalogEntry, key: HardwareSpecKey, unitSystem: UnitSystem, fallback = '') =>
+  getCatalogSpecOptions(entry, entry.category, key, unitSystem)[0] ?? fallback;
+
+export const specValueForDisplay = (item: HardwareItem, key: HardwareSpecKey) =>
+  key === 'length' ? formatLength(item.length, item.lengthUnit) : getItemSpecValue(item, key);
+
+export const normalizeLengthSpec = (value: string, fallbackUnit: string) => splitLengthAndUnit(value, fallbackUnit);
+
+export const defaultSpecValue = (category: HardwareCategory, key: HardwareSpecKey, unitSystem: UnitSystem) =>
+  key === 'length' ? '' : getCatalogSpecOptions(undefined, category, key, unitSystem)[0] ?? '';
+
+export const defaultLengthUnitForSpecs = defaultLengthUnit;
