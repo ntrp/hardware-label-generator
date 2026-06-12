@@ -1,5 +1,5 @@
 import JSZip from 'jszip';
-import type { HardwareItem, LabelSettings, PurchaseLink, PurchaseLinkState, UnitSystem } from '../types';
+import type { HardwareItem, LabelSettings, PurchaseLinkState, UnitSystem } from '../types';
 import { formatLength, safeFilePart } from './format';
 import { createLbxBlob } from './lbx';
 import { renderLabelSvg, svgToPngBlob } from './svg';
@@ -11,42 +11,44 @@ export const downloadBlob = (blob: Blob, filename: string) => {
   const anchor = document.createElement('a');
   anchor.href = url;
   anchor.download = filename;
+  anchor.style.display = 'none';
+  document.body.append(anchor);
   anchor.click();
-  URL.revokeObjectURL(url);
+  window.setTimeout(() => {
+    anchor.remove();
+    URL.revokeObjectURL(url);
+  }, 0);
 };
 
 export const labelFilename = (item: HardwareItem, extension: string) =>
-  `${safeFilePart([item.standard, item.size, formatLength(item.length, item.lengthUnit), item.material].filter(Boolean).join('-'))}.${extension}`;
+  `${safeFilePart([item.standard, item.size, formatLength(item.length, item.lengthUnit), item.material, item.materialType, item.boltClass].filter(Boolean).join('-'))}.${extension}`;
 
 export const labelArchiveFolderName = (item: HardwareItem, index: number) =>
-  `${String(index + 1).padStart(3, '0')}-${safeFilePart([item.standard, item.size, formatLength(item.length, item.lengthUnit), item.material].filter(Boolean).join('-'))}`;
+  `${String(index + 1).padStart(3, '0')}-${safeFilePart([item.standard, item.size, formatLength(item.length, item.lengthUnit), item.material, item.materialType, item.boltClass].filter(Boolean).join('-'))}`;
 
-export const purchaseLinkScopeKey = (item: HardwareItem) => item.catalogId ?? item.id;
-
-export const effectivePurchaseLinks = (links: PurchaseLinkState, item: HardwareItem) =>
-  links.overrideByItem[item.id] ? links.overrides[item.id] ?? [] : links.shared[purchaseLinkScopeKey(item)] ?? [];
+export const effectivePurchaseLink = (links: PurchaseLinkState, item: HardwareItem) => links[item.id] ?? '';
 
 export const exportSingle = async (
   item: HardwareItem,
   settings: LabelSettings,
-  links: PurchaseLink[],
+  purchaseLink: string,
   unitSystem: UnitSystem,
   format: ExportFormat
 ) => {
   if (format === 'svg') {
-    const svg = await renderLabelSvg(item, settings, links, unitSystem);
+    const svg = await renderLabelSvg(item, settings, purchaseLink, unitSystem);
     downloadBlob(new Blob([svg], { type: 'image/svg+xml' }), labelFilename(item, 'svg'));
     return;
   }
 
   if (format === 'png') {
-    const svg = await renderLabelSvg(item, settings, links, unitSystem);
+    const svg = await renderLabelSvg(item, settings, purchaseLink, unitSystem, { rasterSafe: true });
     const png = await svgToPngBlob(svg, settings.widthMm, settings.heightMm);
     downloadBlob(png, labelFilename(item, 'png'));
     return;
   }
 
-  downloadBlob(await createLbxBlob(item, settings, links, unitSystem), labelFilename(item, 'lbx'));
+  downloadBlob(await createLbxBlob(item, settings, purchaseLink, unitSystem), labelFilename(item, 'lbx'));
 };
 
 export const createExportZipBlob = async (
@@ -59,19 +61,19 @@ export const createExportZipBlob = async (
 
   for (const [index, item] of items.entries()) {
     const folder = zip.folder(labelArchiveFolderName(item, index)) ?? zip;
-    const links = effectivePurchaseLinks(linkState, item);
+    const purchaseLink = effectivePurchaseLink(linkState, item);
 
     if (formats.includes('svg')) {
-      folder.file(labelFilename(item, 'svg'), await renderLabelSvg(item, settings, links, item.unitSystem));
+      folder.file(labelFilename(item, 'svg'), await renderLabelSvg(item, settings, purchaseLink, item.unitSystem));
     }
 
     if (formats.includes('png')) {
-      const svg = await renderLabelSvg(item, settings, links, item.unitSystem);
+      const svg = await renderLabelSvg(item, settings, purchaseLink, item.unitSystem, { rasterSafe: true });
       folder.file(labelFilename(item, 'png'), await svgToPngBlob(svg, settings.widthMm, settings.heightMm));
     }
 
     if (formats.includes('lbx')) {
-      folder.file(labelFilename(item, 'lbx'), await (await createLbxBlob(item, settings, links, item.unitSystem)).arrayBuffer());
+      folder.file(labelFilename(item, 'lbx'), await (await createLbxBlob(item, settings, purchaseLink, item.unitSystem)).arrayBuffer());
     }
   }
 

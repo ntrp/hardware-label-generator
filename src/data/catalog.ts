@@ -17,10 +17,14 @@ export const standardsCatalog: StandardCatalogEntry[] = [
       metric: ['4', '6', '8', '10', '12', '16', '20', '25', '30', '40', '50'],
       imperial: ['5/32"', '1/4"', '5/16"', '3/8"', '1/2"', '5/8"', '3/4"', '1"', '1-1/4"', '1-1/2"', '2"']
     },
-    materials: ['zinc', 'A2', 'A4', '12.9 steel', 'brass'],
+    materials: ['steel', 'alloy steel', 'stainless steel', 'brass'],
     pitches: {
       metric: ['0.4', '0.45', '0.5', '0.7', '0.8', '1.0', '1.25', '1.5', '1.75'],
       imperial: ['64 TPI', '56 TPI', '48 TPI', '40 TPI', '32 TPI', '28 TPI', '24 TPI', '20 TPI', '18 TPI', '16 TPI', '13 TPI']
+    },
+    specs: {
+      materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4'],
+      boltClass: ['4.8', '8.8', '10.9', '12.9', 'A2-70', 'A4-70', 'A4-80']
     },
     sourceId: 'iso-fastener-tables'
   },
@@ -40,10 +44,14 @@ export const standardsCatalog: StandardCatalogEntry[] = [
       metric: ['6', '8', '10', '12', '16', '20', '25', '30', '40', '50', '60', '80'],
       imperial: ['1/4"', '5/16"', '3/8"', '1/2"', '5/8"', '3/4"', '1"', '1-1/4"', '1-1/2"', '2"', '2-1/2"', '3"']
     },
-    materials: ['zinc', 'A2', 'A4', '8.8 steel', '10.9 steel'],
+    materials: ['steel', 'alloy steel', 'stainless steel'],
     pitches: {
       metric: ['0.5', '0.7', '0.8', '1.0', '1.25', '1.5', '1.75', '2.0'],
       imperial: ['40 TPI', '32 TPI', '24 TPI', '20 TPI', '18 TPI', '16 TPI', '13 TPI', '11 TPI']
+    },
+    specs: {
+      materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'A2', 'A4'],
+      boltClass: ['4.6', '4.8', '5.8', '8.8', '10.9', '12.9', 'A2-70', 'A4-70', 'A4-80']
     },
     sourceId: 'iso-fastener-tables'
   },
@@ -63,10 +71,13 @@ export const standardsCatalog: StandardCatalogEntry[] = [
       metric: ['standard'],
       imperial: ['standard']
     },
-    materials: ['zinc', 'A2', 'A4', '8 steel', 'brass'],
+    materials: ['steel', 'stainless steel', 'brass'],
     pitches: {
       metric: ['0.4', '0.45', '0.5', '0.7', '0.8', '1.0', '1.25', '1.5', '1.75', '2.0'],
       imperial: ['56 TPI', '40 TPI', '32 TPI', '24 TPI', '20 TPI', '18 TPI', '16 TPI', '13 TPI', '11 TPI']
+    },
+    specs: {
+      materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'A2', 'A4']
     },
     sourceId: 'iso-fastener-tables'
   },
@@ -86,7 +97,7 @@ export const standardsCatalog: StandardCatalogEntry[] = [
       metric: ['standard'],
       imperial: ['standard']
     },
-    materials: ['zinc', 'A2', 'A4', 'brass', 'nylon'],
+    materials: ['steel', 'stainless steel', 'brass', 'nylon'],
     pitches: {
       metric: ['n/a'],
       imperial: ['n/a']
@@ -103,7 +114,8 @@ export const standardsCatalog: StandardCatalogEntry[] = [
       outerDiameter: {
         metric: ['5 mm', '6 mm', '7 mm', '9 mm', '10 mm', '12 mm', '16 mm', '20 mm', '24 mm', '30 mm'],
         imperial: ['0.20"', '0.25"', '0.30"', '0.38"', '0.44"', '0.50"', '0.63"', '0.75"', '1"', '1.25"']
-      }
+      },
+      materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'A2', 'A4', 'natural', 'black']
     },
     sourceId: 'iso-fastener-tables'
   },
@@ -123,10 +135,14 @@ export const standardsCatalog: StandardCatalogEntry[] = [
       metric: ['3', '5', '6', '10', '12', '20', '25', '38', '50'],
       imperial: ['1/8"', '3/16"', '1/4"', '3/8"', '1/2"', '3/4"', '1"', '1-1/2"', '2"']
     },
-    materials: ['zinc', '18-8 stainless', '316 stainless', 'alloy steel', 'brass'],
+    materials: ['steel', 'alloy steel', 'stainless steel', 'brass'],
     pitches: {
       metric: ['0.45 mm approx', '0.64 mm approx', '0.79 mm approx', '1.06 mm approx', '1.27 mm approx', '1.41 mm approx', '1.59 mm approx', '1.95 mm approx'],
       imperial: ['56 TPI', '40 TPI', '32 TPI', '24 TPI', '20 TPI', '18 TPI', '16 TPI', '13 TPI']
+    },
+    specs: {
+      materialType: ['plain', 'zinc plated', 'black oxide', '18-8', '316'],
+      boltClass: ['grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70', 'A4-80']
     },
     sourceId: 'asme-thread-reference'
   },
@@ -146,7 +162,7 @@ export const standardsCatalog: StandardCatalogEntry[] = [
       metric: ['6', '8', '10', '12', '14', '16', '20'],
       imperial: ['1/4"', '5/16"', '3/8"', '1/2"', '9/16"', '5/8"', '3/4"']
     },
-    materials: ['aluminum', 'steel', 'A2', 'copper'],
+    materials: ['aluminum', 'steel', 'stainless steel', 'copper'],
     pitches: {
       metric: ['n/a'],
       imperial: ['n/a']
@@ -155,7 +171,8 @@ export const standardsCatalog: StandardCatalogEntry[] = [
       gripRange: {
         metric: ['1-3 mm', '3-5 mm', '5-8 mm', '8-12 mm'],
         imperial: ['1/32-1/8"', '1/8-1/4"', '1/4-3/8"', '3/8-1/2"']
-      }
+      },
+      materialType: ['plain', 'zinc plated', 'A2', 'A4', 'natural']
     },
     sourceId: 'iso-fastener-tables'
   },
@@ -175,10 +192,13 @@ export const standardsCatalog: StandardCatalogEntry[] = [
       metric: ['6', '8', '10', '12', '16', '20', '24', '30', '40'],
       imperial: ['1/4"', '5/16"', '3/8"', '1/2"', '5/8"', '3/4"', '1"', '1-1/4"', '1-1/2"']
     },
-    materials: ['hardened steel', 'A2', 'A4'],
+    materials: ['steel', 'alloy steel', 'stainless steel'],
     pitches: {
       metric: ['n/a'],
       imperial: ['n/a']
+    },
+    specs: {
+      materialType: ['plain', 'black oxide', 'zinc plated', 'A2', 'A4']
     },
     sourceId: 'iso-fastener-tables'
   },
@@ -198,10 +218,13 @@ export const standardsCatalog: StandardCatalogEntry[] = [
       metric: ['3', '4', '5', '6', '8', '10', '12'],
       imperial: ['1/8"', '5/32"', '3/16"', '1/4"', '5/16"', '3/8"', '1/2"']
     },
-    materials: ['brass', 'stainless'],
+    materials: ['brass', 'stainless steel'],
     pitches: {
       metric: ['0.4', '0.45', '0.5', '0.7', '0.8', '1.0'],
       imperial: ['56 TPI', '48 TPI', '40 TPI', '32 TPI', '24 TPI', '20 TPI']
+    },
+    specs: {
+      materialType: ['plain', 'A2', 'A4']
     },
     sourceId: 'manufacturer-catalogs'
   },
@@ -221,10 +244,13 @@ export const standardsCatalog: StandardCatalogEntry[] = [
       metric: ['20', '25', '30', '40', '50', '60'],
       imperial: ['3/4"', '1"', '1-1/4"', '1-1/2"', '2"', '2-1/2"']
     },
-    materials: ['nylon', 'zinc', 'stainless'],
+    materials: ['nylon', 'steel', 'stainless steel'],
     pitches: {
       metric: ['n/a'],
       imperial: ['n/a']
+    },
+    specs: {
+      materialType: ['plain', 'natural', 'black', 'zinc plated', 'A2', 'A4']
     },
     sourceId: 'manufacturer-catalogs'
   },
@@ -244,10 +270,13 @@ export const standardsCatalog: StandardCatalogEntry[] = [
       metric: ['standard'],
       imperial: ['standard']
     },
-    materials: ['spring steel', 'A2', 'zinc'],
+    materials: ['steel', 'stainless steel'],
     pitches: {
       metric: ['n/a'],
       imperial: ['n/a']
+    },
+    specs: {
+      materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4']
     },
     sourceId: 'manufacturer-catalogs'
   }

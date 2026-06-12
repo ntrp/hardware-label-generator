@@ -1,6 +1,8 @@
 import type { HardwareItem, HardwareSpecKey } from '../types';
 import { createId } from './defaults';
 import { parseList, splitLengthAndUnit } from './format';
+import { isValidBoltClass } from './boltClasses';
+import { isValidMaterialTreatment } from './materials';
 import { categorySpecKeys, patchItemSpec, syncHardwareSpecs } from './specs';
 
 const cartesian = <T,>(entries: T[][]): T[][] =>
@@ -17,7 +19,7 @@ export const generateBatchItems = (base: HardwareItem, specsText: Partial<Record
   const keys = categorySpecKeys[base.category];
   const valueLists = keys.map((key) => normalizeSpecList(base, key, specsText[key]));
 
-  return cartesian(valueLists).map((values) => {
+  return cartesian(valueLists).flatMap((values) => {
     let item: HardwareItem = {
       ...base,
       id: createId('item'),
@@ -42,6 +44,7 @@ export const generateBatchItems = (base: HardwareItem, specsText: Partial<Record
       };
     });
 
-    return syncHardwareSpecs(item);
+    const syncedItem = syncHardwareSpecs(item);
+    return isValidMaterialTreatment(syncedItem.material, syncedItem.materialType) && isValidBoltClass(syncedItem) ? [syncedItem] : [];
   });
 };

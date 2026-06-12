@@ -2,16 +2,16 @@ import type { AppState, FieldStyle, FrameStyle, HardwareItem, LabelPreset, Label
 
 export const defaultFieldStyle: FieldStyle = {
   fontFamily: 'Inter, Arial, sans-serif',
-  fontSize: 7,
+  fontSize: 4,
   fontWeight: 700,
   align: 'start',
   visible: true
 };
 
 export const defaultFrameStyle: FrameStyle = {
-  shape: 'box',
-  strokeWidth: 0.35,
-  radius: 1.2,
+  shape: 'rounded',
+  strokeWidth: 0.5,
+  radius: 3,
   lineStyle: 'solid'
 };
 
@@ -34,13 +34,17 @@ export const defaultHardwareItem: HardwareItem = {
   size: 'M3',
   length: '12',
   lengthUnit: 'mm',
-  material: 'A2',
+  material: 'stainless steel',
+  materialType: 'A2',
+  boltClass: 'A2-70',
   threadPitch: '0.5',
   threadPitchUnit: 'mm',
   specs: {
     size: 'M3',
     length: '12',
-    material: 'A2',
+    material: 'stainless steel',
+    materialType: 'A2',
+    boltClass: 'A2-70',
     threadPitch: '0.5',
     threadPitchUnit: 'mm'
   },
@@ -71,7 +75,7 @@ export const templateFields: Record<string, PlacedField[]> = {
     { id: 'field-size', kind: 'text', text: '{size}', x: 3, y: 11, width: 28, height: 10, style: { ...defaultFieldStyle, fontSize: 10, fontWeight: 800 } },
     { id: 'field-length', kind: 'text', text: '{length} {lengthUnit}', x: 3, y: 22, width: 28, height: 6, style: { ...defaultFieldStyle, fontSize: 5.5, fontWeight: 700 } },
     { id: 'field-qr', kind: 'image', imageSource: 'qr', x: 35, y: 5, width: 17, height: 17, style: { ...defaultFieldStyle } },
-    { id: 'field-material', kind: 'text', text: '{material}', x: 35, y: 25, width: 17, height: 4, style: { ...defaultFieldStyle, fontSize: 4, align: 'middle' } }
+    { id: 'field-material', kind: 'text', text: '{materialType}', x: 35, y: 25, width: 17, height: 4, style: { ...defaultFieldStyle, fontSize: 4, align: 'middle' } }
   ],
   washer: [
     { id: 'field-standard', kind: 'text', text: '{standardDin} {standardIso}', x: 3, y: 4, width: 48, height: 5, style: { ...defaultFieldStyle, fontSize: 4.5, fontWeight: 600 } },
@@ -89,6 +93,67 @@ export const templateFields: Record<string, PlacedField[]> = {
 };
 
 export const builtInLabelPresets: Record<string, LabelPreset> = {
+  'gridfinity-text': {
+    id: 'gridfinity-text',
+    name: 'Gridfinity 36x12',
+    categories: [
+      'screw'
+    ],
+    widthMm: 36,
+    heightMm: 12,
+    tapeWidthMm: 12,
+    marginMm: 2,
+    fields: [
+      {
+        id: 'field-standard',
+        kind: 'text',
+        text: '{standardIso}',
+        x: 2,
+        y: 2,
+        width: 30,
+        height: 4.73,
+        style: {
+          fontFamily: 'Inter, Arial, sans-serif',
+          fontSize: 4.5,
+          fontWeight: 600,
+          align: 'start',
+          visible: true
+        }
+      },
+      {
+        id: 'field-size',
+        kind: 'text',
+        text: '{size} x {length} {lengthUnit}',
+        x: 2,
+        y: 7,
+        width: 25,
+        height: 3,
+        style: {
+          fontFamily: 'Inter, Arial, sans-serif',
+          fontSize: 3,
+          fontWeight: 800,
+          align: 'start',
+          visible: true
+        }
+      },
+      {
+        id: 'field-mqb4do1x-y5bt8d',
+        kind: 'text',
+        text: '{material}',
+        x: 31,
+        y: 2,
+        width: 3,
+        height: 3,
+        style: {
+          fontFamily: 'Inter, Arial, sans-serif',
+          fontSize: 2,
+          fontWeight: 700,
+          align: 'start',
+          visible: true
+        }
+      }
+    ]
+  },
   compact: {
     id: 'compact',
     name: 'Compact text stack',
@@ -96,7 +161,7 @@ export const builtInLabelPresets: Record<string, LabelPreset> = {
     widthMm: 50,
     heightMm: 25,
     tapeWidthMm: 24,
-    marginMm: 0,
+    marginMm: 2,
     fields: templateFields.compact
   },
   'two-column': {
@@ -106,7 +171,7 @@ export const builtInLabelPresets: Record<string, LabelPreset> = {
     widthMm: 54,
     heightMm: 30,
     tapeWidthMm: 24,
-    marginMm: 0,
+    marginMm: 2,
     fields: templateFields['two-column']
   },
   'large-size': {
@@ -116,7 +181,7 @@ export const builtInLabelPresets: Record<string, LabelPreset> = {
     widthMm: 54,
     heightMm: 30,
     tapeWidthMm: 24,
-    marginMm: 0,
+    marginMm: 2,
     fields: templateFields['large-size']
   },
   'qr-sidecar': {
@@ -126,7 +191,7 @@ export const builtInLabelPresets: Record<string, LabelPreset> = {
     widthMm: 54,
     heightMm: 30,
     tapeWidthMm: 24,
-    marginMm: 0,
+    marginMm: 2,
     fields: templateFields['qr-sidecar']
   },
   washer: {
@@ -136,7 +201,7 @@ export const builtInLabelPresets: Record<string, LabelPreset> = {
     widthMm: 54,
     heightMm: 30,
     tapeWidthMm: 24,
-    marginMm: 0,
+    marginMm: 2,
     fields: templateFields.washer
   },
   rivet: {
@@ -146,7 +211,7 @@ export const builtInLabelPresets: Record<string, LabelPreset> = {
     widthMm: 50,
     heightMm: 25,
     tapeWidthMm: 24,
-    marginMm: 0,
+    marginMm: 2,
     fields: templateFields.rivet
   }
 };
@@ -164,11 +229,7 @@ export const defaultLabelSettings: LabelSettings = {
 
 export const defaultAppState: AppState = {
   hardwareItems: [defaultHardwareItem],
-  purchaseLinks: {
-    shared: {},
-    overrides: {},
-    overrideByItem: {}
-  },
+  purchaseLinks: {},
   labelSettings: defaultLabelSettings,
   customPresets: [],
   unitSystem: 'metric',

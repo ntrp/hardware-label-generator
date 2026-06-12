@@ -13,7 +13,7 @@ export type HardwareCategory =
   | 'custom';
 
 export type LabelElementKind = 'text' | 'image' | 'frame';
-export type ImageSource = 'qr';
+export type ImageSource = 'qr' | 'custom';
 export type FrameShape = 'box' | 'rounded';
 export type FrameLineStyle = 'solid' | 'dashed' | 'dotted';
 
@@ -24,6 +24,8 @@ export type HardwareSpecKey =
   | 'threadPitch'
   | 'threadPitchUnit'
   | 'material'
+  | 'materialType'
+  | 'boltClass'
   | 'thickness'
   | 'innerDiameter'
   | 'outerDiameter'
@@ -31,17 +33,7 @@ export type HardwareSpecKey =
 export type StandardFamily = 'ISO' | 'DIN' | 'EN' | 'ASME' | 'ASTM' | 'SAE' | 'JIS';
 export type StandardCodeMap = Partial<Record<StandardFamily, string>>;
 
-export interface PurchaseLink {
-  id: string;
-  url: string;
-  name: string;
-}
-
-export interface PurchaseLinkState {
-  shared: Record<string, PurchaseLink[]>;
-  overrides: Record<string, PurchaseLink[]>;
-  overrideByItem: Record<string, boolean>;
-}
+export type PurchaseLinkState = Record<string, string>;
 
 export interface HardwareItem {
   id: string;
@@ -53,6 +45,8 @@ export interface HardwareItem {
   length: string;
   lengthUnit: string;
   material: string;
+  materialType: string;
+  boltClass: string;
   threadPitch: string;
   threadPitchUnit: string;
   specs: Partial<Record<HardwareSpecKey, string>>;
@@ -84,6 +78,9 @@ export interface PlacedField {
   style: FieldStyle;
   text?: string;
   imageSource?: ImageSource;
+  imageBase64?: string;
+  imageMimeType?: string;
+  imageName?: string;
   frameStyle?: FrameStyle;
 }
 
@@ -136,7 +133,7 @@ export interface AppState {
 
 export interface AppBackup {
   app: 'standalone-fastener-label-generator';
-  version: 4;
+  version: 8;
   exportedAt: string;
   state: AppState;
 }

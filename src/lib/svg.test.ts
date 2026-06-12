@@ -1,11 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { defaultAppState, defaultHardwareItem, defaultLabelSettings } from './defaults';
-import { effectivePurchaseLinks } from './export';
+import { defaultHardwareItem, defaultLabelSettings } from './defaults';
 import { renderLabelSvg } from './svg';
 
 describe('SVG rendering', () => {
   it('renders label geometry and fastener text', async () => {
-    const svg = await renderLabelSvg(defaultHardwareItem, defaultLabelSettings, effectivePurchaseLinks(defaultAppState.purchaseLinks, defaultHardwareItem), 'metric');
+    const svg = await renderLabelSvg(defaultHardwareItem, defaultLabelSettings, 'https://example.com/a2', 'metric');
 
     expect(svg).toContain('width="54mm"');
     expect(svg).toContain('DIN 912 ISO 4762');
@@ -17,7 +16,7 @@ describe('SVG rendering', () => {
   });
 
   it('renders gray hover outlines and blue selected outlines', async () => {
-    const svg = await renderLabelSvg(defaultHardwareItem, defaultLabelSettings, [], 'metric', {
+    const svg = await renderLabelSvg(defaultHardwareItem, defaultLabelSettings, '', 'metric', {
       interactive: true,
       hoveredFieldId: 'field-standard',
       selectedFieldId: 'field-size'
@@ -45,11 +44,51 @@ describe('SVG rendering', () => {
           }
         ]
       },
-      [],
+      '',
       'metric'
     );
 
     expect(svg).toContain('x="0.4" y="0.4" width="53.2" height="29.2"');
     expect(svg).toContain('stroke-width="0.8" rx="3" stroke-dasharray="2 1.2"');
+  });
+
+  it('renders custom image bytes in SVG output', async () => {
+    const svg = await renderLabelSvg(
+      defaultHardwareItem,
+      {
+        ...defaultLabelSettings,
+        fields: [
+          {
+            id: 'field-custom-image',
+            kind: 'image',
+            imageSource: 'custom',
+            imageName: 'logo.png',
+            imageBase64: 'iVBORw0KGgo=',
+            imageMimeType: 'image/png',
+            x: 35,
+            y: 5,
+            width: 12,
+            height: 12,
+            style: { fontFamily: 'Inter', fontSize: 4, fontWeight: 700, align: 'middle', visible: true }
+          }
+        ]
+      },
+      '',
+      'metric'
+    );
+
+    expect(svg).toContain('href="data:image/png;base64,iVBORw0KGgo="');
+    expect(svg).toContain('preserveAspectRatio="xMidYMid meet"');
+  });
+
+  it('can render a raster-safe SVG for PNG export', async () => {
+    const svg = await renderLabelSvg(defaultHardwareItem, defaultLabelSettings, 'https://example.com/a2', 'metric', { rasterSafe: true });
+
+    expect(svg).not.toContain('<foreignObject');
+    expect(svg).not.toContain('text-overflow:ellipsis');
+    expect(svg).toContain('<text');
+    expect(svg).toContain('<clipPath');
+    expect(svg).toContain('data:image/png;base64');
+    expect(svg).toContain('DIN 912');
   });
 });

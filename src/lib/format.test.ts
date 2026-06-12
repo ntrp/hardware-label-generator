@@ -22,8 +22,8 @@ describe('format helpers', () => {
     expect(renderTextTemplate('{standard}', defaultHardwareItem, 'metric')).toBe('ISO 4762');
     expect(renderTextTemplate('{standard}', { ...defaultHardwareItem, standardCodes: { SAE: 'SAE J429' }, standard: 'Fallback standard' }, 'imperial')).toBe('SAE J429');
     expect(renderTextTemplate('{standard}', { ...defaultHardwareItem, standardCodes: {}, standard: 'Fallback standard' }, 'metric')).toBe('Fallback standard');
-    expect(renderTextTemplate('{standardDin} {standardIso} {size} x {length} {lengthUnit} ({threadPitch} {threadPitchUnit}, {material})', defaultHardwareItem, 'metric')).toBe(
-      'DIN 912 ISO 4762 M3 x 12 mm (0.5 mm, A2)'
+    expect(renderTextTemplate('{standardDin} {standardIso} {size} x {length} {lengthUnit} ({threadPitch} {threadPitchUnit}, {material}, {materialType}, {boltClass})', defaultHardwareItem, 'metric')).toBe(
+      'DIN 912 ISO 4762 M3 x 12 mm (0.5 mm, stainless steel, A2, A2-70)'
     );
     expect(renderTextTemplate('{length}', defaultHardwareItem, 'metric')).toBe('12');
     expect(renderTextTemplate('{lengthUnit}', defaultHardwareItem, 'metric')).toBe('mm');

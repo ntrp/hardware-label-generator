@@ -56,6 +56,12 @@ button.secondary:hover {
   background: #edf0f2;
 }
 
+button.compact-button {
+  min-height: 32px;
+  padding: 0 9px;
+  font-size: 11px;
+}
+
 input,
 select,
 textarea {
@@ -306,6 +312,47 @@ h3 {
   color: #65727f;
   font-size: 11px;
   font-weight: 800;
+}
+
+.image-controls {
+  display: grid;
+  gap: 8px;
+}
+
+.image-upload-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.file-upload-button {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  border: 1px solid #27313a;
+  border-radius: 6px;
+  background: #fff;
+  color: #27313a;
+  padding: 0 12px;
+  cursor: pointer;
+}
+
+.file-upload-button:hover {
+  background: #edf0f2;
+}
+
+.file-upload-button span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-upload-button input {
+  display: none;
 }
 
 .hardware-list {
@@ -640,6 +687,12 @@ h3 {
   gap: 8px;
 }
 
+.font-select-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px;
+}
+
 .frame-controls {
   display: grid;
   grid-template-columns: repeat(4, minmax(82px, 1fr));
@@ -865,6 +918,20 @@ h3 {
   background: #fff;
   box-shadow: 0 18px 60px rgb(17 24 32 / 0.28);
   padding: 16px;
+}
+
+.preset-code-modal {
+  width: min(900px, 100%);
+}
+
+.code-export-textarea {
+  min-height: min(460px, 58vh);
+  overflow: auto;
+  color: #172029;
+  font-family: "Roboto Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.45;
+  white-space: pre;
 }
 
 .modal-header {

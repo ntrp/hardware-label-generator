@@ -3,15 +3,11 @@ import JSZip from 'jszip';
 import { defaultHardwareItem, defaultLabelSettings } from './defaults';
 import { createExportZipBlob, labelArchiveFolderName, labelFilename } from './export';
 
-const emptyLinkState = {
-  shared: {},
-  overrides: {},
-  overrideByItem: {}
-};
+const emptyLinkState = {};
 
 describe('export helpers', () => {
   it('builds deterministic label filenames', () => {
-    expect(labelFilename(defaultHardwareItem, 'svg')).toBe('din-912-iso-4762-m3-12-mm-a2.svg');
+    expect(labelFilename(defaultHardwareItem, 'svg')).toBe('din-912-iso-4762-m3-12-mm-stainless-steel-a2-a2-70.svg');
   });
 
   it('creates one ZIP folder per hardware card, even for duplicate labels', async () => {
@@ -31,7 +27,7 @@ describe('export helpers', () => {
 
   it('stores LBX exports inside the all-label ZIP as zipped XML containers', async () => {
     const item = { ...defaultHardwareItem, id: 'item-a' };
-    const blob = await createExportZipBlob([item], defaultLabelSettings, emptyLinkState, ['lbx']);
+    const blob = await createExportZipBlob([item], defaultLabelSettings, { [item.id]: 'https://example.com/a2' }, ['lbx']);
     const zip = await JSZip.loadAsync(await blob.arrayBuffer());
     const lbxPath = `${labelArchiveFolderName(item, 0)}/${labelFilename(item, 'lbx')}`;
     const lbxBytes = await zip.file(lbxPath)?.async('arraybuffer');
@@ -39,6 +35,6 @@ describe('export helpers', () => {
     expect(lbxBytes).toBeDefined();
 
     const lbxZip = await JSZip.loadAsync(lbxBytes as ArrayBuffer);
-    expect(Object.keys(lbxZip.files)).toEqual(expect.arrayContaining(['label.xml', 'objects.xml', 'metadata.xml']));
+    expect(Object.keys(lbxZip.files).sort()).toEqual(['Object0.png', 'label.xml', 'prop.xml']);
   });
 });

@@ -85,6 +85,8 @@ export const placeholderLabels = {
   length: 'Length',
   lengthUnit: 'Length unit',
   material: 'Material',
+  materialType: 'Material type',
+  boltClass: 'Bolt class',
   threadPitch: 'Pitch',
   threadPitchUnit: 'Pitch unit',
   thickness: 'Thickness',
@@ -124,6 +126,10 @@ export const getPlaceholderValue = (item: HardwareItem, key: string, unitSystem:
       return item.lengthUnit;
     case 'material':
       return item.material;
+    case 'materialType':
+      return item.materialType;
+    case 'boltClass':
+      return item.boltClass;
     case 'threadPitch':
       return item.threadPitch;
     case 'threadPitchUnit':

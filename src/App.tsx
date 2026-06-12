@@ -2,7 +2,8 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { PointerEvent as ReactPointerEvent } from 'react';
 import {
   Archive,
-  ChevronDown,
+  Code2,
+  Copy,
   Download,
   FileArchive,
   FileImage,
@@ -19,7 +20,7 @@ import {
 import { standardsCatalog } from './data/catalog';
 import { generateBatchItems } from './lib/batch';
 import { builtInLabelPresets, clonePlacedFields, createId, defaultAppState, defaultFieldStyle, defaultFrameStyle } from './lib/defaults';
-import { downloadBlob, effectivePurchaseLinks, exportSingle, exportZip, purchaseLinkScopeKey, type ExportFormat } from './lib/export';
+import { downloadBlob, effectivePurchaseLink, exportSingle, exportZip, type ExportFormat } from './lib/export';
 import {
   defaultLengthUnit,
   formatLabelSize,
@@ -33,6 +34,7 @@ import {
   categoryDefaultPreset,
   categorySpecKeys,
   firstSpecValue,
+  getAllCatalogSpecOptions,
   getCatalogSpecOptions,
   getCategorySpecDefinitions,
   getItemSpecValue,
@@ -40,6 +42,8 @@ import {
   patchItemSpec,
   syncHardwareSpecs
 } from './lib/specs';
+import { baseMaterials, defaultMaterialTreatment, getMaterialTreatmentOptions, isValidMaterialTreatment } from './lib/materials';
+import { defaultBoltClass, getBoltClassOptions, isValidBoltClass } from './lib/boltClasses';
 import { catalogMatchesSelectedStandards, combinedStandardCode, standardFamilies, standardPlaceholderKeys } from './lib/standards';
 import { loadState, parseBackup, saveState, serializeBackup, storageMeta } from './lib/storage';
 import { renderLabelSvg } from './lib/svg';
@@ -53,13 +57,40 @@ import type {
   HardwareSpecKey,
   LabelElementKind,
   PlacedField,
-  PurchaseLink,
   StandardCatalogEntry
 } from './types';
 
 const categories: HardwareCategory[] = ['screw', 'bolt', 'nut', 'washer', 'rivet', 'pin', 'anchor', 'insert', 'clip', 'custom'];
 const elementKinds: LabelElementKind[] = ['text', 'image', 'frame'];
-const fontFamilies = ['Inter, Arial, sans-serif', 'Arial, sans-serif', 'Roboto Mono, monospace', 'Georgia, serif', 'Helvetica, sans-serif'];
+const fontFamilies = [
+  'Inter, Arial, sans-serif',
+  'Arial, sans-serif',
+  'Helvetica, Arial, sans-serif',
+  'Aptos, Arial, sans-serif',
+  'Calibri, Arial, sans-serif',
+  'Segoe UI, Arial, sans-serif',
+  'San Francisco, Helvetica, Arial, sans-serif',
+  'Roboto, Arial, sans-serif',
+  'Verdana, Geneva, sans-serif',
+  'Tahoma, Geneva, sans-serif',
+  'Trebuchet MS, Arial, sans-serif',
+  'Gill Sans, Arial, sans-serif',
+  'DIN Alternate, Arial Narrow, Arial, sans-serif',
+  'Arial Narrow, Arial, sans-serif',
+  'Impact, Haettenschweiler, sans-serif',
+  'Times New Roman, Times, serif',
+  'Georgia, serif',
+  'Garamond, Georgia, serif',
+  'Courier New, Courier, monospace',
+  'Roboto Mono, monospace',
+  'Menlo, Consolas, monospace',
+  'Consolas, Courier New, monospace',
+  'Monaco, Menlo, monospace',
+  'Helsinki, Arial, sans-serif',
+  'Brussels, Arial, sans-serif',
+  'Letter Gothic, Courier New, monospace',
+  'Brougham, Courier New, monospace'
+];
 const mmToPx = 3.7795275591;
 const mmPerInch = 25.4;
 const minLabelWidthMm = 10;
@@ -68,14 +99,42 @@ const maxLabelWidthMm = 200;
 const maxLabelHeightMm = 120;
 const minElementWidthMm = 3;
 const minElementHeightMm = 3;
+const textElementLineHeight = 1.05;
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 const isBuiltInPresetId = (value: string) => value in builtInLabelPresets;
 const modifiedPresetValue = '__modified-preset';
 type LabelResizeMode = 'width' | 'height' | 'both';
 type ElementResizeMode = LabelResizeMode;
 type LabelDimensionKey = 'widthMm' | 'heightMm' | 'marginMm';
+type LocalFontAccessWindow = Window & {
+  queryLocalFonts?: () => Promise<Array<{ family: string }>>;
+};
 
 const uniqueValues = (values: string[]) => Array.from(new Set(values)).filter(Boolean);
+const formatTsString = (value: string) => `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+const tsIdentifierPattern = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
+const formatTsKey = (key: string) => (tsIdentifierPattern.test(key) ? key : formatTsString(key));
+const formatTsValue = (value: unknown, indent = 0): string => {
+  const space = ' '.repeat(indent);
+  const nextSpace = ' '.repeat(indent + 2);
+
+  if (typeof value === 'string') return formatTsString(value);
+  if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+  if (value === null) return 'null';
+  if (Array.isArray(value)) {
+    if (value.length === 0) return '[]';
+    return `[\n${value.map((entry) => `${nextSpace}${formatTsValue(entry, indent + 2)}`).join(',\n')}\n${space}]`;
+  }
+  if (value && typeof value === 'object') {
+    const entries = Object.entries(value as Record<string, unknown>).filter(([, entry]) => entry !== undefined);
+    if (entries.length === 0) return '{}';
+    return `{\n${entries.map(([key, entry]) => `${nextSpace}${formatTsKey(key)}: ${formatTsValue(entry, indent + 2)}`).join(',\n')}\n${space}}`;
+  }
+
+  return 'undefined';
+};
+const slugifyPresetId = (value: string) =>
+  value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'custom-preset';
 const formatMmInput = (value: number) => String(Number(value.toFixed(2))).replace('.', ',');
 const parseMmInput = (value: string) => Number(value.trim().replace(',', '.'));
 const formatLabelDimensionInput = (valueMm: number, unitSystem: AppState['unitSystem']) =>
@@ -92,6 +151,9 @@ const maxMarginForSettings = (settings: Pick<AppState['labelSettings'], 'widthMm
 
 const normalizedMarginMm = (settings: Pick<AppState['labelSettings'], 'widthMm' | 'heightMm' | 'marginMm'>) =>
   Number(clamp(settings.marginMm, 0, maxMarginForSettings(settings)).toFixed(2));
+
+const autoTextElementHeight = (field: Pick<PlacedField, 'style'>) =>
+  Number(Math.max(minElementHeightMm, field.style.fontSize * textElementLineHeight).toFixed(2));
 
 const constrainFieldToSettings = (field: PlacedField, settings: AppState['labelSettings']): PlacedField => {
   if (field.kind === 'frame') {
@@ -173,7 +235,7 @@ const getElementSummary = (field: PlacedField) => {
   }
 
   if (field.kind === 'image') {
-    return field.imageSource === 'qr' ? 'Purchase links QR' : 'Image';
+    return field.imageSource === 'custom' ? field.imageName || 'Custom image' : 'Purchase link QR';
   }
 
   const frameShape = field.frameStyle?.shape === 'rounded' ? 'Rounded' : 'Box';
@@ -193,7 +255,13 @@ const presetMatchesSettings = (preset: LabelPreset, settings: AppState['labelSet
 };
 
 export function App() {
-  const [state, setState] = useState<AppState>(() => loadState());
+  const [state, setState] = useState<AppState>(() => {
+    const loadedState = loadState();
+    return {
+      ...loadedState,
+      labelSettings: constrainLabelSettings(loadedState.labelSettings)
+    };
+  });
   const [selectedId, setSelectedId] = useState(state.hardwareItems[0]?.id ?? '');
   const [previewSvg, setPreviewSvg] = useState('');
   const [previewScale, setPreviewScale] = useState(1);
@@ -202,8 +270,9 @@ export function App() {
   const [zipFormats, setZipFormats] = useState<ExportFormat[]>(['svg', 'png', 'lbx']);
   const [printSvgs, setPrintSvgs] = useState<string[]>([]);
   const [batchModalOpen, setBatchModalOpen] = useState(false);
-  const [linksCollapsed, setLinksCollapsed] = useState(true);
   const [presetModalOpen, setPresetModalOpen] = useState(false);
+  const [presetCodeModalOpen, setPresetCodeModalOpen] = useState(false);
+  const [systemFontFamilies, setSystemFontFamilies] = useState<string[]>([]);
   const [presetName, setPresetName] = useState('');
   const [presetCategories, setPresetCategories] = useState<HardwareCategory[]>([]);
   const [isResizingLabel, setIsResizingLabel] = useState(false);
@@ -254,8 +323,7 @@ export function App() {
     [selectedFieldId, state.labelSettings.fields]
   );
 
-  const selectedLinks = selectedItem ? effectivePurchaseLinks(state.purchaseLinks, selectedItem) : [];
-  const selectedLinksUseOverride = selectedItem ? Boolean(state.purchaseLinks.overrideByItem[selectedItem.id]) : false;
+  const selectedPurchaseLink = selectedItem ? effectivePurchaseLink(state.purchaseLinks, selectedItem) : '';
   const selectedCatalogEntry = getCatalogEntryForItem(selectedItem);
   const selectedSpecUnitSystem = selectedCatalogEntry?.unitSystem ?? state.unitSystem;
   const filteredCatalog = standardsCatalog.filter((entry) => catalogMatchesSelectedStandards(entry, state.selectedStandards));
@@ -263,7 +331,8 @@ export function App() {
   const selectedCatalogLocked = Boolean(selectedCatalogEntry);
   const activeSpecDefinitions = getCategorySpecDefinitions(selectedItem?.category ?? 'custom');
   const batchSpecDefinitions = getCategorySpecDefinitions(batchCatalogEntry.category);
-  const qrInfo = selectedItem ? buildQrPayload(selectedItem, selectedLinks) : undefined;
+  const hasQrElement = state.labelSettings.fields.some((field) => field.kind === 'image' && field.imageSource === 'qr' && field.style.visible);
+  const qrInfo = hasQrElement ? buildQrPayload(selectedPurchaseLink) : undefined;
   const previewBaseWidth = state.labelSettings.widthMm * mmToPx;
   const previewBaseHeight = state.labelSettings.heightMm * mmToPx;
   const builtInPresetOptions = Object.values(builtInLabelPresets).filter((preset) => presetAppliesToCategory(preset, selectedItem.category));
@@ -273,6 +342,23 @@ export function App() {
   const activeCustomPreset = activePreset ? state.customPresets.find((preset) => preset.id === activePreset.id) : undefined;
   const presetIsModified = !activePreset;
   const activePresetValue = activePreset?.id ?? modifiedPresetValue;
+  const availableFontFamilies = useMemo(() => uniqueValues([...fontFamilies, ...systemFontFamilies]), [systemFontFamilies]);
+  const presetCode = useMemo(() => {
+    const name = activePreset?.name ?? `Preset ${formatLabelSize(state.labelSettings.widthMm, state.labelSettings.heightMm, state.unitSystem)}`;
+    const id = activePreset?.id ?? slugifyPresetId(`${selectedItem.category}-${name}`);
+    const preset: LabelPreset = {
+      id,
+      name,
+      categories: activePreset?.categories.length ? activePreset.categories : [selectedItem.category],
+      widthMm: state.labelSettings.widthMm,
+      heightMm: state.labelSettings.heightMm,
+      tapeWidthMm: state.labelSettings.tapeWidthMm,
+      marginMm: state.labelSettings.marginMm,
+      fields: clonePlacedFields(state.labelSettings.fields)
+    };
+
+    return `${formatTsKey(id)}: ${formatTsValue(preset)},`;
+  }, [activePreset, selectedItem.category, state.labelSettings, state.unitSystem]);
   const placeholderOptions = useMemo(() => {
     const base = [
       'standard',
@@ -341,18 +427,42 @@ export function App() {
   }, [state.labelSettings.widthMm, state.labelSettings.heightMm, state.labelSettings.marginMm, state.unitSystem]);
 
   useEffect(() => {
-    if (!batchModalOpen && !presetModalOpen) return;
+    if (!batchModalOpen && !presetModalOpen && !presetCodeModalOpen) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setBatchModalOpen(false);
         setPresetModalOpen(false);
+        setPresetCodeModalOpen(false);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [batchModalOpen, presetModalOpen]);
+  }, [batchModalOpen, presetModalOpen, presetCodeModalOpen]);
+
+  useEffect(() => {
+    if (!selectedFieldId || batchModalOpen || presetModalOpen || presetCodeModalOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Delete' && event.key !== 'Backspace') return;
+
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      const isEditableTarget =
+        target?.tagName === 'INPUT' ||
+        target?.tagName === 'TEXTAREA' ||
+        target?.tagName === 'SELECT' ||
+        Boolean(target?.isContentEditable);
+
+      if (isEditableTarget) return;
+
+      event.preventDefault();
+      removeField(selectedFieldId);
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [batchModalOpen, presetCodeModalOpen, presetModalOpen, selectedFieldId]);
 
   useEffect(() => {
     if (!isResizingLabel) return;
@@ -422,7 +532,7 @@ export function App() {
       return;
     }
 
-    renderLabelSvg(selectedItem, state.labelSettings, selectedLinks, selectedSpecUnitSystem, {
+    renderLabelSvg(selectedItem, state.labelSettings, selectedPurchaseLink, selectedSpecUnitSystem, {
       interactive: true,
       hoveredFieldId,
       selectedFieldId
@@ -435,7 +545,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [hoveredFieldId, selectedFieldId, selectedItem, selectedLinks, selectedSpecUnitSystem, state.labelSettings]);
+  }, [hoveredFieldId, selectedFieldId, selectedItem, selectedPurchaseLink, selectedSpecUnitSystem, state.labelSettings]);
 
   const updateState = (patch: Partial<AppState>) => setState((current) => ({ ...current, ...patch }));
 
@@ -455,6 +565,32 @@ export function App() {
   const handleManualSave = () => {
     saveState(state);
     showSuccessToast('Saved successfully.');
+  };
+
+  const copyPresetCode = async () => {
+    try {
+      await navigator.clipboard.writeText(presetCode);
+      showSuccessToast('Preset code copied.');
+    } catch {
+      showSuccessToast('Preset code ready to copy.');
+    }
+  };
+
+  const loadSystemFonts = async () => {
+    const queryLocalFonts = (window as LocalFontAccessWindow).queryLocalFonts;
+    if (!queryLocalFonts) {
+      window.alert('This browser does not support reading local system fonts.');
+      return;
+    }
+
+    try {
+      const fonts = await queryLocalFonts();
+      const families = uniqueValues(fonts.map((font) => font.family).sort((a, b) => a.localeCompare(b)));
+      setSystemFontFamilies(families);
+      showSuccessToast(`Loaded ${families.length} system fonts.`);
+    } catch {
+      window.alert('System font access was not allowed.');
+    }
   };
 
   const updateStandardFilter = (family: AppState['selectedStandards'][number], checked: boolean) => {
@@ -501,6 +637,13 @@ export function App() {
       };
     }, {});
     const normalizedLength = normalizeLengthSpec(specs.length ?? item.length, defaultLengthUnit(entry.unitSystem));
+    const material = specs.material ?? item.material;
+    const materialType = isValidMaterialTreatment(material, specs.materialType ?? item.materialType)
+      ? specs.materialType ?? item.materialType
+      : defaultMaterialTreatment(material);
+    const boltClassCandidate = specs.boltClass ?? item.boltClass;
+    const boltClassItem = { ...item, material, materialType, unitSystem: entry.unitSystem, boltClass: boltClassCandidate };
+    const boltClass = isValidBoltClass(boltClassItem, entry.unitSystem) ? boltClassCandidate : defaultBoltClass(boltClassItem, entry.unitSystem);
 
     return {
       catalogId: entry.id,
@@ -511,12 +654,17 @@ export function App() {
       specs: {
         ...item.specs,
         ...specs,
-        length: normalizedLength.length
+        length: normalizedLength.length,
+        material,
+        materialType,
+        boltClass
       },
       size: specs.size ?? item.size,
       length: normalizedLength.length,
       lengthUnit: normalizedLength.lengthUnit,
-      material: specs.material ?? item.material,
+      material,
+      materialType,
+      boltClass,
       threadPitch: specs.threadPitch ?? item.threadPitch,
       threadPitchUnit: specs.threadPitchUnit ?? item.threadPitchUnit
     };
@@ -529,6 +677,39 @@ export function App() {
       updateSelectedItem({
         ...patchItemSpec(selectedItem, key, normalized.length),
         lengthUnit: normalized.lengthUnit
+      });
+      return;
+    }
+
+    if (key === 'material') {
+      const materialType = isValidMaterialTreatment(value, selectedItem.materialType) ? selectedItem.materialType : defaultMaterialTreatment(value);
+      const boltClassItem = { ...selectedItem, material: value, materialType };
+      const boltClass = isValidBoltClass(boltClassItem, selectedSpecUnitSystem) ? selectedItem.boltClass : defaultBoltClass(boltClassItem, selectedSpecUnitSystem);
+      updateSelectedItem({
+        material: value,
+        materialType,
+        boltClass,
+        specs: {
+          ...selectedItem.specs,
+          material: value,
+          materialType,
+          boltClass
+        }
+      });
+      return;
+    }
+
+    if (key === 'materialType') {
+      const boltClassItem = { ...selectedItem, materialType: value };
+      const boltClass = isValidBoltClass(boltClassItem, selectedSpecUnitSystem) ? selectedItem.boltClass : defaultBoltClass(boltClassItem, selectedSpecUnitSystem);
+      updateSelectedItem({
+        materialType: value,
+        boltClass,
+        specs: {
+          ...selectedItem.specs,
+          materialType: value,
+          boltClass
+        }
       });
       return;
     }
@@ -556,58 +737,15 @@ export function App() {
     setSelectedFieldId(null);
   };
 
-  const updateLinks = (links: PurchaseLink[]) => {
+  const updatePurchaseLink = (purchaseLink: string) => {
     if (!selectedItem) return;
     setState((current) => ({
       ...current,
       purchaseLinks: {
         ...current.purchaseLinks,
-        ...(current.purchaseLinks.overrideByItem[selectedItem.id]
-          ? {
-              overrides: {
-                ...current.purchaseLinks.overrides,
-                [selectedItem.id]: links
-              }
-            }
-          : {
-              shared: {
-                ...current.purchaseLinks.shared,
-                [purchaseLinkScopeKey(selectedItem)]: links
-              }
-            })
+        [selectedItem.id]: purchaseLink
       }
     }));
-  };
-
-  const toggleLinkOverride = (checked: boolean) => {
-    if (!selectedItem) return;
-
-    if (!checked) {
-      const confirmed = window.confirm('Disable instance-specific links? Custom links for this hardware card will be lost and shared catalog links will be restored.');
-      if (!confirmed) return;
-    }
-
-    setState((current) => {
-      const nextOverrides = { ...current.purchaseLinks.overrides };
-      const nextOverrideByItem = { ...current.purchaseLinks.overrideByItem };
-
-      if (checked) {
-        nextOverrideByItem[selectedItem.id] = true;
-        nextOverrides[selectedItem.id] = [...effectivePurchaseLinks(current.purchaseLinks, selectedItem)];
-      } else {
-        delete nextOverrideByItem[selectedItem.id];
-        delete nextOverrides[selectedItem.id];
-      }
-
-      return {
-        ...current,
-        purchaseLinks: {
-          ...current.purchaseLinks,
-          overrides: nextOverrides,
-          overrideByItem: nextOverrideByItem
-        }
-      };
-    });
   };
 
   const applyCatalogEntry = (entryId: string) => {
@@ -620,7 +758,7 @@ export function App() {
     if (!entry || !selectedItem) return;
 
     const batchSpecs = Object.fromEntries(
-      categorySpecKeys[entry.category].map((key) => [key, getCatalogSpecOptions(entry, entry.category, key, entry.unitSystem).join(', ')])
+      categorySpecKeys[entry.category].map((key) => [key, getAllCatalogSpecOptions(entry, entry.category, key).join(', ')])
     ) as Partial<Record<HardwareSpecKey, string>>;
 
     setState((current) => ({
@@ -678,12 +816,7 @@ export function App() {
     setState((current) => ({
       ...current,
       hardwareItems: remaining,
-      purchaseLinks: {
-        ...current.purchaseLinks,
-        shared: Object.fromEntries(Object.entries(current.purchaseLinks.shared).filter(([key]) => key !== itemId)),
-        overrides: Object.fromEntries(Object.entries(current.purchaseLinks.overrides).filter(([key]) => key !== itemId)),
-        overrideByItem: Object.fromEntries(Object.entries(current.purchaseLinks.overrideByItem).filter(([key]) => key !== itemId))
-      }
+      purchaseLinks: Object.fromEntries(Object.entries(current.purchaseLinks).filter(([key]) => key !== itemId))
     }));
 
     if (selectedId === itemId) {
@@ -700,11 +833,7 @@ export function App() {
     setState((current) => ({
       ...current,
       hardwareItems,
-      purchaseLinks: {
-        shared: {},
-        overrides: {},
-        overrideByItem: {}
-      }
+      purchaseLinks: {}
     }));
     setSelectedId(hardwareItems[0]?.id ?? '');
   };
@@ -843,7 +972,16 @@ export function App() {
         ...current.labelSettings,
         layout: 'custom',
         fields: current.labelSettings.fields.map((field) =>
-          field.id === fieldId ? { ...field, style: { ...field.style, ...patch } } : field
+          field.id === fieldId
+            ? constrainFieldToSettings(
+                {
+                  ...field,
+                  height: field.kind === 'text' && patch.fontSize !== undefined ? autoTextElementHeight({ style: { ...field.style, ...patch } }) : field.height,
+                  style: { ...field.style, ...patch }
+                },
+                current.labelSettings
+              )
+            : field
         )
       }
     }));
@@ -866,6 +1004,11 @@ export function App() {
     if (kind === 'frame') {
       updateField(field.id, {
         kind,
+        text: undefined,
+        imageSource: undefined,
+        imageBase64: undefined,
+        imageMimeType: undefined,
+        imageName: undefined,
         x: 0,
         y: 0,
         width: state.labelSettings.widthMm,
@@ -876,16 +1019,53 @@ export function App() {
     }
 
     if (kind === 'image') {
-      updateField(field.id, { kind, imageSource: field.imageSource ?? 'qr' });
+      updateField(field.id, { kind, text: undefined, imageSource: field.imageSource ?? 'qr', frameStyle: undefined });
       return;
     }
 
-    updateField(field.id, { kind, text: field.text ?? '{standardDin} {standardIso}' });
+    updateField(field.id, {
+      kind,
+      text: field.text ?? '{standardDin} {standardIso}',
+      imageSource: undefined,
+      imageBase64: undefined,
+      imageMimeType: undefined,
+      imageName: undefined,
+      frameStyle: undefined
+    });
   };
 
   const appendPlaceholder = (field: PlacedField, placeholder: string) => {
     const currentText = field.text ?? '';
     updateField(field.id, { text: `${currentText}${currentText && !currentText.endsWith(' ') ? ' ' : ''}${placeholder}` });
+  };
+
+  const updateCustomImage = async (fieldId: string, file: File | undefined) => {
+    if (!file) return;
+
+    const extension = file.name.split('.').pop()?.toLowerCase();
+    const supportedMimeTypes = ['image/bmp', 'image/x-ms-bmp', 'image/png', 'image/svg+xml'];
+    const supportedExtensions = ['bmp', 'png', 'svg'];
+    if (!supportedMimeTypes.includes(file.type) && !supportedExtensions.includes(extension ?? '')) {
+      window.alert('Custom label images must be BMP, PNG, or SVG.');
+      return;
+    }
+
+    const arrayBuffer = await file.arrayBuffer();
+    const bytes = new Uint8Array(arrayBuffer);
+    let binary = '';
+
+    for (let index = 0; index < bytes.length; index += 1) {
+      binary += String.fromCharCode(bytes[index]);
+    }
+
+    const imageBase64 = btoa(binary);
+
+    updateField(fieldId, {
+      imageSource: 'custom',
+      imageBase64,
+      imageMimeType: file.type || 'application/octet-stream',
+      imageName: file.name
+    });
   };
 
   const getPreviewPointerPosition = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -1113,7 +1293,7 @@ export function App() {
     if (!entry) return;
 
     const batchSpecs = Object.fromEntries(
-      categorySpecKeys[entry.category].map((key) => [key, getCatalogSpecOptions(entry, entry.category, key, entry.unitSystem).join(', ')])
+      categorySpecKeys[entry.category].map((key) => [key, getAllCatalogSpecOptions(entry, entry.category, key).join(', ')])
     ) as Partial<Record<HardwareSpecKey, string>>;
 
     updateState({
@@ -1151,7 +1331,7 @@ export function App() {
     const svgs = await Promise.all(
       state.hardwareItems.map((item) => {
         const catalogEntry = getCatalogEntryForItem(item);
-        return renderLabelSvg(item, state.labelSettings, effectivePurchaseLinks(state.purchaseLinks, item), catalogEntry?.unitSystem ?? item.unitSystem);
+        return renderLabelSvg(item, state.labelSettings, effectivePurchaseLink(state.purchaseLinks, item), catalogEntry?.unitSystem ?? item.unitSystem);
       })
     );
     setPrintSvgs(svgs);
@@ -1170,7 +1350,10 @@ export function App() {
       const confirmed = window.confirm('Importing this file will replace all hardware, purchase links, presets, and settings. Continue?');
       if (!confirmed) return;
 
-      setState(importedState);
+      setState({
+        ...importedState,
+        labelSettings: constrainLabelSettings(importedState.labelSettings)
+      });
       setSelectedId(importedState.hardwareItems[0]?.id ?? '');
       setSelectedFieldId(null);
       setHoveredFieldId(null);
@@ -1344,8 +1527,19 @@ export function App() {
                   return null;
                 }
 
-                const options = getCatalogSpecOptions(selectedCatalogEntry, selectedItem.category, definition.key, selectedSpecUnitSystem);
+                const catalogOptions = selectedCatalogLocked
+                  ? getCatalogSpecOptions(selectedCatalogEntry, selectedItem.category, definition.key, selectedSpecUnitSystem)
+                  : getAllCatalogSpecOptions(selectedCatalogEntry, selectedItem.category, definition.key);
+                const options = definition.key === 'material' && !selectedCatalogLocked ? uniqueValues([...catalogOptions, ...baseMaterials]) : catalogOptions;
                 const datalistId = `spec-options-${definition.key}`;
+                const materialTypeOptions =
+                  definition.key === 'materialType'
+                    ? getMaterialTreatmentOptions(selectedItem.material).filter((value) => options.length === 0 || options.includes(value))
+                    : [];
+                const boltClassOptions =
+                  definition.key === 'boltClass'
+                    ? getBoltClassOptions(selectedItem, selectedSpecUnitSystem).filter((value) => options.length === 0 || options.includes(value))
+                    : [];
                 const lengthUnitOptions =
                   definition.key === 'length'
                     ? uniqueValues([
@@ -1353,6 +1547,24 @@ export function App() {
                         ...options.map((value) => splitLengthAndUnit(value, selectedItem.lengthUnit).lengthUnit)
                       ])
                     : [];
+                const lengthOptions = definition.key === 'length'
+                  ? uniqueValues([
+                      selectedItem.length,
+                      ...options.map((value) => splitLengthAndUnit(value, selectedItem.lengthUnit).length)
+                    ])
+                  : [];
+                const threadPitchOptions = definition.key === 'threadPitch' ? uniqueValues([selectedItem.threadPitch, ...options]) : [];
+                const threadPitchUnitOptions =
+                  definition.key === 'threadPitch'
+                    ? uniqueValues([
+                        selectedItem.threadPitchUnit,
+                        ...(selectedCatalogLocked
+                          ? getCatalogSpecOptions(selectedCatalogEntry, selectedItem.category, 'threadPitchUnit', selectedSpecUnitSystem)
+                          : getAllCatalogSpecOptions(selectedCatalogEntry, selectedItem.category, 'threadPitchUnit'))
+                      ])
+                    : [];
+                const materialOptions = definition.key === 'material' ? uniqueValues([selectedItem.material, ...options]) : [];
+                const genericOptions = uniqueValues([getItemSpecValue(selectedItem, definition.key), ...options]);
 
                 return (
                   <label key={definition.key}>
@@ -1360,17 +1572,41 @@ export function App() {
                     {definition.isLength ? (
                       <>
                         <div className="length-row">
-                          <input
-                            list={datalistId}
-                            value={selectedItem.length}
-                            onChange={(event) => updateSelectedSpec(definition.key, event.target.value)}
-                          />
-                          <input
-                            list="length-unit-options"
-                            value={selectedItem.lengthUnit}
-                            aria-label="Length unit"
-                            onChange={(event) => updateSelectedItem({ lengthUnit: event.target.value })}
-                          />
+                          {selectedCatalogLocked ? (
+                            <select value={selectedItem.length} onChange={(event) => updateSelectedSpec(definition.key, event.target.value)}>
+                              {lengthOptions.map((value) => (
+                                <option key={value} value={value}>
+                                  {value}
+                                </option>
+                              ))}
+                            </select>
+                          ) : (
+                            <input
+                              list={datalistId}
+                              value={selectedItem.length}
+                              onChange={(event) => updateSelectedSpec(definition.key, event.target.value)}
+                            />
+                          )}
+                          {selectedCatalogLocked ? (
+                            <select
+                              value={selectedItem.lengthUnit}
+                              aria-label="Length unit"
+                              onChange={(event) => updateSelectedItem({ lengthUnit: event.target.value })}
+                            >
+                              {lengthUnitOptions.map((value) => (
+                                <option key={value} value={value}>
+                                  {value || 'n/a'}
+                                </option>
+                              ))}
+                            </select>
+                          ) : (
+                            <input
+                              list="length-unit-options"
+                              value={selectedItem.lengthUnit}
+                              aria-label="Length unit"
+                              onChange={(event) => updateSelectedItem({ lengthUnit: event.target.value })}
+                            />
+                          )}
                         </div>
                         <datalist id={datalistId}>
                           {options.map((value) => (
@@ -1386,17 +1622,41 @@ export function App() {
                     ) : definition.key === 'threadPitch' ? (
                       <>
                         <div className="length-row">
-                          <input
-                            list={datalistId}
-                            value={selectedItem.threadPitch}
-                            onChange={(event) => updateSelectedSpec('threadPitch', event.target.value)}
-                          />
-                          <input
-                            list="thread-pitch-unit-options"
-                            value={selectedItem.threadPitchUnit}
-                            aria-label="Thread pitch unit"
-                            onChange={(event) => updateSelectedSpec('threadPitchUnit', event.target.value)}
-                          />
+                          {selectedCatalogLocked ? (
+                            <select value={selectedItem.threadPitch} onChange={(event) => updateSelectedSpec('threadPitch', event.target.value)}>
+                              {threadPitchOptions.map((value) => (
+                                <option key={value} value={value}>
+                                  {value}
+                                </option>
+                              ))}
+                            </select>
+                          ) : (
+                            <input
+                              list={datalistId}
+                              value={selectedItem.threadPitch}
+                              onChange={(event) => updateSelectedSpec('threadPitch', event.target.value)}
+                            />
+                          )}
+                          {selectedCatalogLocked ? (
+                            <select
+                              value={selectedItem.threadPitchUnit}
+                              aria-label="Thread pitch unit"
+                              onChange={(event) => updateSelectedSpec('threadPitchUnit', event.target.value)}
+                            >
+                              {threadPitchUnitOptions.map((value) => (
+                                <option key={value} value={value}>
+                                  {value || 'n/a'}
+                                </option>
+                              ))}
+                            </select>
+                          ) : (
+                            <input
+                              list="thread-pitch-unit-options"
+                              value={selectedItem.threadPitchUnit}
+                              aria-label="Thread pitch unit"
+                              onChange={(event) => updateSelectedSpec('threadPitchUnit', event.target.value)}
+                            />
+                          )}
                         </div>
                         <datalist id={datalistId}>
                           {options.map((value) => (
@@ -1404,11 +1664,83 @@ export function App() {
                           ))}
                         </datalist>
                         <datalist id="thread-pitch-unit-options">
-                          {getCatalogSpecOptions(selectedCatalogEntry, selectedItem.category, 'threadPitchUnit', selectedSpecUnitSystem).map((value) => (
+                          {getAllCatalogSpecOptions(selectedCatalogEntry, selectedItem.category, 'threadPitchUnit').map((value) => (
                             <option key={value} value={value} />
                           ))}
                         </datalist>
                       </>
+                    ) : definition.key === 'materialType' ? (
+                      <>
+                        {selectedCatalogLocked ? (
+                          <select
+                            value={selectedItem.materialType}
+                            onChange={(event) => updateSelectedSpec('materialType', event.target.value)}
+                          >
+                            {materialTypeOptions.map((value) => (
+                              <option key={value} value={value}>
+                                {value}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <>
+                            <input
+                              list={datalistId}
+                              value={selectedItem.materialType}
+                              onChange={(event) => updateSelectedSpec('materialType', event.target.value)}
+                            />
+                            <datalist id={datalistId}>
+                              {materialTypeOptions.map((value) => (
+                                <option key={value} value={value} />
+                              ))}
+                            </datalist>
+                          </>
+                        )}
+                      </>
+                    ) : definition.key === 'boltClass' ? (
+                      <>
+                        {selectedCatalogLocked ? (
+                          <select
+                            value={selectedItem.boltClass}
+                            onChange={(event) => updateSelectedSpec('boltClass', event.target.value)}
+                          >
+                            {boltClassOptions.map((value) => (
+                              <option key={value} value={value}>
+                                {value || 'n/a'}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <>
+                            <input
+                              list={datalistId}
+                              value={selectedItem.boltClass}
+                              onChange={(event) => updateSelectedSpec('boltClass', event.target.value)}
+                            />
+                            <datalist id={datalistId}>
+                              {boltClassOptions.map((value) => (
+                                <option key={value} value={value} />
+                              ))}
+                            </datalist>
+                          </>
+                        )}
+                      </>
+                    ) : definition.key === 'material' && selectedCatalogLocked ? (
+                      <select value={selectedItem.material} onChange={(event) => updateSelectedSpec('material', event.target.value)}>
+                        {materialOptions.map((value) => (
+                          <option key={value} value={value}>
+                            {value}
+                          </option>
+                        ))}
+                      </select>
+                    ) : selectedCatalogLocked ? (
+                      <select value={getItemSpecValue(selectedItem, definition.key)} onChange={(event) => updateSelectedSpec(definition.key, event.target.value)}>
+                        {genericOptions.map((value) => (
+                          <option key={value} value={value}>
+                            {value}
+                          </option>
+                        ))}
+                      </select>
                     ) : (
                       <>
                         <input
@@ -1428,62 +1760,22 @@ export function App() {
               })}
             </div>
 
-            <section className="links-section">
-              <button
-                type="button"
-                className="links-disclosure"
-                aria-expanded={!linksCollapsed}
-                onClick={() => setLinksCollapsed((current) => !current)}
-              >
-                <span className="panel-title-main">
-                  <QrCode size={18} />
-                  <span>Purchase links</span>
-                </span>
-                <ChevronDown size={16} className={linksCollapsed ? '' : 'open'} />
-              </button>
-              {!linksCollapsed && (
-                <div className="links-panel">
-                  <label className="link-override-toggle">
-                    <input type="checkbox" checked={selectedLinksUseOverride} onChange={(event) => toggleLinkOverride(event.target.checked)} />
-                    Override links for this hardware card
-                  </label>
-                  <div className="links-list">
-                    {selectedLinks.map((link) => (
-                      <article key={link.id} className="link-card">
-                        <input
-                          value={link.name}
-                          placeholder="Name"
-                          onChange={(event) => updateLinks(selectedLinks.map((entry) => (entry.id === link.id ? { ...entry, name: event.target.value } : entry)))}
-                        />
-                        <input
-                          value={link.url}
-                          placeholder="https://..."
-                          onChange={(event) => updateLinks(selectedLinks.map((entry) => (entry.id === link.id ? { ...entry, url: event.target.value } : entry)))}
-                        />
-                        <button type="button" className="icon-button small" title="Remove link" onClick={() => updateLinks(selectedLinks.filter((entry) => entry.id !== link.id))}>
-                          <Trash2 size={15} />
-                        </button>
-                      </article>
-                    ))}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      updateLinks([
-                        ...selectedLinks,
-                        {
-                          id: createId('link'),
-                          name: '',
-                          url: ''
-                        }
-                      ])
-                    }
-                  >
-                    <Plus size={16} /> Link
-                  </button>
-                </div>
-              )}
-            </section>
+            {hasQrElement && (
+              <section className="links-section">
+                <label className="template-control">
+                  <span className="panel-title-main">
+                    <QrCode size={18} />
+                    <span>Purchase link</span>
+                  </span>
+                  <input
+                    value={selectedPurchaseLink}
+                    placeholder="https://..."
+                    inputMode="url"
+                    onChange={(event) => updatePurchaseLink(event.target.value)}
+                  />
+                </label>
+              </section>
+            )}
           </section>
 
           <section className="panel label-design-panel">
@@ -1519,6 +1811,9 @@ export function App() {
                   <Save size={15} /> Save
                 </button>
               )}
+              <button type="button" className="secondary preset-save" onClick={() => setPresetCodeModalOpen(true)}>
+                <Code2 size={15} /> Dev export
+              </button>
               {activeCustomPreset && (
                 <button type="button" className="icon-button small secondary" title="Delete selected preset" onClick={() => deleteCustomPreset(activeCustomPreset.id)}>
                   <Trash2 size={15} />
@@ -1670,12 +1965,41 @@ export function App() {
                           </label>
                         )}
                         {field.kind === 'image' && (
-                          <label className="template-control">
-                            Image
-                            <select value={field.imageSource ?? 'qr'} onChange={(event) => updateField(field.id, { imageSource: event.target.value as PlacedField['imageSource'] })}>
-                              <option value="qr">Purchase links QR</option>
-                            </select>
-                          </label>
+                          <div className="image-controls">
+                            <label className="template-control">
+                              Image
+                              <select value={field.imageSource ?? 'qr'} onChange={(event) => updateField(field.id, { imageSource: event.target.value as PlacedField['imageSource'] })}>
+                                <option value="qr">Purchase link QR</option>
+                                <option value="custom">Custom image</option>
+                              </select>
+                            </label>
+                            {field.imageSource === 'custom' && (
+                              <div className="image-upload-row">
+                                <label className="file-upload-button">
+                                  <FileImage size={16} />
+                                  <span>{field.imageName || 'Choose image'}</span>
+                                  <input
+                                    type="file"
+                                    accept=".bmp,.png,.svg,image/bmp,image/x-ms-bmp,image/png,image/svg+xml"
+                                    onChange={(event) => {
+                                      void updateCustomImage(field.id, event.target.files?.[0]);
+                                      event.currentTarget.value = '';
+                                    }}
+                                  />
+                                </label>
+                                {field.imageBase64 && (
+                                  <button
+                                    type="button"
+                                    className="icon-button small secondary"
+                                    title="Remove custom image"
+                                    onClick={() => updateField(field.id, { imageBase64: undefined, imageMimeType: undefined, imageName: undefined })}
+                                  >
+                                    <Trash2 size={15} />
+                                  </button>
+                                )}
+                              </div>
+                            )}
+                          </div>
                         )}
                         {field.kind === 'frame' && (
                           <div className="frame-controls">
@@ -1736,13 +2060,18 @@ export function App() {
                             <>
                               <label>
                                 Font
-                                <select value={field.style.fontFamily} onChange={(event) => updateFieldStyle(field.id, { fontFamily: event.target.value })}>
-                                  {fontFamilies.map((font) => (
-                                    <option key={font} value={font}>
-                                      {font.split(',')[0]}
-                                    </option>
-                                  ))}
-                                </select>
+                                <span className="font-select-row">
+                                  <select value={field.style.fontFamily} onChange={(event) => updateFieldStyle(field.id, { fontFamily: event.target.value })}>
+                                    {availableFontFamilies.map((font) => (
+                                      <option key={font} value={font}>
+                                        {font.split(',')[0]}
+                                      </option>
+                                    ))}
+                                  </select>
+                                  <button type="button" className="secondary compact-button" onClick={() => void loadSystemFonts()}>
+                                    System
+                                  </button>
+                                </span>
                               </label>
                               <label>
                                 Size
@@ -1858,18 +2187,49 @@ export function App() {
           <p className="storage-note">Saved locally under {storageMeta.storageKey}.</p>
 
           <div className="button-grid">
-            <button type="button" onClick={() => exportSingle(selectedItem, state.labelSettings, selectedLinks, selectedSpecUnitSystem, 'svg')}>
+            <button type="button" onClick={() => exportSingle(selectedItem, state.labelSettings, selectedPurchaseLink, selectedSpecUnitSystem, 'svg')}>
               <FileText size={16} /> SVG
             </button>
-            <button type="button" onClick={() => exportSingle(selectedItem, state.labelSettings, selectedLinks, selectedSpecUnitSystem, 'png')}>
+            <button type="button" onClick={() => exportSingle(selectedItem, state.labelSettings, selectedPurchaseLink, selectedSpecUnitSystem, 'png')}>
               <FileImage size={16} /> PNG
             </button>
-            <button type="button" onClick={() => exportSingle(selectedItem, state.labelSettings, selectedLinks, selectedSpecUnitSystem, 'lbx')}>
+            <button type="button" onClick={() => exportSingle(selectedItem, state.labelSettings, selectedPurchaseLink, selectedSpecUnitSystem, 'lbx')}>
               <Download size={16} /> LBX
             </button>
           </div>
         </aside>
       </section>
+
+      {presetCodeModalOpen && (
+        <div className="modal-backdrop" role="presentation" onMouseDown={() => setPresetCodeModalOpen(false)}>
+          <section
+            className="modal-panel preset-code-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="preset-code-modal-title"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <div className="modal-header">
+              <div className="panel-title-main">
+                <Code2 size={18} />
+                <h2 id="preset-code-modal-title">Preset code</h2>
+              </div>
+              <button type="button" className="icon-button small" title="Close preset code" onClick={() => setPresetCodeModalOpen(false)}>
+                <X size={16} />
+              </button>
+            </div>
+            <textarea className="code-export-textarea" readOnly value={presetCode} aria-label="Built-in preset TypeScript code" />
+            <div className="modal-actions">
+              <button type="button" className="secondary" onClick={() => setPresetCodeModalOpen(false)}>
+                Close
+              </button>
+              <button type="button" onClick={() => void copyPresetCode()}>
+                <Copy size={16} /> Copy
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
 
       {presetModalOpen && (
         <div className="modal-backdrop" role="presentation" onMouseDown={() => setPresetModalOpen(false)}>

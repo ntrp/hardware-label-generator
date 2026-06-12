@@ -1,7 +1,7 @@
-import type { HardwareItem, LabelSettings, PurchaseLink, PlacedField, UnitSystem } from '../types';
+import type { HardwareItem, LabelSettings, PlacedField, UnitSystem } from '../types';
 import { defaultFrameStyle } from './defaults';
 import { renderTextTemplate } from './format';
-import { buildQrPayload, createQrSvg } from './qr';
+import { buildQrPayload, createQrPngDataUrl, createQrSvg } from './qr';
 
 const mmToPx = 3.7795275591;
 
@@ -19,25 +19,33 @@ const textAlign = (field: PlacedField) => {
   return 'left';
 };
 
+const imageHref = (field: PlacedField) =>
+  field.imageBase64 ? `data:${field.imageMimeType || 'application/octet-stream'};base64,${field.imageBase64}` : '';
+
 export interface RenderLabelSvgOptions {
   interactive?: boolean;
   hoveredFieldId?: string | null;
   selectedFieldId?: string | null;
+  rasterSafe?: boolean;
 }
 
 export const renderLabelSvg = async (
   item: HardwareItem,
   settings: LabelSettings,
-  links: PurchaseLink[],
+  purchaseLink: string,
   unitSystem: UnitSystem,
   options: RenderLabelSvgOptions = {}
 ) => {
-  const qrPayload = buildQrPayload(item, links);
+  const qrPayload = buildQrPayload(purchaseLink);
   let qrSvgDataUri = '';
 
-  if (settings.fields.some((field) => field.kind === 'image' && field.imageSource === 'qr' && field.style.visible)) {
-    const qrSvg = await createQrSvg(qrPayload.target);
-    qrSvgDataUri = `data:image/svg+xml;base64,${btoa(qrSvg)}`;
+  if (qrPayload.target && settings.fields.some((field) => field.kind === 'image' && field.imageSource === 'qr' && field.style.visible)) {
+    if (options.rasterSafe) {
+      qrSvgDataUri = await createQrPngDataUrl(qrPayload.target);
+    } else {
+      const qrSvg = await createQrSvg(qrPayload.target);
+      qrSvgDataUri = `data:image/svg+xml;base64,${btoa(qrSvg)}`;
+    }
   }
 
   const fields = settings.fields
@@ -64,16 +72,19 @@ export const svgToPngBlob = async (svg: string, widthMm: number, heightMm: numbe
     throw new Error('Canvas rendering is not available in this browser.');
   }
 
-  await new Promise<void>((resolve, reject) => {
-    image.onload = () => resolve();
-    image.onerror = () => reject(new Error('Unable to rasterize SVG label.'));
-    image.src = url;
-  });
+  try {
+    await new Promise<void>((resolve, reject) => {
+      image.onload = () => resolve();
+      image.onerror = () => reject(new Error('Unable to rasterize SVG label.'));
+      image.src = url;
+    });
 
-  context.fillStyle = '#ffffff';
-  context.fillRect(0, 0, canvas.width, canvas.height);
-  context.drawImage(image, 0, 0, canvas.width, canvas.height);
-  URL.revokeObjectURL(url);
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+  } finally {
+    URL.revokeObjectURL(url);
+  }
 
   return new Promise<Blob>((resolve, reject) => {
     canvas.toBlob((blob) => {
@@ -81,6 +92,31 @@ export const svgToPngBlob = async (svg: string, widthMm: number, heightMm: numbe
       else reject(new Error('Unable to create PNG blob.'));
     }, 'image/png');
   });
+};
+
+const estimatedTextWidth = (value: string, fontSize: number) => {
+  let width = 0;
+
+  for (const character of value) {
+    if (character === ' ') width += fontSize * 0.32;
+    else if ('ilI.,:;|!'.includes(character)) width += fontSize * 0.28;
+    else if ('mwMW@#%&'.includes(character)) width += fontSize * 0.82;
+    else width += fontSize * 0.56;
+  }
+
+  return width;
+};
+
+const ellipsizeText = (value: string, maxWidth: number, fontSize: number) => {
+  if (estimatedTextWidth(value, fontSize) <= maxWidth) return value;
+  const ellipsis = '...';
+  let result = value;
+
+  while (result.length > 0 && estimatedTextWidth(`${result}${ellipsis}`, fontSize) > maxWidth) {
+    result = result.slice(0, -1);
+  }
+
+  return result ? `${result}${ellipsis}` : ellipsis;
 };
 
 const renderInteractiveWrapper = (field: PlacedField, content: string, options: RenderLabelSvgOptions) => {
@@ -124,15 +160,31 @@ const renderField = (
   }
 
   if (field.kind === 'image') {
-    if (!qrSvgDataUri) return '';
+    const href = field.imageSource === 'custom' ? imageHref(field) : qrSvgDataUri;
+    if (!href) return '';
     return renderInteractiveWrapper(
       field,
-      `<image x="${field.x}" y="${field.y}" width="${field.width}" height="${field.height}" href="${qrSvgDataUri}"/>`,
+      `<image x="${field.x}" y="${field.y}" width="${field.width}" height="${field.height}" href="${escapeXml(href)}" preserveAspectRatio="xMidYMid meet"/>`,
       options
     );
   }
 
   const value = renderTextTemplate(field.text ?? '', item, unitSystem);
+
+  if (options.rasterSafe) {
+    const textAnchor = field.style.align === 'middle' ? 'middle' : field.style.align === 'end' ? 'end' : 'start';
+    const textX = field.style.align === 'middle' ? field.x + field.width / 2 : field.style.align === 'end' ? field.x + field.width : field.x;
+    const textY = field.y + Math.min(field.height, field.style.fontSize) * 0.82;
+    const clipId = `clip-${field.id.replace(/[^A-Za-z0-9_-]/g, '-')}`;
+    const clippedValue = ellipsizeText(value, field.width, field.style.fontSize);
+
+    return renderInteractiveWrapper(
+      field,
+      `<clipPath id="${escapeXml(clipId)}"><rect x="${field.x}" y="${field.y}" width="${field.width}" height="${field.height}"/></clipPath>
+    <text x="${textX}" y="${textY}" clip-path="url(#${escapeXml(clipId)})" font-family="${escapeXml(field.style.fontFamily)}" font-size="${field.style.fontSize}" font-weight="${field.style.fontWeight}" text-anchor="${textAnchor}" fill="#111">${escapeXml(clippedValue)}</text>`,
+      options
+    );
+  }
 
   return renderInteractiveWrapper(
     field,
