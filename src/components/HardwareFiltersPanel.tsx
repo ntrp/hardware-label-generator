@@ -13,14 +13,6 @@ const catalogCategoryOptions = hardwareCategories.filter((category) =>
 
 const categoryLabel = (category: HardwareCategory) => category[0].toUpperCase() + category.slice(1);
 
-const findMatchingCatalog = (
-  batchCatalogId: string,
-  selectedStandards: StandardFamily[],
-  selectedCategories: HardwareCategory[]
-) =>
-  standardsCatalog.find((entry) => entry.id === batchCatalogId && catalogMatchesSelectedFilters(entry, selectedStandards, selectedCategories)) ??
-  standardsCatalog.find((entry) => catalogMatchesSelectedFilters(entry, selectedStandards, selectedCategories));
-
 export function HardwareFiltersPanel() {
   const { setState, state } = useAppState();
   const [collapsed, setCollapsed] = useState(() => state.selectedStandards.length === 0 && state.selectedCategories.length === 0);
@@ -32,13 +24,11 @@ export function HardwareFiltersPanel() {
   const updateFilters = (buildFilters: (current: AppState) => Pick<AppState, 'selectedStandards' | 'selectedCategories'>) => {
     setState((current) => {
       const { selectedStandards, selectedCategories } = buildFilters(current);
-      const nextCatalog = findMatchingCatalog(current.batchCatalogId, selectedStandards, selectedCategories);
 
       return {
         ...current,
         selectedStandards,
-        selectedCategories,
-        ...(nextCatalog ? { batchCatalogId: nextCatalog.id } : {})
+        selectedCategories
       };
     });
   };

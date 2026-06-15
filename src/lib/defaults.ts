@@ -52,6 +52,11 @@ export const defaultHardwareItem: HardwareItem = {
     threadPitchName: 'coarse',
     threadPitchUnit: 'mm'
   },
+  batch: {
+    enabled: false,
+    specs: {},
+    activeKeys: []
+  },
   unitSystem: 'metric'
 };
 
@@ -238,15 +243,5 @@ export const defaultAppState: AppState = {
   customPresets: [],
   unitSystem: 'metric',
   selectedStandards: [],
-  selectedCategories: [],
-  batchCatalogId: 'din-912',
-  batchSpecs: {
-    size: 'M2, M2.5, M3, M4, M5, M6',
-    length: '6, 8, 10, 12, 16, 20',
-    threadPitchName: 'coarse',
-    material: 'stainless steel',
-    materialType: 'A2',
-    finish: 'plain',
-    boltClass: 'A2-70'
-  }
+  selectedCategories: []
 };

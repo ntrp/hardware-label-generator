@@ -1,5 +1,5 @@
-import { FileText, QrCode } from 'lucide-react';
-import { useEffect } from 'react';
+import { ChevronDown, ChevronRight, FileText, QrCode } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { standardsCatalog } from '../data/catalog';
 import { useAppState } from '../app/AppStateContext';
 import { uniqueValues } from '../lib/labelLayout';
@@ -8,7 +8,8 @@ import { baseMaterials, getFinishOptions, getMaterialTreatmentOptions } from '..
 import { defaultFinish, defaultMaterialTreatment, isValidFinish, isValidMaterialTreatment } from '../lib/materials';
 import { getBoltClassOptions } from '../lib/boltClasses';
 import { defaultBoltClass, isValidBoltClass } from '../lib/boltClasses';
-import { splitLengthAndUnit } from '../lib/format';
+import { batchOptionLabel, batchPreviewLabel, batchSpecKeys, decodeBatchOptionValue, encodeBatchOptionValue, generateBatchItems } from '../lib/batch';
+import { parseList, splitLengthAndUnit } from '../lib/format';
 import { effectivePurchaseLink } from '../lib/export';
 import {
   defaultImperialThreadPitch,
@@ -20,7 +21,6 @@ import {
 import { formatMetricThreadPitchOption, metricThreadPitchNamesForSize } from '../lib/metricThreads';
 import { defaultMetricThreadPitch, findMetricThreadPitch } from '../lib/metricThreads';
 import {
-  categorySpecKeys,
   getAllCatalogSpecOptions,
   getCatalogSpecOptions,
   getCatalogWasherDimensionValue,
@@ -42,7 +42,8 @@ import { CatalogPartPicker } from './CatalogPartPicker';
 import {
   applyCategoryPresetToState,
   buildCatalogItemPatch,
-  getCatalogEntryForItem
+  getCatalogEntryForItem,
+  getHardwareSpecLine
 } from './hardware/hardwareLogic';
 import type { AppState, HardwareCategory, HardwareItem, HardwareSpecKey, StandardCatalogEntry } from '../types';
 
@@ -72,8 +73,23 @@ const catalogAssetPreviewUrl = (reference: StandardImageReference, source: (type
   return reference.topUrl;
 };
 
+const selectedBatchValues = (item: HardwareItem, key: HardwareSpecKey) => parseList(item.batch.specs[key] ?? '');
+const selectedBatchRawValues = (item: HardwareItem, key: HardwareSpecKey) =>
+  selectedBatchValues(item, key).map((value) => decodeBatchOptionValue(value).value);
+const multiSelectBatchSpecKeys: HardwareSpecKey[] = ['size', 'length', 'threadPitchName'];
+const optionalSingleSelectBatchSpecKeys: HardwareSpecKey[] = ['material', 'materialType', 'finish', 'boltClass'];
+
+const batchOptionMatchesCurrentItem = (item: HardwareItem, encodedValue: string) => {
+  const { dependencies } = decodeBatchOptionValue(encodedValue);
+  if (dependencies.size && dependencies.size !== item.size) return false;
+  if (dependencies.material && dependencies.material !== item.material) return false;
+  if (dependencies.materialType && dependencies.materialType !== item.materialType) return false;
+  return true;
+};
+
 export function HardwareSpecsPanel() {
-  const { selectedId, setSelectedFieldId, setState, state } = useAppState();
+  const { previewHardwareItem, selectedId, setPreviewHardwareItem, setSelectedFieldId, setState, state } = useAppState();
+  const [batchCollapsed, setBatchCollapsed] = useState(false);
   const selectedItem = state.hardwareItems.find((item) => item.id === selectedId) ?? state.hardwareItems[0];
   const selectedCatalogEntry = getCatalogEntryForItem(selectedItem);
   const selectedStandardImageReference = selectedItem ? standardImageReferenceForItem(selectedItem) : undefined;
@@ -85,6 +101,12 @@ export function HardwareSpecsPanel() {
   const selectedUsesUnifiedImperialPitches =
     !selectedCatalogLocked || !selectedCatalogEntry || isUnifiedImperialThreadPitchList(selectedCatalogEntry.pitches.imperial);
   const activeSpecDefinitions = getCategorySpecDefinitions(selectedItem?.category ?? 'custom');
+  const batchEnabled = Boolean(selectedItem?.batch.enabled);
+  const batchDefinitions = selectedItem
+    ? activeSpecDefinitions.filter((definition) => batchSpecKeys(selectedItem).includes(definition.key))
+    : [];
+  const batchPreviewItems = selectedItem && batchEnabled ? generateBatchItems(selectedItem) : [];
+  const previewHardwareSpecLine = previewHardwareItem ? getHardwareSpecLine(previewHardwareItem) : '';
   const selectedPurchaseLink = selectedItem ? effectivePurchaseLink(state.purchaseLinks, selectedItem) : '';
   const hasQrElement = state.labelSettings.fields.some((field) => field.kind === 'image' && field.imageSource === 'qr' && field.style.visible);
 
@@ -104,11 +126,158 @@ export function HardwareSpecsPanel() {
 
   const updateSelectedItem = (patch: Partial<HardwareItem>) => {
     if (!selectedItem) return;
+    setPreviewHardwareItem(null);
     setState((current) => ({
       ...current,
       hardwareItems: current.hardwareItems.map((item) => (item.id === selectedItem.id ? syncHardwareSpecs({ ...item, ...patch }) : item))
     }));
   };
+
+  const updateSelectedBatch = (patch: Partial<HardwareItem['batch']>) => {
+    if (!selectedItem) return;
+    updateSelectedItem({
+      batch: {
+        ...selectedItem.batch,
+        ...patch
+      }
+    });
+  };
+
+  const selectedOrDefaultBatchValues = (item: HardwareItem, key: HardwareSpecKey, options: string[]) => {
+    const selectedValues = selectedBatchValues(item, key).filter((value) => options.includes(value));
+    if (selectedValues.length > 0) return selectedValues;
+    if (optionalSingleSelectBatchSpecKeys.includes(key)) return [];
+
+    const currentValue = getItemSpecValue(item, key);
+    const currentOption = options.find((option) => {
+      const decoded = decodeBatchOptionValue(option);
+      return decoded.value === currentValue && batchOptionMatchesCurrentItem(item, option);
+    }) ?? options.find((option) => decodeBatchOptionValue(option).value === currentValue);
+    if (currentOption) return [currentOption];
+    return options.slice(0, 1);
+  };
+
+  const updateBatchSpec = (key: HardwareSpecKey, values: string[], options: string[]) => {
+    if (!selectedItem) return;
+    const selectedValues = values.length > 0 ? values : selectedOrDefaultBatchValues(selectedItem, key, options);
+    const specs = { ...selectedItem.batch.specs };
+    if (selectedValues.length > 0) {
+      specs[key] = selectedValues.join(', ');
+    } else {
+      delete specs[key];
+    }
+
+    updateSelectedBatch({
+      specs,
+      activeKeys: selectedValues.length > 0
+        ? uniqueValues([...selectedItem.batch.activeKeys, key]) as HardwareSpecKey[]
+        : selectedItem.batch.activeKeys.filter((entry) => entry !== key)
+    });
+  };
+
+  const batchContextValues = (key: HardwareSpecKey) => {
+    if (!selectedItem) return [];
+    const values = selectedBatchRawValues(selectedItem, key);
+    return values.length > 0 ? values : [getItemSpecValue(selectedItem, key)].filter(Boolean);
+  };
+
+  const batchOptionsForKey = (key: HardwareSpecKey) => {
+    if (!selectedItem) return [];
+    const catalogOptions = selectedCatalogLocked
+      ? getCatalogSpecOptions(selectedCatalogEntry, selectedItem.category, key, selectedSpecUnitSystem)
+      : getAllCatalogSpecOptions(selectedCatalogEntry, selectedItem.category, key);
+
+    if (key === 'length') {
+      return uniqueValues([
+        ...catalogOptions.map((value) => splitLengthAndUnit(value, selectedItem.lengthUnit).length),
+        selectedItem.length
+      ]);
+    }
+
+    if (key === 'threadPitchName') {
+      const sizeValues = batchContextValues('size');
+      return uniqueValues(
+        sizeValues.flatMap((size) =>
+          (selectedSpecUnitSystem === 'metric'
+            ? metricThreadPitchNamesForSize(size)
+            : selectedUsesUnifiedImperialPitches
+              ? imperialThreadPitchNamesForSize(size)
+              : catalogOptions
+          ).map((value) => encodeBatchOptionValue(value, { size }))
+        )
+      );
+    }
+
+    if (key === 'material') {
+      return uniqueValues([selectedItem.material, ...catalogOptions, ...baseMaterials]);
+    }
+
+    if (key === 'materialType') {
+      const materialValues = batchContextValues('material');
+      return uniqueValues(
+        materialValues.flatMap((material) =>
+          getMaterialTreatmentOptions(material).map((value) => encodeBatchOptionValue(value, { material }))
+        )
+      );
+    }
+
+    if (key === 'finish') {
+      return uniqueValues(
+        batchContextValues('material').flatMap((material) =>
+          getFinishOptions(material).map((value) => encodeBatchOptionValue(value, { material }))
+        )
+      );
+    }
+
+    if (key === 'boltClass') {
+      const sizes = batchContextValues('size');
+      const materials = batchContextValues('material');
+      const materialTypeEntries = selectedBatchValues(selectedItem, 'materialType')
+        .map(decodeBatchOptionValue)
+        .filter((entry) => entry.value)
+        .filter((entry) => !entry.dependencies.material || materials.includes(entry.dependencies.material));
+      const materialTypes = materialTypeEntries.length > 0
+        ? materialTypeEntries
+        : batchContextValues('materialType').map((value) => ({ value, dependencies: { material: selectedItem.material } }));
+
+      return uniqueValues(
+        sizes.flatMap((size) =>
+          materialTypes.flatMap(({ value: materialType, dependencies }) => {
+            const material = dependencies.material ?? selectedItem.material;
+            if (!materials.includes(material)) return [];
+            return getBoltClassOptions({ ...selectedItem, size, material, materialType }, selectedSpecUnitSystem).map((boltClass) =>
+              encodeBatchOptionValue(boltClass, { size, material, materialType })
+            );
+          })
+        )
+      );
+    }
+
+    return uniqueValues([...catalogOptions, getItemSpecValue(selectedItem, key)]);
+  };
+
+  useEffect(() => {
+    if (!selectedItem || !batchEnabled) return;
+
+    const visibleEntries = batchDefinitions.flatMap((definition) => {
+      const options = batchOptionsForKey(definition.key);
+      if (options.length === 0) return [];
+      return [{ key: definition.key, values: selectedOrDefaultBatchValues(selectedItem, definition.key, options) }];
+    });
+    const selectedEntries = visibleEntries.filter((entry) => entry.values.length > 0);
+    const visibleKeys = selectedEntries.map((entry) => entry.key);
+    const nextSpecs = Object.fromEntries(selectedEntries.map((entry) => [entry.key, entry.values.join(', ')])) as HardwareItem['batch']['specs'];
+    const specsChanged = JSON.stringify(selectedItem.batch.specs) !== JSON.stringify(nextSpecs);
+    const activeKeysChanged =
+      selectedItem.batch.activeKeys.length !== visibleKeys.length ||
+      selectedItem.batch.activeKeys.some((key, index) => key !== visibleKeys[index]);
+
+    if (!specsChanged && !activeKeysChanged) return;
+    updateSelectedBatch({
+      specs: nextSpecs,
+      activeKeys: visibleKeys
+    });
+  });
 
   const updateSelectedSpec = (key: HardwareSpecKey, value: string) => {
     if (!selectedItem) return;
@@ -245,6 +414,7 @@ export function HardwareSpecsPanel() {
               ...item,
               catalogId: undefined,
               category,
+              batch: { enabled: false, specs: {}, activeKeys: [] },
               specs: { ...item.specs }
             })
           : item
@@ -273,17 +443,17 @@ export function HardwareSpecsPanel() {
     const entry = standardsCatalog.find((candidate) => candidate.id === entryId);
     if (!entry || !selectedItem) return;
 
-    const batchSpecs = Object.fromEntries(
-      categorySpecKeys[entry.category].map((key) => [key, getAllCatalogSpecOptions(entry, entry.category, key).join(', ')])
-    ) as Partial<Record<HardwareSpecKey, string>>;
-
     setState((current) => ({
       ...current,
       ...applyCategoryPresetToState(current, entry.category),
-      batchCatalogId: entry.id,
-      batchSpecs,
       hardwareItems: current.hardwareItems.map((item) =>
-        item.id === selectedItem.id ? syncHardwareSpecs({ ...item, ...buildCatalogItemPatch(entry, item) }) : item
+        item.id === selectedItem.id
+          ? syncHardwareSpecs({
+              ...item,
+              ...buildCatalogItemPatch(entry, item),
+              batch: { enabled: false, specs: {}, activeKeys: [] }
+            })
+          : item
       )
     }));
     setSelectedFieldId(null);
@@ -333,7 +503,7 @@ export function HardwareSpecsPanel() {
             onChange={(event) => updateSelectedItem({ standard: event.target.value })}
           />
         </label>
-        {activeSpecDefinitions.map((definition) => {
+        {!batchEnabled && activeSpecDefinitions.map((definition) => {
           const catalogOptions = selectedCatalogLocked
             ? getCatalogSpecOptions(selectedCatalogEntry, selectedItem.category, definition.key, selectedSpecUnitSystem)
             : getAllCatalogSpecOptions(selectedCatalogEntry, selectedItem.category, definition.key);
@@ -590,6 +760,112 @@ export function HardwareSpecsPanel() {
           );
         })}
       </div>
+
+      <section className={batchEnabled ? 'batch-section active' : 'batch-section'}>
+        <div className="batch-section-title">
+          <label className="batch-enable">
+            <input
+              type="checkbox"
+              checked={batchEnabled}
+              onChange={(event) => {
+                updateSelectedBatch({ enabled: event.target.checked });
+                if (!event.target.checked) setPreviewHardwareItem(null);
+              }}
+            />
+            <span>Batch</span>
+          </label>
+          <button
+            type="button"
+            className="icon-button small"
+            title={batchCollapsed ? 'Expand batch' : 'Collapse batch'}
+            aria-label={batchCollapsed ? 'Expand batch' : 'Collapse batch'}
+            aria-expanded={!batchCollapsed}
+            disabled={!batchEnabled}
+            onClick={() => setBatchCollapsed((current) => !current)}
+          >
+            {batchCollapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
+          </button>
+        </div>
+        {batchEnabled && !batchCollapsed && (
+          <>
+            <div className="batch-property-grid">
+              {batchDefinitions.flatMap((definition) => {
+                const options = batchOptionsForKey(definition.key);
+                const values = selectedOrDefaultBatchValues(selectedItem, definition.key, options);
+                const multiple = multiSelectBatchSpecKeys.includes(definition.key);
+
+                if (options.length === 0) return [];
+
+                return [
+                  <label key={definition.key} className={multiple ? 'batch-property active batch-property-multi' : 'batch-property active'}>
+                    <span className="batch-property-heading">{definition.label}</span>
+                    {multiple ? (
+                      <select
+                        multiple
+                        value={values}
+                        onChange={(event) =>
+                          updateBatchSpec(
+                            definition.key,
+                            Array.from(event.currentTarget.selectedOptions).map((option) => option.value),
+                            options
+                          )
+                        }
+                      >
+                        {options.map((value) => (
+                          <option key={value} value={value}>
+                            {batchOptionLabel(value) || 'n/a'}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <select
+                        value={values[0] ?? ''}
+                        onChange={(event) =>
+                          updateBatchSpec(definition.key, event.currentTarget.value ? [event.currentTarget.value] : [], options)
+                        }
+                      >
+                        <option value="">Use default</option>
+                        {options.map((value) => (
+                          <option key={value} value={value}>
+                            {batchOptionLabel(value) || 'n/a'}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </label>
+                ];
+              })}
+            </div>
+            <div className="batch-preview">
+              <div className="batch-preview-title">
+                <span>Produced parts</span>
+                <strong>{batchPreviewItems.length}</strong>
+              </div>
+              <p className="batch-preview-note">
+                Size, length, and pitch allow multiple values; other batch fields use one value or default.
+              </p>
+              <div className="batch-preview-list">
+                {batchPreviewItems.length === 0 ? (
+                  <div className="batch-preview-row empty">
+                    Select at least one complete valid combination to produce parts.
+                  </div>
+                ) : (
+                  batchPreviewItems.map((item, index) => (
+                    <button
+                      key={`${batchPreviewLabel(item)}-${index}`}
+                      type="button"
+                      className={previewHardwareSpecLine === getHardwareSpecLine(item) ? 'batch-preview-row active' : 'batch-preview-row'}
+                      onClick={() => setPreviewHardwareItem(item)}
+                    >
+                      {getHardwareSpecLine(item)}
+                    </button>
+                  ))
+                )}
+              </div>
+            </div>
+          </>
+        )}
+      </section>
 
       {selectedStandardImageReference && (
         <section className="standard-images-section">

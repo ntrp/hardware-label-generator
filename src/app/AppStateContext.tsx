@@ -1,12 +1,14 @@
 import { createContext, useContext } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
-import type { AppState } from '../types';
+import type { AppState, HardwareItem } from '../types';
 
 interface AppStateContextValue {
   hoveredFieldId: string | null;
   selectedFieldId: string | null;
   selectedId: string;
+  previewHardwareItem: HardwareItem | null;
   setHoveredFieldId: Dispatch<SetStateAction<string | null>>;
+  setPreviewHardwareItem: Dispatch<SetStateAction<HardwareItem | null>>;
   setSelectedFieldId: Dispatch<SetStateAction<string | null>>;
   setSelectedId: Dispatch<SetStateAction<string>>;
   setState: Dispatch<SetStateAction<AppState>>;

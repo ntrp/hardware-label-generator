@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import JSZip from 'jszip';
 import { defaultHardwareItem, defaultLabelSettings } from './defaults';
 import { createExportZipBlob, labelArchiveFolderName, labelFilename } from './export';
+import { resolveEffectiveHardwareItems } from './batch';
 
 const emptyLinkState = {};
 
@@ -10,19 +11,20 @@ describe('export helpers', () => {
     expect(labelFilename(defaultHardwareItem, 'svg')).toBe('din-912-iso-4762-m3-12-mm-stainless-steel-a2-plain-a2-70.svg');
   });
 
-  it('creates one ZIP folder per hardware card, even for duplicate labels', async () => {
+  it('creates one ZIP folder per resolved effective hardware card', async () => {
     const items = [
       { ...defaultHardwareItem, id: 'item-a' },
       { ...defaultHardwareItem, id: 'item-b' }
     ];
-    const blob = await createExportZipBlob(items, defaultLabelSettings, emptyLinkState, ['svg']);
+    const resolved = resolveEffectiveHardwareItems(items);
+    const blob = await createExportZipBlob(resolved.items, defaultLabelSettings, emptyLinkState, ['svg']);
     const zip = await JSZip.loadAsync(await blob.arrayBuffer());
     const entries = Object.keys(zip.files);
 
+    expect(resolved.duplicateCount).toBe(1);
     expect(entries).toContain(`${labelArchiveFolderName(items[0], 0)}/`);
-    expect(entries).toContain(`${labelArchiveFolderName(items[1], 1)}/`);
     expect(entries).toContain(`${labelArchiveFolderName(items[0], 0)}/${labelFilename(items[0], 'svg')}`);
-    expect(entries).toContain(`${labelArchiveFolderName(items[1], 1)}/${labelFilename(items[1], 'svg')}`);
+    expect(entries).not.toContain(`${labelArchiveFolderName(items[1], 1)}/`);
   });
 
   it('stores LBX exports inside the all-label ZIP as zipped XML containers', async () => {

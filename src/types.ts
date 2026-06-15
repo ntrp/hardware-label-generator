@@ -37,6 +37,12 @@ export type StandardCodeMap = Partial<Record<StandardFamily, string>>;
 
 export type PurchaseLinkState = Record<string, string>;
 
+export interface HardwareBatchConfig {
+  enabled: boolean;
+  specs: Partial<Record<HardwareSpecKey, string>>;
+  activeKeys: HardwareSpecKey[];
+}
+
 export interface HardwareItem {
   id: string;
   catalogId?: string;
@@ -54,6 +60,7 @@ export interface HardwareItem {
   threadPitchName: string;
   threadPitchUnit: string;
   specs: Partial<Record<HardwareSpecKey, string>>;
+  batch: HardwareBatchConfig;
   unitSystem: UnitSystem;
 }
 
@@ -134,13 +141,11 @@ export interface AppState {
   unitSystem: UnitSystem;
   selectedStandards: StandardFamily[];
   selectedCategories: HardwareCategory[];
-  batchCatalogId: string;
-  batchSpecs: Partial<Record<HardwareSpecKey, string>>;
 }
 
 export interface AppBackup {
   app: 'makers-label-generator';
-  version: 12;
+  version: 13;
   exportedAt: string;
   state: AppState;
 }

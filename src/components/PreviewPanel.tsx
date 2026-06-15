@@ -60,7 +60,7 @@ const PreviewImageLayer = memo(
 PreviewImageLayer.displayName = 'PreviewImageLayer';
 
 export function PreviewPanel() {
-  const { hoveredFieldId, selectedFieldId, selectedId, setHoveredFieldId, setSelectedFieldId, setState, state } = useAppState();
+  const { hoveredFieldId, previewHardwareItem, selectedFieldId, selectedId, setHoveredFieldId, setSelectedFieldId, setState, state } = useAppState();
   const { updateField } = useLabelFields();
   const [previewSvg, setPreviewSvg] = useState('');
   const [previewScale, setPreviewScale] = useState(1);
@@ -106,7 +106,8 @@ export function PreviewPanel() {
     startAngle: number;
     rotationDeg: number;
   } | null>(null);
-  const selectedItem = state.hardwareItems.find((item) => item.id === selectedId) ?? state.hardwareItems[0];
+  const selectedSourceItem = state.hardwareItems.find((item) => item.id === selectedId) ?? state.hardwareItems[0];
+  const selectedItem = previewHardwareItem ?? selectedSourceItem;
   const selectedField = state.labelSettings.fields.find((field) => field.id === selectedFieldId);
   const hoveredField = state.labelSettings.fields.find((field) => field.id === hoveredFieldId);
   const selectedCatalogEntry = getCatalogEntryForItem(selectedItem);

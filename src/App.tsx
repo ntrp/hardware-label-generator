@@ -9,7 +9,7 @@ import { LabelDesignPanel } from './components/LabelDesignPanel';
 import { PreviewPanel } from './components/PreviewPanel';
 import { constrainLabelSettings } from './lib/labelLayout';
 import { loadState, saveState } from './lib/storage';
-import type { AppState } from './types';
+import type { AppState, HardwareItem } from './types';
 
 export function App() {
   const [state, setState] = useState<AppState>(() => {
@@ -20,6 +20,7 @@ export function App() {
     };
   });
   const [selectedId, setSelectedId] = useState(state.hardwareItems[0]?.id ?? '');
+  const [previewHardwareItem, setPreviewHardwareItem] = useState<HardwareItem | null>(null);
   const [hoveredFieldId, setHoveredFieldId] = useState<string | null>(null);
   const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null);
   const [successToast, setSuccessToast] = useState('');
@@ -39,6 +40,10 @@ export function App() {
     },
     []
   );
+
+  useEffect(() => {
+    setPreviewHardwareItem(null);
+  }, [selectedId]);
 
   const showSuccessToast = (message: string) => {
     setSuccessToast(message);
@@ -63,7 +68,9 @@ export function App() {
         hoveredFieldId,
         selectedFieldId,
         selectedId,
+        previewHardwareItem,
         setHoveredFieldId,
+        setPreviewHardwareItem,
         setSelectedFieldId,
         setSelectedId,
         setState,

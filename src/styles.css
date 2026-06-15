@@ -663,6 +663,32 @@ h3 {
   text-overflow: ellipsis;
 }
 
+.hardware-card-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.hardware-card-title strong {
+  flex: 1;
+}
+
+.hardware-batch-badge {
+  display: inline-flex;
+  width: fit-content;
+  flex: 0 0 auto;
+  padding: 2px 6px;
+  border: 1px solid #9ab8df;
+  border-radius: 999px;
+  background: #f7fbff;
+  color: #2f5f99;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
 .hardware-description {
   color: #74808a;
   font-size: 12px;
@@ -712,6 +738,131 @@ h3 {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+}
+
+.batch-section {
+  margin-top: 14px;
+  border: 1px solid #d8dee3;
+  border-radius: 8px;
+  background: #fbfcfc;
+  overflow: hidden;
+}
+
+.batch-section.active {
+  border-color: #9ab8df;
+  background: #f7fbff;
+}
+
+.batch-section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 46px;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e4e8eb;
+}
+
+.batch-enable {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #202933;
+  font-weight: 700;
+}
+
+.batch-property-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  padding: 10px;
+}
+
+.batch-property {
+  display: grid;
+  grid-column: span 3;
+  gap: 6px;
+  color: #59636e;
+}
+
+.batch-property-multi {
+  grid-column: span 2;
+}
+
+.batch-property-heading {
+  color: #202933;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.batch-property select[multiple] {
+  min-height: 118px;
+  padding: 7px;
+  overflow: auto;
+}
+
+.batch-preview {
+  margin: 0 10px 10px;
+  border: 1px solid #d8dee3;
+  border-radius: 8px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.batch-preview-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 38px;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e4e8eb;
+  color: #59636e;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.batch-preview-note {
+  margin: 0;
+  padding: 8px 10px;
+  border-bottom: 1px solid #edf1f4;
+  color: #59636e;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.batch-preview-list {
+  max-height: 180px;
+  overflow: auto;
+}
+
+.batch-preview-row {
+  display: block;
+  width: 100%;
+  padding: 7px 10px;
+  border: 0;
+  border-bottom: 1px solid #edf1f4;
+  background: #fff;
+  color: #202933;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.batch-preview-row:hover,
+.batch-preview-row.active {
+  background: #e7f1ee;
+  color: #202933;
+}
+
+.batch-preview-row:last-child {
+  border-bottom: 0;
+}
+
+.batch-preview-row.empty {
+  cursor: default;
+  color: #59636e;
+  font-style: italic;
+  font-weight: 400;
 }
 
 .compact-grid {
@@ -1299,6 +1450,7 @@ h3 {
   .form-grid,
   .compact-grid,
   .batch-grid,
+  .batch-property-grid,
   .filter-grid,
   .link-card {
     grid-template-columns: 1fr;
