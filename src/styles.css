@@ -1476,7 +1476,15 @@ h3 {
     background: #fff;
   }
 
-  .app-shell > :not(.print-sheet) {
+  .app-shell > :not(.workspace) {
+    display: none !important;
+  }
+
+  .workspace {
+    display: block !important;
+  }
+
+  .workspace > :not(.print-sheet) {
     display: none !important;
   }
 
