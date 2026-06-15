@@ -913,6 +913,17 @@ h3 {
   overflow: visible;
 }
 
+.preview-image-layer {
+  position: absolute;
+  z-index: 2;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  transform-origin: center;
+  will-change: transform, width, height;
+  backface-visibility: hidden;
+}
+
 .label-resize-handle {
   position: absolute;
   z-index: 2;
@@ -967,6 +978,21 @@ h3 {
   pointer-events: none;
 }
 
+.element-outline-box {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+  outline-offset: 0;
+}
+
+.element-outline-box.hovered {
+  outline: 2px solid #747f8a;
+}
+
+.element-outline-box.selected {
+  outline: 2px solid #1d72ff;
+}
+
 .element-resize-handle {
   position: absolute;
   width: 10px;
@@ -1005,6 +1031,36 @@ h3 {
   bottom: 0;
   cursor: nwse-resize;
   transform: translate(50%, 50%);
+}
+
+.element-rotate-handle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 22px;
+  min-width: 22px;
+  height: 22px;
+  min-height: 22px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 2px solid #1d72ff;
+  border-radius: 999px;
+  background: #fff;
+  color: #1d72ff;
+  box-shadow: 0 1px 5px rgb(17 24 32 / 0.3);
+  cursor: grab;
+  pointer-events: auto;
+  transform: translate(50%, -50%);
+}
+
+.element-rotate-handle:hover,
+.element-rotate-handle:focus-visible {
+  background: #eaf2ff;
+}
+
+.label-preview-shell.rotating-element .element-rotate-handle {
+  cursor: grabbing;
 }
 
 .warning {

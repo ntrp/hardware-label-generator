@@ -1,120 +1,87 @@
 # Catalog Asset Pipeline
 
-Offline tooling for finding CAD models for catalog parts and generating label-ready images.
+Offline tooling for generating local fastener model assets. The browser app remains standalone; these scripts are build/research tooling and are not loaded by Vite.
 
-The browser app remains standalone. These scripts are research/build tooling and are not loaded by the Vite app.
+## Pipeline
 
-## Model Format Policy
+1. Generate flat STEP files from the installed FreeCAD Fasteners workbench.
+2. Render side/top SVG technical drawings from those STEP files.
+3. Optionally render an ISO PNG through Blender.
+4. Copy or keep generated assets under `public/catalog-assets/<catalog-id>/`.
 
-- Prefer `STEP` (`.step` / `.stp`) as the canonical CAD format.
-- Accept `STL` as a fallback when STEP is unavailable.
-- Keep original downloads in `models/<catalogId>/original.<ext>`.
-- Create `models/<catalogId>/normalized.step` when FreeCAD can import and re-export the source.
-
-STEP is the preferred source because it preserves CAD geometry better than triangle-only mesh formats.
+STEP is the handoff format between generation and rendering. It preserves CAD geometry better than mesh-only formats and keeps the renderer independent from the Fasteners workbench.
 
 ## Directory Layout
 
 ```text
 research/catalog-assets/
-  status.json
-  sources.json
-  boltsparts/          # mirrored BOLTS data and FreeCAD generator sources
-  fasteners-workbench/ # FreeCAD Fasteners workbench experiment outputs
-  models/              # ignored by git except .gitkeep
-  renders/             # ignored by git except .gitkeep
+  steps/                # ignored by git except .gitkeep; files like din_912.step
   scripts/
+    generate_fasteners_steps.py
     catalog_assets.py
+    run_freecad.py
+```
+
+Rendered app assets live in:
+
+```text
+public/catalog-assets/<catalog-id>/
+  iso.png
+  side.svg
+  top.svg
 ```
 
 ## Commands
 
-Commands that generate or render geometry require FreeCAD. Rendering uses FreeCAD to export an STL working mesh and Blender in background mode for the shaded ISO image. Side and top views are exported as FreeCAD technical drawing SVGs.
-
-Seed or refresh status from the current TypeScript catalog:
+Generate STEP files from FreeCAD Fasteners Workbench:
 
 ```bash
-python3 research/catalog-assets/scripts/catalog_assets.py status --write
+pnpm research:assets:steps
+python3 research/catalog-assets/scripts/run_freecad.py generate-fasteners-steps generate --catalog-id din-912 --threads
+python3 research/catalog-assets/scripts/run_freecad.py generate-fasteners-steps list-types
 ```
 
-Mirror Boltsparts/BOLTS data and FreeCAD generator files, then refresh status:
+Render side/top SVGs from flat STEP files:
 
 ```bash
-python3 research/catalog-assets/scripts/catalog_assets.py boltsparts-sync --write-status
+pnpm research:assets:technical
+python3 research/catalog-assets/scripts/run_freecad.py catalog-assets render --catalog-id din-912
 ```
 
-Inspect the local Boltsparts class index:
+Render side/top SVGs plus ISO PNGs:
 
 ```bash
-python3 research/catalog-assets/scripts/catalog_assets.py boltsparts-index
+pnpm research:assets:render
+python3 research/catalog-assets/scripts/run_freecad.py catalog-assets render --catalog-id din-912 --iso
 ```
 
-Generate default STEP models for catalog entries that match Boltsparts classes:
+Render one explicit STEP file:
 
 ```bash
-python3 research/catalog-assets/scripts/run_freecad.py boltsparts-generate --all
-python3 research/catalog-assets/scripts/run_freecad.py boltsparts-generate --catalog-id din-912
+python3 research/catalog-assets/scripts/run_freecad.py catalog-assets render \
+  --step-path research/catalog-assets/steps/din_912.step \
+  --output-dir public/catalog-assets \
+  --iso
 ```
 
-Generate STEP models and render images in one pass:
+Audit public asset files referenced by `src/data/catalogAssets.ts`:
 
 ```bash
-python3 research/catalog-assets/scripts/run_freecad.py boltsparts-generate --all --render
+pnpm research:assets:audit
 ```
 
-Generate STEP models from the installed FreeCAD Fasteners workbench:
+Also require matching STEP files for every manifest entry:
 
 ```bash
-python3 research/catalog-assets/scripts/run_freecad.py fasteners-generate --all
-python3 research/catalog-assets/scripts/run_freecad.py fasteners-generate --all --render
+python3 research/catalog-assets/scripts/catalog_assets.py audit --check-steps
 ```
 
-Fasteners workbench output is isolated under `fasteners-workbench/` so it can be compared against the Boltsparts/BOLTS provider without overwriting its status, models, or renders.
+## File Naming
 
-Try to discover/download model sources:
+STEP filenames use underscores and map directly to catalog ids:
 
-```bash
-python3 research/catalog-assets/scripts/catalog_assets.py discover --all
-python3 research/catalog-assets/scripts/catalog_assets.py discover --catalog-id din-1587
-```
+- `din_912.step` -> `public/catalog-assets/din-912/`
+- `iso_7380.step` -> `public/catalog-assets/iso-7380/`
+- `asme_b18_2_1_hex_cap.step` -> `public/catalog-assets/asme-b18-2-1-hex-cap/`
 
-Render images for downloaded models:
-
-```bash
-python3 research/catalog-assets/scripts/run_freecad.py render --catalog-id din-912
-python3 research/catalog-assets/scripts/run_freecad.py render --all
-```
-
-Render any one model directly:
-
-```bash
-python3 research/catalog-assets/scripts/run_freecad.py render-file \
-  --model-path /path/to/model.step \
-  --output-dir research/catalog-assets/renders/manual-test
-```
-
-Audit status and referenced local files:
-
-```bash
-python3 research/catalog-assets/scripts/catalog_assets.py audit
-```
-
-Run discovery then rendering:
-
-```bash
-python3 research/catalog-assets/scripts/catalog_assets.py pipeline --all
-```
-
-## Output Images
-
-Each rendered catalog part should produce:
-
-- `renders/<catalogId>/iso.png`: perspective shaded isometric render on a white background.
-- `renders/<catalogId>/side.svg`: FreeCAD technical drawing side view.
-- `renders/<catalogId>/top.svg`: FreeCAD technical drawing top view.
-
-## Source Policy
-
-The discovery command is deliberately conservative. It does not bypass login walls, paywalls, anti-bot checks, or provider terms. If a model cannot be downloaded directly from a public page, the entry is marked as blocked or missing in `status.json`.
-
-Boltsparts/BOLTS is the preferred model provider when a catalog entry matches one of its standards. The mirrored `.blt` data identifies the part class and parameters, while the mirrored FreeCAD backend contains the procedural generator code needed to create local model geometry.
+The renderer does not know how a STEP file was created. Any valid `.step` or `.stp` file following this naming convention can be rendered.

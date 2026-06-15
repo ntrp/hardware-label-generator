@@ -9,15 +9,10 @@
     "build": "tsc --noEmit && vite build",
     "test": "vitest run",
     "preview": "vite preview",
-    "research:assets:status": "python3 research/catalog-assets/scripts/catalog_assets.py status --write",
     "research:assets:audit": "python3 research/catalog-assets/scripts/catalog_assets.py audit",
-    "research:assets:discover": "python3 research/catalog-assets/scripts/catalog_assets.py discover --all",
-    "research:assets:render": "python3 research/catalog-assets/scripts/run_freecad.py render --all",
-    "research:assets:boltsparts": "python3 research/catalog-assets/scripts/catalog_assets.py boltsparts-sync --write-status",
-    "research:assets:boltsparts:generate": "python3 research/catalog-assets/scripts/run_freecad.py boltsparts-generate --all",
-    "research:assets:boltsparts:render": "python3 research/catalog-assets/scripts/run_freecad.py boltsparts-generate --all --render",
-    "research:assets:fasteners:generate": "python3 research/catalog-assets/scripts/run_freecad.py fasteners-generate --all --threads",
-    "research:assets:fasteners:render": "python3 research/catalog-assets/scripts/run_freecad.py fasteners-generate --all --threads --render"
+    "research:assets:steps": "python3 research/catalog-assets/scripts/run_freecad.py generate-fasteners-steps generate --all --threads",
+    "research:assets:render": "python3 research/catalog-assets/scripts/run_freecad.py catalog-assets render --all --iso",
+    "research:assets:technical": "python3 research/catalog-assets/scripts/run_freecad.py catalog-assets render --all"
   },
   "dependencies": {
     "jszip": "^3.10.1",

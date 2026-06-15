@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { PointerEvent as ReactPointerEvent } from 'react';
 import {
   Archive,
@@ -12,6 +12,7 @@ import {
   Printer,
   QrCode,
   RotateCcw,
+  RotateCw,
   Save,
   Trash2,
   Upload,
@@ -49,8 +50,9 @@ import { defaultBoltClass, getBoltClassOptions, isValidBoltClass } from './lib/b
 import { defaultMetricThreadPitch, findMetricThreadPitch, formatMetricThreadPitchOption, metricThreadPitchNamesForSize } from './lib/metricThreads';
 import { catalogMatchesSelectedStandards, combinedStandardCode, standardFamilies, standardPlaceholderKeys } from './lib/standards';
 import { loadState, parseBackup, saveState, serializeBackup, storageMeta } from './lib/storage';
-import { renderLabelSvg } from './lib/svg';
-import { catalogAssetLabel, catalogAssetSources, catalogAssetUrlForEntry, standardImageLabel, standardImageReferenceForItem, standardImageSources, standardImageUrlForItem } from './lib/standardImages';
+import { renderLabelSvg, resolveLabelImageHref } from './lib/svg';
+import { defaultTechnicalDrawingStrokeWidth } from './lib/svgAssets';
+import { catalogAssetLabel, catalogAssetSources, catalogAssetUrlForEntry, isStandardImageSource, missingCatalogAssetDataUrl, standardImageLabel, standardImageReferenceForItem, standardImageSources, standardImageUrlForItem } from './lib/standardImages';
 import type {
   AppState,
   FrameLineStyle,
@@ -115,6 +117,10 @@ type LocalFontAccessWindow = Window & {
 };
 
 const uniqueValues = (values: string[]) => Array.from(new Set(values)).filter(Boolean);
+const normalizedRotationDeg = (value: number) => {
+  const normalized = value % 360;
+  return Number((normalized < 0 ? normalized + 360 : normalized).toFixed(1));
+};
 const formatTsString = (value: string) => `'${value.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
 const tsIdentifierPattern = /^[A-Za-z_$][A-Za-z0-9_$]*$/;
 const formatTsKey = (key: string) => (tsIdentifierPattern.test(key) ? key : formatTsString(key));
@@ -320,7 +326,7 @@ const drawingKindForEntry = (entry: StandardCatalogEntry) => {
 const CatalogDrawing = ({ entry }: { entry: StandardCatalogEntry }) => {
   const sideUrl = catalogAssetUrlForEntry(entry, 'side');
   if (sideUrl) {
-    return <img className="catalog-drawing" src={sideUrl} alt={`${entry.description} side drawing`} loading="lazy" />;
+    return <img className="catalog-drawing" src={sideUrl} alt={`${entry.description} side drawing`} loading="lazy" onError={(event) => { event.currentTarget.src = missingCatalogAssetDataUrl('Side drawing'); }} />;
   }
 
   const kind = drawingKindForEntry(entry);
@@ -391,6 +397,7 @@ const CatalogDrawing = ({ entry }: { entry: StandardCatalogEntry }) => {
 };
 
 const catalogAssetPreviewUrl = (reference: NonNullable<ReturnType<typeof standardImageReferenceForItem>>, source: (typeof catalogAssetSources)[number]) => {
+  if (source === 'isoRender') return reference.isoRenderUrl;
   if (source === 'iso') return reference.isoUrl;
   if (source === 'side') return reference.sideUrl;
   return reference.topUrl;
@@ -484,6 +491,40 @@ const CatalogPartPicker = ({ entries, selectedId, selectedStandards, onSelect, i
   );
 };
 
+const PreviewSvgMarkup = memo(({ svg }: { svg: string }) => (
+  <div className="label-preview" dangerouslySetInnerHTML={{ __html: svg }} />
+));
+PreviewSvgMarkup.displayName = 'PreviewSvgMarkup';
+
+const PreviewImageLayer = memo(
+  ({
+    field,
+    href,
+    labelWidthMm,
+    labelHeightMm
+  }: {
+    field: PlacedField;
+    href: string;
+    labelWidthMm: number;
+    labelHeightMm: number;
+  }) => (
+    <img
+      className="preview-image-layer"
+      src={href}
+      alt=""
+      draggable={false}
+      style={{
+        left: `${(field.x / labelWidthMm) * 100}%`,
+        top: `${(field.y / labelHeightMm) * 100}%`,
+        width: `${(field.width / labelWidthMm) * 100}%`,
+        height: `${(field.height / labelHeightMm) * 100}%`,
+        transform: `rotate(${field.rotationDeg ?? 0}deg)`
+      }}
+    />
+  )
+);
+PreviewImageLayer.displayName = 'PreviewImageLayer';
+
 export function App() {
   const [state, setState] = useState<AppState>(() => {
     const loadedState = loadState();
@@ -497,6 +538,7 @@ export function App() {
   const [previewScale, setPreviewScale] = useState(1);
   const [hoveredFieldId, setHoveredFieldId] = useState<string | null>(null);
   const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null);
+  const [previewImageHrefs, setPreviewImageHrefs] = useState<Record<string, string>>({});
   const [zipFormats, setZipFormats] = useState<ExportFormat[]>(['svg', 'png', 'lbx']);
   const [printSvgs, setPrintSvgs] = useState<string[]>([]);
   const [batchModalOpen, setBatchModalOpen] = useState(false);
@@ -507,6 +549,7 @@ export function App() {
   const [presetCategories, setPresetCategories] = useState<HardwareCategory[]>([]);
   const [isResizingLabel, setIsResizingLabel] = useState(false);
   const [isResizingElement, setIsResizingElement] = useState(false);
+  const [isRotatingElement, setIsRotatingElement] = useState(false);
   const [labelWidthInput, setLabelWidthInput] = useState(() => formatLabelDimensionInput(state.labelSettings.widthMm, state.unitSystem));
   const [labelHeightInput, setLabelHeightInput] = useState(() => formatLabelDimensionInput(state.labelSettings.heightMm, state.unitSystem));
   const [labelMarginInput, setLabelMarginInput] = useState(() => formatLabelDimensionInput(state.labelSettings.marginMm, state.unitSystem));
@@ -543,6 +586,14 @@ export function App() {
     height: number;
     scale: number;
   } | null>(null);
+  const elementRotationRef = useRef<{
+    fieldId: string;
+    pointerId: number;
+    centerClientX: number;
+    centerClientY: number;
+    startAngle: number;
+    rotationDeg: number;
+  } | null>(null);
 
   const selectedItem = useMemo(
     () => state.hardwareItems.find((item) => item.id === selectedId) ?? state.hardwareItems[0],
@@ -551,6 +602,10 @@ export function App() {
   const selectedField = useMemo(
     () => state.labelSettings.fields.find((field) => field.id === selectedFieldId),
     [selectedFieldId, state.labelSettings.fields]
+  );
+  const hoveredField = useMemo(
+    () => state.labelSettings.fields.find((field) => field.id === hoveredFieldId),
+    [hoveredFieldId, state.labelSettings.fields]
   );
 
   const selectedPurchaseLink = selectedItem ? effectivePurchaseLink(state.purchaseLinks, selectedItem) : '';
@@ -566,6 +621,23 @@ export function App() {
   const batchCombinationSpecDefinitions = batchSpecDefinitions.filter((definition) => !isBatchReadonlyWasherDimension(definition.key));
   const hasQrElement = state.labelSettings.fields.some((field) => field.kind === 'image' && field.imageSource === 'qr' && field.style.visible);
   const qrInfo = hasQrElement ? buildQrPayload(selectedPurchaseLink) : undefined;
+  const previewImageFields = useMemo(
+    () => state.labelSettings.fields.filter((field) => field.kind === 'image' && field.style.visible),
+    [state.labelSettings.fields]
+  );
+  const previewImageSignature = useMemo(
+    () =>
+      JSON.stringify(
+        previewImageFields.map((field) => ({
+          id: field.id,
+          imageSource: field.imageSource,
+          imageBase64: field.imageBase64,
+          imageMimeType: field.imageMimeType,
+          svgStrokeWidth: field.svgStrokeWidth
+        }))
+      ),
+    [previewImageFields]
+  );
   const previewBaseWidth = state.labelSettings.widthMm * mmToPx;
   const previewBaseHeight = state.labelSettings.heightMm * mmToPx;
   const builtInPresetOptions = Object.values(builtInLabelPresets).filter((preset) => presetAppliesToCategory(preset, selectedItem.category));
@@ -641,7 +713,8 @@ export function App() {
   }, [previewBaseHeight, previewBaseWidth]);
 
   useEffect(() => {
-    saveState(state);
+    const saveTimeout = window.setTimeout(() => saveState(state), 200);
+    return () => window.clearTimeout(saveTimeout);
   }, [state]);
 
   useEffect(
@@ -758,6 +831,36 @@ export function App() {
   }, [isResizingElement]);
 
   useEffect(() => {
+    if (!isRotatingElement) return;
+
+    const handlePointerMove = (event: globalThis.PointerEvent) => {
+      const rotation = elementRotationRef.current;
+      if (!rotation || rotation.pointerId !== event.pointerId) return;
+
+      event.preventDefault();
+      rotateElementFromClient(event.clientX, event.clientY);
+    };
+
+    const handlePointerEnd = (event: globalThis.PointerEvent) => {
+      const rotation = elementRotationRef.current;
+      if (!rotation || rotation.pointerId !== event.pointerId) return;
+
+      elementRotationRef.current = null;
+      setIsRotatingElement(false);
+    };
+
+    window.addEventListener('pointermove', handlePointerMove, { passive: false });
+    window.addEventListener('pointerup', handlePointerEnd);
+    window.addEventListener('pointercancel', handlePointerEnd);
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerEnd);
+      window.removeEventListener('pointercancel', handlePointerEnd);
+    };
+  }, [isRotatingElement]);
+
+  useEffect(() => {
     let cancelled = false;
 
     if (!selectedItem) {
@@ -767,8 +870,7 @@ export function App() {
 
     renderLabelSvg(selectedItem, state.labelSettings, selectedPurchaseLink, selectedSpecUnitSystem, {
       interactive: true,
-      hoveredFieldId,
-      selectedFieldId
+      omitImageContent: true
     }).then((svg) => {
       if (!cancelled) {
         setPreviewSvg(svg);
@@ -778,7 +880,28 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [hoveredFieldId, selectedFieldId, selectedItem, selectedPurchaseLink, selectedSpecUnitSystem, state.labelSettings]);
+  }, [selectedItem, selectedPurchaseLink, selectedSpecUnitSystem, state.labelSettings]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!selectedItem) {
+      setPreviewImageHrefs({});
+      return;
+    }
+
+    Promise.all(
+      previewImageFields.map(async (field) => [field.id, await resolveLabelImageHref(field, selectedItem, selectedPurchaseLink)] as const)
+    ).then((entries) => {
+      if (!cancelled) {
+        setPreviewImageHrefs(Object.fromEntries(entries));
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [previewImageSignature, selectedItem, selectedPurchaseLink]);
 
   const updateState = (patch: Partial<AppState>) => setState((current) => ({ ...current, ...patch }));
 
@@ -1557,6 +1680,47 @@ export function App() {
     };
   };
 
+  const pointerAngleFromCenter = (clientX: number, clientY: number, centerClientX: number, centerClientY: number) =>
+    (Math.atan2(clientY - centerClientY, clientX - centerClientX) * 180) / Math.PI;
+
+  const rotateElementFromClient = (clientX: number, clientY: number) => {
+    const rotation = elementRotationRef.current;
+    if (!rotation) return;
+
+    const angle = pointerAngleFromCenter(clientX, clientY, rotation.centerClientX, rotation.centerClientY);
+    const delta = angle - rotation.startAngle;
+    updateField(rotation.fieldId, { rotationDeg: normalizedRotationDeg(rotation.rotationDeg + delta) });
+  };
+
+  const handleElementRotatePointerDown = (event: ReactPointerEvent<HTMLButtonElement>, field: PlacedField) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (field.kind !== 'image') return;
+
+    const svg = previewStageRef.current?.querySelector('.label-preview svg');
+    const rect = svg?.getBoundingClientRect();
+
+    if (!rect || rect.width === 0 || rect.height === 0) {
+      return;
+    }
+
+    const centerClientX = rect.left + ((field.x + field.width / 2) / state.labelSettings.widthMm) * rect.width;
+    const centerClientY = rect.top + ((field.y + field.height / 2) / state.labelSettings.heightMm) * rect.height;
+
+    setSelectedFieldId(field.id);
+    setHoveredFieldId(field.id);
+    setIsRotatingElement(true);
+    elementRotationRef.current = {
+      fieldId: field.id,
+      pointerId: event.pointerId,
+      centerClientX,
+      centerClientY,
+      startAngle: pointerAngleFromCenter(event.clientX, event.clientY, centerClientX, centerClientY),
+      rotationDeg: field.rotationDeg ?? 0
+    };
+  };
+
   const addField = () => {
     const marginMm = normalizedMarginMm(state.labelSettings);
     const next: PlacedField = {
@@ -2118,7 +2282,12 @@ export function App() {
                       key={source}
                       className="standard-image-card"
                     >
-                      <img src={catalogAssetPreviewUrl(selectedStandardImageReference, source)} alt={`${catalogAssetLabel(source)} for ${selectedItem.standard}`} loading="lazy" />
+                      <img
+                        src={catalogAssetPreviewUrl(selectedStandardImageReference, source)}
+                        alt={`${catalogAssetLabel(source)} for ${selectedItem.standard}`}
+                        loading="lazy"
+                        onError={(event) => { event.currentTarget.src = missingCatalogAssetDataUrl(catalogAssetLabel(source)); }}
+                      />
                       <span>{catalogAssetLabel(source)}</span>
                     </div>
                   ))}
@@ -2336,6 +2505,7 @@ export function App() {
                               Image
                               <select value={field.imageSource ?? 'qr'} onChange={(event) => updateField(field.id, { imageSource: event.target.value as PlacedField['imageSource'] })}>
                                 <option value="qr">Purchase link QR</option>
+                                <option value="iso">ISO</option>
                                 <option value="side">Side</option>
                                 <option value="top">Top</option>
                                 <option value="custom">Custom image</option>
@@ -2367,7 +2537,7 @@ export function App() {
                                 )}
                               </div>
                             )}
-                            {(field.imageSource === 'side' || field.imageSource === 'top') && !standardImageUrlForItem(selectedItem, field.imageSource) && (
+                            {isStandardImageSource(field.imageSource) && !standardImageUrlForItem(selectedItem, field.imageSource) && (
                               <p className="storage-note">No standard image URL is available for this hardware item.</p>
                             )}
                           </div>
@@ -2423,10 +2593,38 @@ export function App() {
                           {field.kind !== 'frame' &&
                             (['width', 'height'] as const).map((key) => (
                               <label key={key}>
-                                {key}
+                                {key === 'width' ? 'Width' : 'Height'}
                                 <input type="number" step="0.5" value={field[key]} onChange={(event) => updateField(field.id, { [key]: Number(event.target.value) })} />
                               </label>
                             ))}
+                          {field.kind === 'image' && (
+                            <>
+                              <label>
+                                Rotation
+                                <input
+                                  type="number"
+                                  step="1"
+                                  value={field.rotationDeg ?? 0}
+                                  onChange={(event) => {
+                                    const value = Number(event.target.value);
+                                    updateField(field.id, { rotationDeg: Number.isFinite(value) ? value : 0 });
+                                  }}
+                                />
+                              </label>
+                              {isStandardImageSource(field.imageSource) && (
+                                <label>
+                                  Line thickness
+                                  <input
+                                    type="number"
+                                    step="0.05"
+                                    min="0.05"
+                                    value={field.svgStrokeWidth ?? defaultTechnicalDrawingStrokeWidth}
+                                    onChange={(event) => updateField(field.id, { svgStrokeWidth: Number(event.target.value) || defaultTechnicalDrawingStrokeWidth })}
+                                  />
+                                </label>
+                              )}
+                            </>
+                          )}
                           {field.kind === 'text' && (
                             <>
                               <label>
@@ -2504,14 +2702,51 @@ export function App() {
               className={[
                 'label-preview-shell',
                 isResizingLabel ? 'resizing' : '',
-                isResizingElement ? 'resizing-element' : ''
+                isResizingElement ? 'resizing-element' : '',
+                isRotatingElement ? 'rotating-element' : ''
               ].filter(Boolean).join(' ')}
               style={{
                 width: `${previewBaseWidth * previewScale}px`,
                 height: `${previewBaseHeight * previewScale}px`
               }}
             >
-              <div className="label-preview" dangerouslySetInnerHTML={{ __html: previewSvg }} />
+              <PreviewSvgMarkup svg={previewSvg} />
+              {previewImageFields.map((field) => {
+                const href = previewImageHrefs[field.id];
+                if (!href) return null;
+
+                return (
+                  <PreviewImageLayer
+                    key={field.id}
+                    field={field}
+                    href={href}
+                    labelWidthMm={state.labelSettings.widthMm}
+                    labelHeightMm={state.labelSettings.heightMm}
+                  />
+                );
+              })}
+              {hoveredField && hoveredField.id !== selectedField?.id && (
+                <div
+                  className="element-outline-box hovered"
+                  style={{
+                    left: `${(hoveredField.x / state.labelSettings.widthMm) * 100}%`,
+                    top: `${(hoveredField.y / state.labelSettings.heightMm) * 100}%`,
+                    width: `${(hoveredField.width / state.labelSettings.widthMm) * 100}%`,
+                    height: `${(hoveredField.height / state.labelSettings.heightMm) * 100}%`
+                  }}
+                />
+              )}
+              {selectedField && (
+                <div
+                  className="element-outline-box selected"
+                  style={{
+                    left: `${(selectedField.x / state.labelSettings.widthMm) * 100}%`,
+                    top: `${(selectedField.y / state.labelSettings.heightMm) * 100}%`,
+                    width: `${(selectedField.width / state.labelSettings.widthMm) * 100}%`,
+                    height: `${(selectedField.height / state.labelSettings.heightMm) * 100}%`
+                  }}
+                />
+              )}
               {selectedField && selectedField.kind !== 'frame' && (
                 <div
                   className="element-resize-box"
@@ -2536,6 +2771,17 @@ export function App() {
                       onPointerDown={(event) => handleElementResizePointerDown(event, selectedField, handle.mode)}
                     />
                   ))}
+                  {selectedField.kind === 'image' && (
+                    <button
+                      type="button"
+                      className="element-rotate-handle"
+                      aria-label="Rotate selected image"
+                      title="Rotate selected image"
+                      onPointerDown={(event) => handleElementRotatePointerDown(event, selectedField)}
+                    >
+                      <RotateCw size={13} strokeWidth={2.4} />
+                    </button>
+                  )}
                 </div>
               )}
               {[

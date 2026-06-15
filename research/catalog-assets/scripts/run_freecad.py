@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run catalog asset commands inside FreeCAD's Python console."""
+"""Run catalog asset scripts inside FreeCAD's Python console."""
 
 from __future__ import annotations
 
@@ -11,7 +11,10 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[3]
-CATALOG_ASSETS = ROOT / "research" / "catalog-assets" / "scripts" / "catalog_assets.py"
+SCRIPTS = {
+    "catalog-assets": ROOT / "research" / "catalog-assets" / "scripts" / "catalog_assets.py",
+    "generate-fasteners-steps": ROOT / "research" / "catalog-assets" / "scripts" / "generate_fasteners_steps.py",
+}
 FREECAD_CANDIDATES = (
     "FreeCADCmd",
     "freecadcmd",
@@ -27,25 +30,24 @@ def find_freecadcmd() -> str:
     raise RuntimeError("FreeCADCmd/freecadcmd was not found.")
 
 
-def build_console_code(args: list[str]) -> str:
-    argv = ["catalog_assets.py", *args]
+def build_console_code(script_path: Path, args: list[str]) -> str:
+    argv = [script_path.name, *args]
     return (
         "import runpy, sys\n"
         f"sys.argv = {argv!r}\n"
-        f"runpy.run_path({str(CATALOG_ASSETS)!r}, run_name='__main__')\n"
+        f"runpy.run_path({str(script_path)!r}, run_name='__main__')\n"
     )
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Run catalog asset commands through FreeCADCmd console mode")
-    parser.add_argument("args", nargs=argparse.REMAINDER, help="Arguments for catalog_assets.py")
+    parser = argparse.ArgumentParser(description="Run a catalog asset script through FreeCADCmd console mode")
+    parser.add_argument("script", choices=sorted(SCRIPTS), help="Script alias to run")
+    parser.add_argument("args", nargs=argparse.REMAINDER, help="Arguments for the selected script")
     parsed = parser.parse_args(argv)
-    if not parsed.args:
-        parser.error("missing catalog_assets.py command")
 
     process = subprocess.run(
         [find_freecadcmd(), "-c"],
-        input=build_console_code(parsed.args),
+        input=build_console_code(SCRIPTS[parsed.script], parsed.args),
         text=True,
         cwd=ROOT,
         check=False,

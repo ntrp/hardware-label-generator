@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { defaultHardwareItem, defaultLabelSettings } from './defaults';
 import { renderLabelSvg } from './svg';
 
@@ -15,15 +15,17 @@ describe('SVG rendering', () => {
     expect(svg).not.toContain('width="53.3" height="29.3"');
   });
 
-  it('renders gray hover outlines and blue selected outlines', async () => {
+  it('renders stable interactive hit targets without stateful outline markup', async () => {
     const svg = await renderLabelSvg(defaultHardwareItem, defaultLabelSettings, '', 'metric', {
       interactive: true,
       hoveredFieldId: 'field-standard',
       selectedFieldId: 'field-size'
     });
 
-    expect(svg).toContain('data-field-id="field-standard" x="3" y="4" width="29" height="5" fill="transparent" stroke="#747f8a" stroke-width="0.85"');
-    expect(svg).toContain('data-field-id="field-size" x="3" y="11" width="28" height="10" fill="transparent" stroke="#1d72ff" stroke-width="0.75"');
+    expect(svg).toContain('data-field-id="field-standard" x="3" y="4" width="29" height="5" fill="transparent" stroke="transparent" stroke-width="0"');
+    expect(svg).toContain('data-field-id="field-size" x="3" y="11" width="28" height="10" fill="transparent" stroke="transparent" stroke-width="0"');
+    expect(svg).not.toContain('stroke="#747f8a"');
+    expect(svg).not.toContain('stroke="#1d72ff"');
   });
 
   it('renders styled frame elements as explicit label borders', async () => {
@@ -81,9 +83,58 @@ describe('SVG rendering', () => {
     expect(svg).toContain('preserveAspectRatio="xMidYMid meet"');
   });
 
-  it('renders standard side and top image URLs in SVG output', async () => {
+  it('renders standard iso, side, and top image URLs in SVG output', async () => {
     const svg = await renderLabelSvg(
       { ...defaultHardwareItem, standardCodes: { DIN: 'DIN 1587' } },
+      {
+        ...defaultLabelSettings,
+        fields: [
+          {
+            id: 'field-iso-image',
+            kind: 'image',
+            imageSource: 'iso',
+            rotationDeg: 15,
+            x: 2,
+            y: 2,
+            width: 10,
+            height: 10,
+            style: { fontFamily: 'Inter', fontSize: 4, fontWeight: 700, align: 'middle', visible: true }
+          },
+          {
+            id: 'field-side-image',
+            kind: 'image',
+            imageSource: 'side',
+            x: 14,
+            y: 2,
+            width: 10,
+            height: 10,
+            style: { fontFamily: 'Inter', fontSize: 4, fontWeight: 700, align: 'middle', visible: true }
+          },
+          {
+            id: 'field-top-image',
+            kind: 'image',
+            imageSource: 'top',
+            x: 26,
+            y: 2,
+            width: 10,
+            height: 10,
+            style: { fontFamily: 'Inter', fontSize: 4, fontWeight: 700, align: 'middle', visible: true }
+          }
+        ]
+      },
+      '',
+      'metric'
+    );
+
+    expect(svg).toContain('./catalog-assets/din-912/iso.svg');
+    expect(svg).toContain('./catalog-assets/din-912/side.svg');
+    expect(svg).toContain('./catalog-assets/din-912/top.svg');
+    expect(svg).toContain('transform="rotate(15 7 7)"');
+  });
+
+  it('renders a placeholder when a standard image is missing', async () => {
+    const svg = await renderLabelSvg(
+      { ...defaultHardwareItem, catalogId: undefined },
       {
         ...defaultLabelSettings,
         fields: [
@@ -96,16 +147,6 @@ describe('SVG rendering', () => {
             width: 10,
             height: 10,
             style: { fontFamily: 'Inter', fontSize: 4, fontWeight: 700, align: 'middle', visible: true }
-          },
-          {
-            id: 'field-top-image',
-            kind: 'image',
-            imageSource: 'top',
-            x: 14,
-            y: 2,
-            width: 10,
-            height: 10,
-            style: { fontFamily: 'Inter', fontSize: 4, fontWeight: 700, align: 'middle', visible: true }
           }
         ]
       },
@@ -113,8 +154,47 @@ describe('SVG rendering', () => {
       'metric'
     );
 
-    expect(svg).toContain('./catalog-assets/din-912/side.svg');
-    expect(svg).toContain('./catalog-assets/din-912/top.svg');
+    expect(svg).toContain('data:image/svg+xml;charset=utf-8');
+    expect(svg).toContain('Side%20drawing');
+  });
+
+  it('embeds configured standard SVG image line thickness', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('<svg xmlns="http://www.w3.org/2000/svg"><g stroke-width="0.35"><path d="M0 0L1 1"/></g></svg>'))
+    );
+
+    try {
+      const svg = await renderLabelSvg(
+        defaultHardwareItem,
+        {
+          ...defaultLabelSettings,
+          fields: [
+            {
+              id: 'field-side-image',
+              kind: 'image',
+              imageSource: 'side',
+              svgStrokeWidth: 0.9,
+              x: 2,
+              y: 2,
+              width: 10,
+              height: 10,
+              style: { fontFamily: 'Inter', fontSize: 4, fontWeight: 700, align: 'middle', visible: true }
+            }
+          ]
+        },
+        '',
+        'metric'
+      );
+
+      const href = svg.match(/href="data:image\/svg\+xml;base64,([^"]+)"/)?.[1] ?? '';
+      const embeddedSvg = Buffer.from(href, 'base64').toString('utf8');
+
+      expect(embeddedSvg).toContain('stroke-width="0.9"');
+      expect(embeddedSvg).not.toContain('stroke-width="0.35"');
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 
   it('can render a raster-safe SVG for PNG export', async () => {

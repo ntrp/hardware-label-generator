@@ -3,7 +3,8 @@ import type { HardwareItem, LabelSettings, PlacedField, UnitSystem } from '../ty
 import { defaultFrameStyle } from './defaults';
 import { renderTextTemplate } from './format';
 import { buildQrPayload, createQrPngDataUrl } from './qr';
-import { isStandardImageSource, standardImageLabel, standardImageUrlForItem } from './standardImages';
+import { isStandardImageSource, missingCatalogAssetSvg, standardImageLabel, standardImageUrlForItem } from './standardImages';
+import { applySvgStrokeWidth, normalizedSvgStrokeWidth } from './svgAssets';
 
 export interface LbxXmlFiles {
   'label.xml': string;
@@ -44,7 +45,7 @@ const lbxImageFields = (item: HardwareItem, settings: LabelSettings) =>
       field.kind === 'image' &&
       field.style.visible &&
       (field.imageSource === 'qr' || isStandardImageSource(field.imageSource) || (field.imageSource === 'custom' && field.imageBase64))
-  ).filter((field) => !isStandardImageSource(field.imageSource) || Boolean(standardImageUrlForItem(item, field.imageSource)));
+  );
 
 const lbxExportedImageFields = (item: HardwareItem, settings: LabelSettings, purchaseLink: string) =>
   lbxImageFields(item, settings).filter((field) => field.imageSource !== 'qr' || purchaseLink.trim());
@@ -67,7 +68,12 @@ const imageExtension = (field: PlacedField) => {
 
 const imageFileName = (imageIndex: number, field: PlacedField) => `Object${imageIndex}.${imageExtension(field)}` as const;
 
-const objectStyleXml = (field: PlacedField, objectName: string, extra = '') => `<pt:objectStyle x="${pt(field.x)}" y="${pt(field.y)}" width="${pt(field.width)}" height="${pt(field.height)}" backColor="#FFFFFF" backPrintColorNumber="0" ropMode="COPYPEN" angle="0" anchor="TOPLEFT" flip="NONE">
+const objectAngle = (field: PlacedField) => {
+  if (field.kind !== 'image' || !Number.isFinite(field.rotationDeg)) return 0;
+  return Number(Number(field.rotationDeg).toFixed(2));
+};
+
+const objectStyleXml = (field: PlacedField, objectName: string, extra = '') => `<pt:objectStyle x="${pt(field.x)}" y="${pt(field.y)}" width="${pt(field.width)}" height="${pt(field.height)}" backColor="#FFFFFF" backPrintColorNumber="0" ropMode="COPYPEN" angle="${objectAngle(field)}" anchor="TOPLEFT" flip="NONE">
   <pt:pen style="NULL" widthX="0.5pt" widthY="0.5pt" color="#000000" printColorNumber="1"></pt:pen>
   <pt:brush style="NULL" color="#000000" printColorNumber="1" id="0"></pt:brush>
   <pt:expanded objectName="${escapeXml(objectName)}" ID="0" lock="0" templateMergeTarget="LABELLIST" templateMergeType="NONE" templateMergeID="0" allowOutOfBoundsTransfer="false" linkStatus="NONE" linkID="0"${extra}></pt:expanded>
@@ -229,9 +235,22 @@ const imageFieldBytes = async (field: PlacedField, item: HardwareItem, purchaseL
 
   if (isStandardImageSource(field.imageSource)) {
     const url = standardImageUrlForItem(item, field.imageSource);
-    if (!url) throw new Error(`${standardImageLabel(field.imageSource)} is not available for this catalog part.`);
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`Unable to fetch ${standardImageLabel(field.imageSource).toLowerCase()} from local catalog assets.`);
+    const fallback = () => new TextEncoder().encode(missingCatalogAssetSvg(standardImageLabel(field.imageSource)));
+    if (!url) return fallback();
+    if (url.startsWith('data:')) return dataUrlToBytes(url);
+
+    let response: Response;
+    try {
+      response = await fetch(url);
+    } catch {
+      return fallback();
+    }
+    if (!response.ok) return fallback();
+
+    const strokeWidth = normalizedSvgStrokeWidth(field.svgStrokeWidth);
+    if (strokeWidth) {
+      return new TextEncoder().encode(applySvgStrokeWidth(await response.text(), strokeWidth));
+    }
     return new Uint8Array(await response.arrayBuffer());
   }
 

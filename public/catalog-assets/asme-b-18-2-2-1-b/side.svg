@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-5.586476 -6.3421259999999995 6.461252 12.684251999999999">
+<rect width="100%" height="100%" fill="white"/>
+<g   fill="none"
+   stroke="rgb(0, 0, 0)"
+   stroke-linecap="butt"
+   stroke-linejoin="miter"
+   stroke-width="0.35"
+   transform="scale(1, -1)"
+  >
+<path id= "1" d=" M 0 -5.46735 L -4.7117 -5.46735 " />
+<path id= "2" d=" M 0 -5.46735 L 0 5.46735 " />
+<path id= "3" d=" M -4.7117 -5.46735 L -4.7117 5.46735 " />
+<path id= "4" d=" M 0 5.46735 L -4.7117 5.46735 " />
+</g>
+
+</svg>

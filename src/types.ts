@@ -13,7 +13,7 @@ export type HardwareCategory =
   | 'custom';
 
 export type LabelElementKind = 'text' | 'image' | 'frame';
-export type ImageSource = 'qr' | 'side' | 'top' | 'custom';
+export type ImageSource = 'qr' | 'iso' | 'side' | 'top' | 'custom';
 export type FrameShape = 'box' | 'rounded';
 export type FrameLineStyle = 'solid' | 'dashed' | 'dotted';
 
@@ -83,6 +83,8 @@ export interface PlacedField {
   imageBase64?: string;
   imageMimeType?: string;
   imageName?: string;
+  svgStrokeWidth?: number;
+  rotationDeg?: number;
   frameStyle?: FrameStyle;
 }
 

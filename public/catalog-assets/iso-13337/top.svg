@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="2.44326 -0.201681 1.16 1.16">
+<rect width="100%" height="100%" fill="white"/>
+<g   fill="none"
+   stroke="rgb(0, 0, 0)"
+   stroke-linecap="butt"
+   stroke-linejoin="miter"
+   stroke-width="0.35"
+   transform="scale(1, -1)"
+  >
+<path d="M2.52326 0.0938148 A2.525 2.525 0 1 1 2.52326 -0.0938148" /><path id= "2" d=" M 2.52326 -0.0938148 L 2.898 -0.107748 " />
+<path d="M2.898 0.107748 A2.9 2.9 0 1 1 2.898 -0.107748" /><path id= "4" d=" M 2.52326 0.0938148 L 2.898 0.107748 " />
+<path id= "5" d=" M 2.898 0.107748 L 3.27274 0.121681 " />
+<path d="M3.27274 0.121681 A3.275 3.275 0 1 1 3.27274 -0.121681" /><path id= "7" d=" M 2.898 -0.107748 L 3.27274 -0.121681 " />
+</g>
+
+</svg>
