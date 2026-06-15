@@ -1,9 +1,9 @@
 import type { AppBackup, AppState } from '../types';
 import { defaultAppState } from './defaults';
 
-const storageKey = 'fastener-label-generator:v11';
+const storageKey = 'fastener-label-generator:v12';
 const backupAppName = 'standalone-fastener-label-generator';
-const backupVersion = 8;
+const backupVersion = 9;
 
 export const loadState = (): AppState => {
   if (typeof localStorage === 'undefined') {

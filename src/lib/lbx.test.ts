@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import JSZip from 'jszip';
-import { defaultHardwareItem, defaultLabelSettings } from './defaults';
+import { defaultFieldStyle, defaultHardwareItem, defaultLabelSettings } from './defaults';
 import { createLbxBlob, generateLbxXml, generateLbxXmlFiles } from './lbx';
 
 const clipartFixturePath = resolve(process.cwd(), 'fixtures/lbx/two_text_clipart.lbx');
@@ -91,6 +91,97 @@ describe('LBX export adapter', () => {
     expect(labelXml).toContain('<image:image>');
     expect(labelXml).toContain('originalName="logo.png"');
     expect(labelXml).toContain('fileName="Object0.png"');
+  });
+
+  it('generates Brother standard side image object references', () => {
+    const labelXml = generateLbxXml(
+      { ...defaultHardwareItem, standardCodes: { DIN: 'DIN 1587' } },
+      {
+        ...defaultLabelSettings,
+        fields: [
+          {
+            id: 'field-side-image',
+            kind: 'image',
+            imageSource: 'side',
+            x: 2,
+            y: 2,
+            width: 12,
+            height: 12,
+            style: { ...defaultFieldStyle }
+          }
+        ]
+      },
+      '',
+      'metric'
+    );
+
+    expect(labelXml).toContain('<image:image>');
+    expect(labelXml).toContain('originalName="Object0.svg"');
+    expect(labelXml).toContain('fileName="Object0.svg"');
+  });
+
+  it('generates Brother standard ISO drawing image objects with rotation', () => {
+    const labelXml = generateLbxXml(
+      defaultHardwareItem,
+      {
+        ...defaultLabelSettings,
+        fields: [
+          {
+            id: 'field-iso-image',
+            kind: 'image',
+            imageSource: 'iso',
+            rotationDeg: 30,
+            x: 2,
+            y: 2,
+            width: 12,
+            height: 12,
+            style: { ...defaultFieldStyle }
+          }
+        ]
+      },
+      '',
+      'metric'
+    );
+
+    expect(labelXml).toContain('<image:image>');
+    expect(labelXml).toContain('angle="30"');
+    expect(labelXml).toContain('fileName="Object0.svg"');
+  });
+
+  it('stores configured standard SVG image line thickness in LBX image files', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('<svg xmlns="http://www.w3.org/2000/svg"><g stroke-width="0.35"><path d="M0 0L1 1"/></g></svg>'))
+    );
+
+    try {
+      const generatedBlob = await createLbxBlob(
+        defaultHardwareItem,
+        {
+          ...defaultLabelSettings,
+          fields: [
+            {
+              id: 'field-side-image',
+              kind: 'image',
+              imageSource: 'side',
+              svgStrokeWidth: 1.1,
+              x: 2,
+              y: 2,
+              width: 12,
+              height: 12,
+              style: { ...defaultFieldStyle }
+            }
+          ]
+        },
+        '',
+        'metric'
+      );
+      const zip = await JSZip.loadAsync(await generatedBlob.arrayBuffer());
+
+      await expect(zip.file('Object0.svg')?.async('string')).resolves.toContain('stroke-width="1.1"');
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 
   it('stores custom image bytes with their original supported file type', async () => {

@@ -2,6 +2,8 @@ import type { HardwareItem, LabelSettings, PlacedField, UnitSystem } from '../ty
 import { defaultFrameStyle } from './defaults';
 import { renderTextTemplate } from './format';
 import { buildQrPayload, createQrPngDataUrl, createQrSvg } from './qr';
+import { isStandardImageSource, missingCatalogAssetDataUrl, standardImageUrlForItem } from './standardImages';
+import { applySvgStrokeWidth, normalizedSvgStrokeWidth } from './svgAssets';
 
 const mmToPx = 3.7795275591;
 
@@ -19,15 +21,96 @@ const textAlign = (field: PlacedField) => {
   return 'left';
 };
 
-const imageHref = (field: PlacedField) =>
+const customImageHref = (field: PlacedField) =>
   field.imageBase64 ? `data:${field.imageMimeType || 'application/octet-stream'};base64,${field.imageBase64}` : '';
+
+const blobToDataUrl = (blob: Blob) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(new Error('Unable to read standard image bytes.'));
+    reader.readAsDataURL(blob);
+  });
+
+const rasterSafeStandardImageHref = async (url: string) => {
+  if (!url) return '';
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`Unable to fetch standard image: ${url}`);
+  return blobToDataUrl(await response.blob());
+};
+
+const svgTextToDataUrl = (svg: string) => {
+  const bytes = new TextEncoder().encode(svg);
+  let binary = '';
+
+  for (const byte of bytes) {
+    binary += String.fromCharCode(byte);
+  }
+
+  return `data:image/svg+xml;base64,${btoa(binary)}`;
+};
+
+const standardImageHrefCache = new Map<string, Promise<string>>();
+
+const standardImageHref = async (url: string, field: PlacedField, rasterSafe: boolean | undefined) => {
+  const fallback = missingCatalogAssetDataUrl('Image missing');
+  if (!url) return fallback;
+  if (url.startsWith('data:')) return url;
+  const strokeWidth = normalizedSvgStrokeWidth(field.svgStrokeWidth);
+  const cacheKey = `${rasterSafe ? 'raster' : 'svg'}|${url}|${strokeWidth ?? 'default'}`;
+  const cached = standardImageHrefCache.get(cacheKey);
+
+  if (cached) {
+    return cached;
+  }
+
+  const hrefPromise = (async () => {
+    if (strokeWidth) {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) return fallback;
+        return svgTextToDataUrl(applySvgStrokeWidth(await response.text(), strokeWidth));
+      } catch {
+        return fallback;
+      }
+    }
+
+    if (!rasterSafe) return url;
+
+    try {
+      return await rasterSafeStandardImageHref(url);
+    } catch {
+      return fallback;
+    }
+  })();
+
+  standardImageHrefCache.set(cacheKey, hrefPromise);
+  return hrefPromise;
+};
 
 export interface RenderLabelSvgOptions {
   interactive?: boolean;
   hoveredFieldId?: string | null;
   selectedFieldId?: string | null;
   rasterSafe?: boolean;
+  omitImageContent?: boolean;
 }
+
+export const resolveLabelImageHref = async (field: PlacedField, item: HardwareItem, purchaseLink: string, rasterSafe?: boolean) => {
+  if (field.kind !== 'image') return '';
+  if (field.imageSource === 'custom') return customImageHref(field);
+
+  if (field.imageSource === 'qr') {
+    const qrPayload = buildQrPayload(purchaseLink);
+    if (!qrPayload.target) return '';
+    if (rasterSafe) return createQrPngDataUrl(qrPayload.target);
+    const qrSvg = await createQrSvg(qrPayload.target);
+    return `data:image/svg+xml;base64,${btoa(qrSvg)}`;
+  }
+
+  const url = standardImageUrlForItem(item, field.imageSource);
+  return standardImageHref(url, field, rasterSafe);
+};
 
 export const renderLabelSvg = async (
   item: HardwareItem,
@@ -38,8 +121,9 @@ export const renderLabelSvg = async (
 ) => {
   const qrPayload = buildQrPayload(purchaseLink);
   let qrSvgDataUri = '';
+  const standardImageHrefs = new Map<string, string>();
 
-  if (qrPayload.target && settings.fields.some((field) => field.kind === 'image' && field.imageSource === 'qr' && field.style.visible)) {
+  if (!options.omitImageContent && qrPayload.target && settings.fields.some((field) => field.kind === 'image' && field.imageSource === 'qr' && field.style.visible)) {
     if (options.rasterSafe) {
       qrSvgDataUri = await createQrPngDataUrl(qrPayload.target);
     } else {
@@ -48,9 +132,20 @@ export const renderLabelSvg = async (
     }
   }
 
+  if (!options.omitImageContent && settings.fields.some((field) => field.kind === 'image' && field.style.visible && isStandardImageSource(field.imageSource))) {
+    await Promise.all(
+      settings.fields
+        .filter((field) => field.kind === 'image' && field.style.visible && isStandardImageSource(field.imageSource))
+        .map(async (field) => {
+          const url = standardImageUrlForItem(item, field.imageSource);
+          standardImageHrefs.set(field.id, await standardImageHref(url, field, options.rasterSafe));
+        })
+    );
+  }
+
   const fields = settings.fields
     .filter((field) => field.style.visible)
-    .map((field) => renderField(field, item, settings, unitSystem, qrSvgDataUri, options))
+    .map((field) => renderField(field, item, settings, unitSystem, qrSvgDataUri, standardImageHrefs, options))
     .join('\n');
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${settings.widthMm}mm" height="${settings.heightMm}mm" viewBox="0 0 ${settings.widthMm} ${settings.heightMm}">
@@ -124,13 +219,8 @@ const renderInteractiveWrapper = (field: PlacedField, content: string, options: 
     return content;
   }
 
-  const isHovered = options.hoveredFieldId === field.id;
-  const isSelected = options.selectedFieldId === field.id;
-  const stroke = isSelected ? '#1d72ff' : isHovered ? '#747f8a' : 'transparent';
-  const strokeWidth = isSelected ? 0.75 : isHovered ? 0.85 : 0;
-
   return `<g data-field-id="${escapeXml(field.id)}" class="label-field" style="cursor: move">
-    <rect data-field-id="${escapeXml(field.id)}" x="${field.x}" y="${field.y}" width="${field.width}" height="${field.height}" fill="transparent" stroke="${stroke}" stroke-width="${strokeWidth}" vector-effect="non-scaling-stroke" pointer-events="all"/>
+    <rect data-field-id="${escapeXml(field.id)}" x="${field.x}" y="${field.y}" width="${field.width}" height="${field.height}" fill="transparent" stroke="transparent" stroke-width="0" vector-effect="non-scaling-stroke" pointer-events="all"/>
     <g pointer-events="none">${content}</g>
   </g>`;
 };
@@ -141,6 +231,7 @@ const renderField = (
   settings: LabelSettings,
   unitSystem: UnitSystem,
   qrSvgDataUri: string,
+  standardImageHrefs: Map<string, string>,
   options: RenderLabelSvgOptions
 ) => {
   if (field.kind === 'frame') {
@@ -160,11 +251,19 @@ const renderField = (
   }
 
   if (field.kind === 'image') {
-    const href = field.imageSource === 'custom' ? imageHref(field) : qrSvgDataUri;
+    if (options.omitImageContent) {
+      return renderInteractiveWrapper(field, '', options);
+    }
+
+    const href = field.imageSource === 'custom' ? customImageHref(field) : field.imageSource === 'qr' ? qrSvgDataUri : standardImageHrefs.get(field.id) ?? '';
     if (!href) return '';
+    const rotationDeg = Number.isFinite(field.rotationDeg) ? Number(field.rotationDeg) : 0;
+    const centerX = field.x + field.width / 2;
+    const centerY = field.y + field.height / 2;
+    const transform = rotationDeg ? ` transform="rotate(${rotationDeg} ${centerX} ${centerY})"` : '';
     return renderInteractiveWrapper(
       field,
-      `<image x="${field.x}" y="${field.y}" width="${field.width}" height="${field.height}" href="${escapeXml(href)}" preserveAspectRatio="xMidYMid meet"/>`,
+      `<image x="${field.x}" y="${field.y}" width="${field.width}" height="${field.height}" href="${escapeXml(href)}" preserveAspectRatio="xMidYMid meet"${transform}/>`,
       options
     );
   }

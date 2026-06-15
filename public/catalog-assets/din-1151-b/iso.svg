@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1.03249664 -1.8998645399999998 26.90168528 17.61955318">
+<rect width="100%" height="100%" fill="white"/>
+<g   fill="none"
+   stroke="rgb(0, 0, 0)"
+   stroke-linecap="butt"
+   stroke-linejoin="miter"
+   stroke-width="0.35"
+   transform="scale(1, -1)"
+  >
+<path id= "1" d=" M 0.822792 -1.51427 L 21.8154 -13.6344 " />
+<path id= "2" d=" M 1.72279 0.0445759 L 22.7154 -12.0755 " />
+<path id= "3" d=" M 24.0139 -13.8644 L 22.8161 -12.1686 " />
+<path id= "4" d=" M 24.0139 -13.8644 L 21.9464 -13.675 " />
+</g>
+<g   fill="none"
+   stroke="rgb(0, 0, 0)"
+   stroke-linecap="butt"
+   stroke-linejoin="miter"
+   stroke-width="0.35"
+   transform="scale(1, -1)"
+  >
+<g transform = "rotate(60, 0, 0)">
+<ellipse cx ="0" cy ="0" rx ="2.7"  ry ="1.55885"/>
+</g>
+<path d="M22.9018 -12.4875 A0.9 0.519615 60 0 1 22.8161 -12.1686" />
+<path d="M22.8161 -12.1686 A0.9 0.519615 60 0 1 22.7154 -12.0755" />
+<path d="M21.8154 -13.6344 A0.9 0.519615 60 0 1 21.9464 -13.675" />
+<path d="M21.9464 -13.675 A0.9 0.519615 60 0 1 22.9018 -12.4875" />
+</g>
+
+</svg>

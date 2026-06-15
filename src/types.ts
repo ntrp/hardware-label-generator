@@ -13,7 +13,7 @@ export type HardwareCategory =
   | 'custom';
 
 export type LabelElementKind = 'text' | 'image' | 'frame';
-export type ImageSource = 'qr' | 'custom';
+export type ImageSource = 'qr' | 'iso' | 'side' | 'top' | 'custom';
 export type FrameShape = 'box' | 'rounded';
 export type FrameLineStyle = 'solid' | 'dashed' | 'dotted';
 
@@ -22,6 +22,7 @@ export type HardwareSpecKey =
   | 'size'
   | 'length'
   | 'threadPitch'
+  | 'threadPitchName'
   | 'threadPitchUnit'
   | 'material'
   | 'materialType'
@@ -48,6 +49,7 @@ export interface HardwareItem {
   materialType: string;
   boltClass: string;
   threadPitch: string;
+  threadPitchName: string;
   threadPitchUnit: string;
   specs: Partial<Record<HardwareSpecKey, string>>;
   unitSystem: UnitSystem;
@@ -81,6 +83,8 @@ export interface PlacedField {
   imageBase64?: string;
   imageMimeType?: string;
   imageName?: string;
+  svgStrokeWidth?: number;
+  rotationDeg?: number;
   frameStyle?: FrameStyle;
 }
 
@@ -133,7 +137,7 @@ export interface AppState {
 
 export interface AppBackup {
   app: 'standalone-fastener-label-generator';
-  version: 8;
+  version: 9;
   exportedAt: string;
   state: AppState;
 }

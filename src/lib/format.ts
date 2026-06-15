@@ -88,6 +88,7 @@ export const placeholderLabels = {
   materialType: 'Material type',
   boltClass: 'Bolt class',
   threadPitch: 'Pitch',
+  threadPitchName: 'Pitch name',
   threadPitchUnit: 'Pitch unit',
   thickness: 'Thickness',
   innerDiameter: 'ID',
@@ -132,6 +133,8 @@ export const getPlaceholderValue = (item: HardwareItem, key: string, unitSystem:
       return item.boltClass;
     case 'threadPitch':
       return item.threadPitch;
+    case 'threadPitchName':
+      return item.threadPitchName;
     case 'threadPitchUnit':
       return item.threadPitchUnit;
     case 'thickness':

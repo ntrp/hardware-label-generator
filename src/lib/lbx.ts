@@ -3,6 +3,8 @@ import type { HardwareItem, LabelSettings, PlacedField, UnitSystem } from '../ty
 import { defaultFrameStyle } from './defaults';
 import { renderTextTemplate } from './format';
 import { buildQrPayload, createQrPngDataUrl } from './qr';
+import { isStandardImageSource, missingCatalogAssetSvg, standardImageLabel, standardImageUrlForItem } from './standardImages';
+import { applySvgStrokeWidth, normalizedSvgStrokeWidth } from './svgAssets';
 
 export interface LbxXmlFiles {
   'label.xml': string;
@@ -37,14 +39,20 @@ const lineStyle = (style: string) => {
   return 'SOLID';
 };
 
-const lbxImageFields = (settings: LabelSettings) =>
-  settings.fields.filter((field) => field.kind === 'image' && field.style.visible && (field.imageSource === 'qr' || (field.imageSource === 'custom' && field.imageBase64)));
+const lbxImageFields = (item: HardwareItem, settings: LabelSettings) =>
+  settings.fields.filter(
+    (field) =>
+      field.kind === 'image' &&
+      field.style.visible &&
+      (field.imageSource === 'qr' || isStandardImageSource(field.imageSource) || (field.imageSource === 'custom' && field.imageBase64))
+  );
 
-const lbxExportedImageFields = (settings: LabelSettings, purchaseLink: string) =>
-  lbxImageFields(settings).filter((field) => field.imageSource !== 'qr' || purchaseLink.trim());
+const lbxExportedImageFields = (item: HardwareItem, settings: LabelSettings, purchaseLink: string) =>
+  lbxImageFields(item, settings).filter((field) => field.imageSource !== 'qr' || purchaseLink.trim());
 
 const imageExtension = (field: PlacedField) => {
   if (field.imageSource === 'qr') return 'png';
+  if (isStandardImageSource(field.imageSource)) return 'svg';
 
   const nameExtension = field.imageName?.split('.').pop()?.toLowerCase();
   if (nameExtension === 'bmp' || nameExtension === 'png' || nameExtension === 'svg') {
@@ -60,7 +68,12 @@ const imageExtension = (field: PlacedField) => {
 
 const imageFileName = (imageIndex: number, field: PlacedField) => `Object${imageIndex}.${imageExtension(field)}` as const;
 
-const objectStyleXml = (field: PlacedField, objectName: string, extra = '') => `<pt:objectStyle x="${pt(field.x)}" y="${pt(field.y)}" width="${pt(field.width)}" height="${pt(field.height)}" backColor="#FFFFFF" backPrintColorNumber="0" ropMode="COPYPEN" angle="0" anchor="TOPLEFT" flip="NONE">
+const objectAngle = (field: PlacedField) => {
+  if (field.kind !== 'image' || !Number.isFinite(field.rotationDeg)) return 0;
+  return Number(Number(field.rotationDeg).toFixed(2));
+};
+
+const objectStyleXml = (field: PlacedField, objectName: string, extra = '') => `<pt:objectStyle x="${pt(field.x)}" y="${pt(field.y)}" width="${pt(field.width)}" height="${pt(field.height)}" backColor="#FFFFFF" backPrintColorNumber="0" ropMode="COPYPEN" angle="${objectAngle(field)}" anchor="TOPLEFT" flip="NONE">
   <pt:pen style="NULL" widthX="0.5pt" widthY="0.5pt" color="#000000" printColorNumber="1"></pt:pen>
   <pt:brush style="NULL" color="#000000" printColorNumber="1" id="0"></pt:brush>
   <pt:expanded objectName="${escapeXml(objectName)}" ID="0" lock="0" templateMergeTarget="LABELLIST" templateMergeType="NONE" templateMergeID="0" allowOutOfBoundsTransfer="false" linkStatus="NONE" linkID="0"${extra}></pt:expanded>
@@ -105,7 +118,7 @@ const renderFrameObject = (field: PlacedField, index: number) => {
 
 const renderImageObject = (field: PlacedField, index: number, imageIndex: number) => {
   const fileName = imageFileName(imageIndex, field);
-  const originalName = field.imageSource === 'qr' ? fileName : field.imageName?.trim() || fileName;
+  const originalName = field.imageSource === 'qr' || isStandardImageSource(field.imageSource) ? fileName : field.imageName?.trim() || fileName;
 
   return `<image:image>
   ${objectStyleXml(field, `Bitmap${index + 1}`)}
@@ -124,8 +137,8 @@ const renderObjects = (item: HardwareItem, settings: LabelSettings, purchaseLink
     .filter((field) => field.style.visible)
     .map((field, index) => {
       if (field.kind === 'frame') return renderFrameObject({ ...field, width: settings.widthMm, height: settings.heightMm }, index);
-      if (field.kind === 'image' && (field.imageSource === 'qr' || (field.imageSource === 'custom' && field.imageBase64))) {
-        const imageIndex = lbxExportedImageFields(settings, purchaseLink).findIndex((candidate) => candidate.id === field.id);
+      if (field.kind === 'image' && (field.imageSource === 'qr' || isStandardImageSource(field.imageSource) || (field.imageSource === 'custom' && field.imageBase64))) {
+        const imageIndex = lbxExportedImageFields(item, settings, purchaseLink).findIndex((candidate) => candidate.id === field.id);
         return imageIndex >= 0 ? renderImageObject(field, index, imageIndex) : '';
       }
       if (field.kind === 'text') return renderTextObject(field, item, unitSystem, index);
@@ -207,17 +220,38 @@ export const createLbxBlob = async (item: HardwareItem, settings: LabelSettings,
 
 const generateImageFiles = async (item: HardwareItem, settings: LabelSettings, purchaseLink: string) => {
   const entries = await Promise.all(
-    lbxExportedImageFields(settings, purchaseLink).map(async (field, index) => [imageFileName(index, field), await imageFieldBytes(field, purchaseLink)] as const)
+    lbxExportedImageFields(item, settings, purchaseLink).map(async (field, index) => [imageFileName(index, field), await imageFieldBytes(field, item, purchaseLink)] as const)
   );
 
   return Object.fromEntries(entries) as Partial<LbxXmlFiles>;
 };
 
-const imageFieldBytes = async (field: PlacedField, purchaseLink: string) => {
+const imageFieldBytes = async (field: PlacedField, item: HardwareItem, purchaseLink: string) => {
   if (field.imageSource === 'qr') {
     const payload = buildQrPayload(purchaseLink);
     if (!payload.target) return new Uint8Array();
     return dataUrlToBytes(await createQrPngDataUrl(payload.target));
+  }
+
+  if (isStandardImageSource(field.imageSource)) {
+    const url = standardImageUrlForItem(item, field.imageSource);
+    const fallback = () => new TextEncoder().encode(missingCatalogAssetSvg(standardImageLabel(field.imageSource)));
+    if (!url) return fallback();
+    if (url.startsWith('data:')) return dataUrlToBytes(url);
+
+    let response: Response;
+    try {
+      response = await fetch(url);
+    } catch {
+      return fallback();
+    }
+    if (!response.ok) return fallback();
+
+    const strokeWidth = normalizedSvgStrokeWidth(field.svgStrokeWidth);
+    if (strokeWidth) {
+      return new TextEncoder().encode(applySvgStrokeWidth(await response.text(), strokeWidth));
+    }
+    return new Uint8Array(await response.arrayBuffer());
   }
 
   if (!field.imageBase64) {

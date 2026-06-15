@@ -38,6 +38,7 @@ export const defaultHardwareItem: HardwareItem = {
   materialType: 'A2',
   boltClass: 'A2-70',
   threadPitch: '0.5',
+  threadPitchName: 'coarse',
   threadPitchUnit: 'mm',
   specs: {
     size: 'M3',
@@ -46,6 +47,7 @@ export const defaultHardwareItem: HardwareItem = {
     materialType: 'A2',
     boltClass: 'A2-70',
     threadPitch: '0.5',
+    threadPitchName: 'coarse',
     threadPitchUnit: 'mm'
   },
   unitSystem: 'metric'
@@ -238,8 +240,11 @@ export const defaultAppState: AppState = {
   batchSpecs: {
     size: 'M2, M2.5, M3, M4, M5, M6',
     length: '6, 8, 10, 12, 16, 20',
+    threadPitchName: 'coarse',
     threadPitch: '0.5',
     threadPitchUnit: 'mm',
-    material: 'A2'
+    material: 'stainless steel',
+    materialType: 'A2',
+    boltClass: 'A2-70'
   }
 };

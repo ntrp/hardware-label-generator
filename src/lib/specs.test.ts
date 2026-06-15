@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { standardsCatalog } from '../data/catalog';
-import { getAllCatalogSpecOptions, getCatalogSpecOptions } from './specs';
+import { getAllCatalogSpecOptions, getCatalogSpecOptions, getCatalogWasherDimensionValue } from './specs';
 
 describe('catalog spec options', () => {
   it('returns metric and imperial values for a selected catalog part', () => {
@@ -34,5 +34,31 @@ describe('catalog spec options', () => {
     const imperialSizes = getCatalogSpecOptions(imperialEntry, 'screw', 'size', 'imperial');
     expect(imperialSizes).toContain('#2-56');
     expect(imperialSizes).not.toContain('M3 equivalent');
+  });
+
+  it('includes the full metric thread table sizes for metric screw catalog parts', () => {
+    const entry = standardsCatalog.find((candidate) => candidate.id === 'din-912');
+    expect(entry).toBeDefined();
+
+    const sizes = getCatalogSpecOptions(entry, 'screw', 'size', 'metric');
+    expect(sizes).toEqual(expect.arrayContaining(['M1', 'M1.7', 'M2.2', 'M2.3', 'M2.6', 'M7', 'M9', 'M68', 'M100']));
+  });
+
+  it('maps catalog washer dimensions from the selected size', () => {
+    const entry = standardsCatalog.find((candidate) => candidate.id === 'din-125');
+    expect(entry).toBeDefined();
+
+    expect(getCatalogWasherDimensionValue(entry, 'thickness', 'metric', 'M6')).toBe('1.6 mm');
+    expect(getCatalogWasherDimensionValue(entry, 'innerDiameter', 'metric', 'M6')).toBe('6.4 mm');
+    expect(getCatalogWasherDimensionValue(entry, 'outerDiameter', 'metric', 'M6')).toBe('12 mm');
+  });
+
+  it('keeps fixed washer dimensions readonly when the catalog only exposes a standard value', () => {
+    const entry = standardsCatalog.find((candidate) => candidate.id === 'din-127');
+    expect(entry).toBeDefined();
+
+    expect(getCatalogWasherDimensionValue(entry, 'thickness', 'metric', 'M6')).toBe('standard');
+    expect(getCatalogWasherDimensionValue(entry, 'innerDiameter', 'metric', 'M6')).toBe('standard');
+    expect(getCatalogWasherDimensionValue(entry, 'outerDiameter', 'metric', 'M6')).toBe('standard');
   });
 });

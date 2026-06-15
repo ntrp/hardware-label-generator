@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-5.01501 -6.73299 10.14129 12.81278">
+<rect width="100%" height="100%" fill="white"/>
+<g   fill="none"
+   stroke="rgb(0, 0, 0)"
+   stroke-linecap="butt"
+   stroke-linejoin="miter"
+   stroke-width="0.35"
+   transform="scale(1, -1)"
+  >
+<path id= "1" d=" M -4.13137 -4.54296 L -3 -5.19615 " />
+<path id= "2" d=" M 1.86863 5.84935 L 3 5.19615 " />
+</g>
+<g   fill="none"
+   stroke="rgb(0, 0, 0)"
+   stroke-linecap="butt"
+   stroke-linejoin="miter"
+   stroke-width="0.35"
+   transform="scale(1, -1)"
+  >
+<path d="M0.989949 1.87794 A3 1.73205 60 0 1 0.368629 3.25127" />
+<path d="M0.368629 3.25127 A3 1.73205 60 0 1 -2.63137 -1.94488" />
+<path d="M-2.63137 -1.94488 A3 1.73205 60 0 1 0.989949 1.87794" />
+<path d="M3.11127 3.10269 A6 3.4641 60 0 1 1.86863 5.84935" />
+<path d="M1.86863 5.84935 A6 3.4641 60 0 1 -4.13137 -4.54296" />
+<path d="M-4.13137 -4.54296 A6 3.4641 60 0 1 3.11127 3.10269" />
+<path d="M4.24264 2.44949 A6 3.4641 60 0 1 3 5.19615" />
+<path d="M-3 -5.19615 A6 3.4641 60 0 1 4.24264 2.44949" />
+<path d="M0.823559 2.73284 A3 1.73205 60 0 1 -1.95493 -2.07964" />
+</g>
+
+</svg>

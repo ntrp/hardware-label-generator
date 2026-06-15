@@ -8,7 +8,11 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "test": "vitest run",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "research:assets:audit": "python3 research/catalog-assets/scripts/catalog_assets.py audit",
+    "research:assets:steps": "python3 research/catalog-assets/scripts/run_freecad.py generate-fasteners-steps generate --all --threads",
+    "research:assets:render": "python3 research/catalog-assets/scripts/run_freecad.py catalog-assets render --all --iso",
+    "research:assets:technical": "python3 research/catalog-assets/scripts/run_freecad.py catalog-assets render --all"
   },
   "dependencies": {
     "jszip": "^3.10.1",
