@@ -7,7 +7,7 @@ const emptyLinkState = {};
 
 describe('export helpers', () => {
   it('builds deterministic label filenames', () => {
-    expect(labelFilename(defaultHardwareItem, 'svg')).toBe('din-912-iso-4762-m3-12-mm-stainless-steel-a2-a2-70.svg');
+    expect(labelFilename(defaultHardwareItem, 'svg')).toBe('din-912-iso-4762-m3-12-mm-stainless-steel-a2-plain-a2-70.svg');
   });
 
   it('creates one ZIP folder per hardware card, even for duplicate labels', async () => {

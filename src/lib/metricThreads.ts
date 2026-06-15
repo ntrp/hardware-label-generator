@@ -68,7 +68,7 @@ export const metricThreadPitches: MetricThreadPitch[] = metricThreadPitchRows.fl
 export const metricThreadPitchesForSize = (size: string) =>
   metricThreadPitches.filter((entry) => entry.size.toLowerCase() === size.trim().toLowerCase());
 
-export const formatMetricThreadPitchOption = (entry: MetricThreadPitch) => `${entry.name} (${entry.value})`;
+export const formatMetricThreadPitchOption = (entry: MetricThreadPitch) => `${entry.name} (${entry.value} mm)`;
 
 export const metricThreadPitchNamesForSize = (size: string) =>
   metricThreadPitchesForSize(size).map(formatMetricThreadPitchOption);

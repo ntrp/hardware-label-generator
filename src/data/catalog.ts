@@ -3,24 +3,45 @@ import { metricThreadSizes } from '../lib/metricThreads';
 
 const metricMachineSizes = metricThreadSizes;
 const metricStructuralSizes = metricThreadSizes.filter((size) => !['M1', 'M1.2', 'M1.4', 'M1.6', 'M1.7', 'M1.8', 'M2', 'M2.2', 'M2.3', 'M2.5', 'M2.6', 'M3', 'M3.5', 'M4'].includes(size));
-const metricLengths = ['4', '5', '6', '8', '10', '12', '16', '20', '25', '30', '35', '40', '45', '50', '60', '70', '80', '100', '120', '160'];
-const metricShortLengths = ['3', '4', '5', '6', '8', '10', '12', '16', '20', '25', '30', '35', '40'];
+const metricLengths = ['4', '5', '6', '8', '10', '12', '14', '16', '18', '20', '22', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80', '90', '100', '110', '120', '130', '140', '150', '160', '180', '200'];
+const metricShortLengths = ['2', '2.5', '3', '4', '5', '6', '8', '10', '12', '14', '16', '18', '20', '22', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80'];
 const metricCoarsePitches = ['0.35', '0.4', '0.45', '0.5', '0.7', '0.8', '1.0', '1.25', '1.5', '1.75', '2.0', '2.5', '3.0'];
 const metricFinePitches = ['0.35', '0.5', '0.75', '1.0', '1.25', '1.5', '2.0', '3.0', '4.0'];
 const inchMachineSizes = ['#0-80', '#1-64', '#2-56', '#3-48', '#4-40', '#5-40', '#6-32', '#8-32', '#10-24', '1/4-20', '5/16-18', '3/8-16', '1/2-13'];
 const inchFineSizes = ['#0-80', '#1-72', '#2-64', '#3-56', '#4-48', '#5-44', '#6-40', '#8-36', '#10-32', '1/4-28', '5/16-24', '3/8-24', '1/2-20'];
+const inchNominalMachineSizes = ['#0', '#1', '#2', '#3', '#4', '#5', '#6', '#8', '#10', '#12', '1/4"', '5/16"', '3/8"', '7/16"', '1/2"'];
+const inchNominalStructuralSizes = ['1/4"', '5/16"', '3/8"', '7/16"', '1/2"', '9/16"', '5/8"', '3/4"', '7/8"', '1"'];
 const inchLengths = ['1/8"', '3/16"', '1/4"', '5/16"', '3/8"', '1/2"', '5/8"', '3/4"', '1"', '1-1/4"', '1-1/2"', '2"', '2-1/2"', '3"', '4"'];
 const inchPitches = ['80 TPI', '72 TPI', '64 TPI', '56 TPI', '48 TPI', '44 TPI', '40 TPI', '36 TPI', '32 TPI', '28 TPI', '24 TPI', '20 TPI', '18 TPI', '16 TPI', '13 TPI'];
 const steelStainlessMaterials = ['steel', 'alloy steel', 'stainless steel'];
 const nonferrousFastenerMaterials = ['steel', 'stainless steel', 'brass', 'aluminum', 'bronze', 'nylon'];
 const metricBoltClassOptions = ['4.6', '4.8', '5.8', '8.8', '10.9', '12.9', 'A2-70', 'A4-70', 'A4-80'];
-const saeBoltClassOptions = ['grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70', 'A4-80'];
-const steelStainlessMaterialTypes = ['plain', 'zinc plated', 'yellow zinc plated', 'hot-dip galvanized', 'black oxide', 'phosphate', 'zinc flake', 'A2', 'A4', '18-8', '316'];
+const saeBoltClassOptions = ['grade 2', 'grade 5', 'grade 8'];
+const steelStainlessMaterialTypes = ['low carbon', 'medium carbon', 'high carbon', 'alloy steel', 'A1', 'A2', 'A4', '18-8', '304', '316', '410'];
+const nonferrousFastenerMaterialTypes = [
+  'low carbon',
+  'medium carbon',
+  'high carbon',
+  'A1',
+  'A2',
+  'A4',
+  '18-8',
+  '304',
+  '316',
+  '410',
+  'plain',
+  '6061',
+  '7075',
+  'silicon bronze',
+  'phosphor bronze',
+  'aluminum bronze',
+  'nylon'
+];
 const washerMaterials = ['steel', 'stainless steel', 'brass', 'bronze', 'nylon', 'pom'];
-const washerMaterialTypes = ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316', 'natural', 'black'];
+const washerMaterialTypes = ['low carbon', 'medium carbon', 'high carbon', 'A1', 'A2', 'A4', '18-8', '304', '316', '410', 'plain', 'nylon', 'pom'];
 const noPitch = { metric: ['n/a'], imperial: ['n/a'] };
 
-const coreStandardsCatalog: StandardCatalogEntry[] = [
+export const standardsCatalog: StandardCatalogEntry[] = [
   {
     id: 'din-912',
     category: 'screw',
@@ -34,7 +55,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
       imperial: ['#2', '#3', '#4', '#6', '#8', '#10', '1/4"', '5/16"', '3/8"', '1/2"']
     },
     lengths: {
-      metric: ['4', '6', '8', '10', '12', '16', '20', '25', '30', '40', '50'],
+      metric: metricShortLengths,
       imperial: ['5/32"', '1/4"', '5/16"', '3/8"', '1/2"', '5/8"', '3/4"', '1"', '1-1/4"', '1-1/2"', '2"']
     },
     materials: ['steel', 'alloy steel', 'stainless steel', 'brass'],
@@ -43,7 +64,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
       imperial: ['64 TPI', '56 TPI', '48 TPI', '40 TPI', '32 TPI', '28 TPI', '24 TPI', '20 TPI', '18 TPI', '16 TPI', '13 TPI']
     },
     specs: {
-      materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4'],
+      materialType: steelStainlessMaterialTypes,
       boltClass: ['4.8', '8.8', '10.9', '12.9', 'A2-70', 'A4-70', 'A4-80']
     },
     sourceId: 'iso-fastener-tables'
@@ -70,7 +91,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
       imperial: ['40 TPI', '32 TPI', '24 TPI', '20 TPI', '18 TPI', '16 TPI', '13 TPI', '11 TPI']
     },
     specs: {
-      materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'A2', 'A4'],
+      materialType: steelStainlessMaterialTypes,
       boltClass: ['4.6', '4.8', '5.8', '8.8', '10.9', '12.9', 'A2-70', 'A4-70', 'A4-80']
     },
     sourceId: 'iso-fastener-tables'
@@ -97,7 +118,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
       imperial: ['56 TPI', '40 TPI', '32 TPI', '24 TPI', '20 TPI', '18 TPI', '16 TPI', '13 TPI', '11 TPI']
     },
     specs: {
-      materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'A2', 'A4']
+      materialType: steelStainlessMaterialTypes
     },
     sourceId: 'iso-fastener-tables'
   },
@@ -124,18 +145,18 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     },
     specs: {
       thickness: {
-        metric: ['0.3 mm', '0.5 mm', '0.8 mm', '1 mm', '1.2 mm', '1.6 mm', '2 mm', '2.5 mm', '3 mm'],
-        imperial: ['0.02"', '0.03"', '0.05"', '0.06"', '0.08"', '0.10"']
+        metric: ['0.3 mm', '0.5 mm', '0.5 mm', '0.8 mm', '1 mm', '1.6 mm', '1.6 mm', '2 mm', '2.5 mm', '3 mm'],
+        imperial: ['0.02"', '0.02"', '0.03"', '0.03"', '0.04"', '0.06"', '0.06"', '0.08"', '0.10"', '0.12"', '0.12"']
       },
       innerDiameter: {
         metric: ['2.2 mm', '2.7 mm', '3.2 mm', '4.3 mm', '5.3 mm', '6.4 mm', '8.4 mm', '10.5 mm', '13 mm', '17 mm'],
-        imperial: ['0.09"', '0.11"', '0.14"', '0.17"', '0.20"', '0.26"', '0.34"', '0.41"', '0.53"', '0.66"']
+        imperial: ['0.09"', '0.11"', '0.14"', '0.17"', '0.20"', '0.23"', '0.26"', '0.34"', '0.41"', '0.53"', '0.66"']
       },
       outerDiameter: {
         metric: ['5 mm', '6 mm', '7 mm', '9 mm', '10 mm', '12 mm', '16 mm', '20 mm', '24 mm', '30 mm'],
-        imperial: ['0.20"', '0.25"', '0.30"', '0.38"', '0.44"', '0.50"', '0.63"', '0.75"', '1"', '1.25"']
+        imperial: ['0.20"', '0.25"', '0.30"', '0.38"', '0.44"', '0.50"', '0.56"', '0.63"', '0.75"', '1"', '1.25"']
       },
-      materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'A2', 'A4', 'natural', 'black']
+      materialType: washerMaterialTypes
     },
     sourceId: 'iso-fastener-tables'
   },
@@ -161,7 +182,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
       imperial: ['56 TPI', '40 TPI', '32 TPI', '24 TPI', '20 TPI', '18 TPI', '16 TPI', '13 TPI']
     },
     specs: {
-      materialType: ['plain', 'zinc plated', 'black oxide', '18-8', '316'],
+      materialType: steelStainlessMaterialTypes,
       boltClass: ['grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70', 'A4-80']
     },
     sourceId: 'asme-thread-reference'
@@ -192,7 +213,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
         metric: ['1-3 mm', '3-5 mm', '5-8 mm', '8-12 mm'],
         imperial: ['1/32-1/8"', '1/8-1/4"', '1/4-3/8"', '3/8-1/2"']
       },
-      materialType: ['plain', 'zinc plated', 'A2', 'A4', 'natural']
+      materialType: ['plain', 'low carbon', 'medium carbon', 'high carbon', 'A1', 'A2', 'A4', 'nylon']
     },
     sourceId: 'iso-fastener-tables'
   },
@@ -218,7 +239,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
       imperial: ['n/a']
     },
     specs: {
-      materialType: ['plain', 'black oxide', 'zinc plated', 'A2', 'A4']
+      materialType: steelStainlessMaterialTypes
     },
     sourceId: 'iso-fastener-tables'
   },
@@ -244,7 +265,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
       imperial: ['56 TPI', '48 TPI', '40 TPI', '32 TPI', '24 TPI', '20 TPI']
     },
     specs: {
-      materialType: ['plain', 'A2', 'A4']
+      materialType: ['plain', 'A1', 'A2', 'A4']
     },
     sourceId: 'manufacturer-catalogs'
   },
@@ -270,7 +291,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
       imperial: ['n/a']
     },
     specs: {
-      materialType: ['plain', 'natural', 'black', 'zinc plated', 'A2', 'A4']
+      materialType: ['nylon', 'low carbon', 'medium carbon', 'high carbon', 'A1', 'A2', 'A4']
     },
     sourceId: 'manufacturer-catalogs'
   },
@@ -296,7 +317,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
       imperial: ['n/a']
     },
     specs: {
-      materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4']
+      materialType: steelStainlessMaterialTypes
     },
     sourceId: 'manufacturer-catalogs'
   },
@@ -462,7 +483,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'nickel plated', 'chrome plated', 'A2', 'A4', 'natural', 'black'], boltClass: metricBoltClassOptions },
+    specs: { materialType: nonferrousFastenerMaterialTypes, boltClass: metricBoltClassOptions },
     sourceId: 'din-iso-public-standard-index'
   },
   {
@@ -477,7 +498,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'nickel plated', 'chrome plated', 'A2', 'A4', 'natural', 'black'], boltClass: metricBoltClassOptions },
+    specs: { materialType: nonferrousFastenerMaterialTypes, boltClass: metricBoltClassOptions },
     sourceId: 'din-iso-public-standard-index'
   },
   {
@@ -492,7 +513,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'nickel plated', 'chrome plated', 'A2', 'A4', 'natural', 'black'], boltClass: metricBoltClassOptions },
+    specs: { materialType: nonferrousFastenerMaterialTypes, boltClass: metricBoltClassOptions },
     sourceId: 'din-iso-public-standard-index'
   },
   {
@@ -507,7 +528,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel'],
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['zinc plated', 'black oxide', 'A2', 'A4'], boltClass: ['10.9', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['10.9', 'A2-70', 'A4-70'] },
     sourceId: 'din-public-standard-index'
   },
   {
@@ -522,7 +543,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     lengths: { metric: ['9.5', '13', '16', '19', '25', '32', '38', '50', '63', '75'], imperial: ['3/8"', '1/2"', '5/8"', '3/4"', '1"', '1-1/4"', '1-1/2"', '2"', '2-1/2"', '3"'] },
     materials: ['steel', 'stainless steel'],
     pitches: { metric: ['self-drilling'], imperial: ['self-drilling'] },
-    specs: { materialType: ['zinc plated', 'zinc flake', 'A2', 'A4'], boltClass: [''] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: [''] },
     sourceId: 'din-iso-public-standard-index'
   },
   {
@@ -537,7 +558,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'A2', 'A4', 'nickel plated'], boltClass: ['04', '05', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['04', '05', 'A2-70', 'A4-70'] },
     sourceId: 'din-iso-public-standard-index'
   },
   {
@@ -552,7 +573,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: ['steel', 'stainless steel'],
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['zinc plated', 'plain', 'A2', 'A4'], boltClass: ['8', '10', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['8', '10', 'A2-70', 'A4-70'] },
     sourceId: 'din-iso-public-standard-index'
   },
   {
@@ -567,7 +588,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: ['steel', 'stainless steel'],
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['zinc plated', 'plain', 'A2', 'A4'], boltClass: ['8', '10', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['8', '10', 'A2-70', 'A4-70'] },
     sourceId: 'din-iso-public-standard-index'
   },
   {
@@ -582,7 +603,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'chrome plated', 'A2', 'A4', 'nickel plated'], boltClass: ['6', '8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['6', '8', 'A2-70', 'A4-70'] },
     sourceId: 'din-public-standard-index'
   },
   {
@@ -597,7 +618,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: ['steel', 'stainless steel'],
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'A2', 'A4'], boltClass: ['8', '10', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['8', '10', 'A2-70', 'A4-70'] },
     sourceId: 'din-en-public-standard-index'
   },
   {
@@ -608,14 +629,14 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     code: 'DIN 9021 / ISO 7093',
     standards: { DIN: 'DIN 9021', ISO: 'ISO 7093' },
     description: 'Large diameter flat washer',
-    sizes: { metric: metricMachineSizes, imperial: ['#2', '#4', '#6', '#8', '#10', '1/4"', '5/16"', '3/8"', '1/2"', '5/8"'] },
+    sizes: { metric: ['M2', 'M3', 'M4', 'M5', 'M6', 'M8', 'M10', 'M12', 'M16', 'M20'], imperial: ['#2', '#4', '#6', '#8', '#10', '1/4"', '5/16"', '3/8"', '1/2"', '5/8"'] },
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: washerMaterials,
     pitches: noPitch,
     specs: {
-      thickness: { metric: ['0.5 mm', '0.8 mm', '1 mm', '1.6 mm', '2 mm', '2.5 mm', '3 mm', '4 mm', '5 mm'], imperial: ['0.03"', '0.05"', '0.06"', '0.08"', '0.10"', '0.13"', '0.16"'] },
+      thickness: { metric: ['0.5 mm', '0.8 mm', '1 mm', '1.2 mm', '1.6 mm', '2 mm', '2.5 mm', '3 mm', '4 mm', '5 mm'], imperial: ['0.03"', '0.03"', '0.05"', '0.05"', '0.06"', '0.08"', '0.10"', '0.13"', '0.16"', '0.20"'] },
       innerDiameter: { metric: ['2.2 mm', '3.2 mm', '4.3 mm', '5.3 mm', '6.4 mm', '8.4 mm', '10.5 mm', '13 mm', '17 mm', '21 mm'], imperial: ['0.09"', '0.14"', '0.17"', '0.20"', '0.26"', '0.34"', '0.41"', '0.53"', '0.66"', '0.81"'] },
-      outerDiameter: { metric: ['6 mm', '9 mm', '12 mm', '15 mm', '18 mm', '24 mm', '30 mm', '37 mm', '50 mm', '60 mm'], imperial: ['0.25"', '0.38"', '0.50"', '0.63"', '0.75"', '1"', '1.25"', '1.5"', '2"'] },
+      outerDiameter: { metric: ['6 mm', '9 mm', '12 mm', '15 mm', '18 mm', '24 mm', '30 mm', '37 mm', '50 mm', '60 mm'], imperial: ['0.25"', '0.38"', '0.50"', '0.63"', '0.75"', '1"', '1.25"', '1.5"', '2"', '2.5"'] },
       materialType: washerMaterialTypes
     },
     sourceId: 'din-iso-public-standard-index'
@@ -677,7 +698,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'A2', 'A4', 'nickel plated'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'din-iso-public-standard-index'
   },
   {
@@ -692,7 +713,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     lengths: { metric: ['6', '8', '10', '12', '16', '20', '25', '32', '40', '50', '63', '80'], imperial: ['1/4"', '3/8"', '1/2"', '5/8"', '3/4"', '1"', '1-1/4"', '1-1/2"', '2"', '2-1/2"', '3"'] },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'A2', 'A4', 'nickel plated'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'din-iso-public-standard-index'
   },
   {
@@ -707,7 +728,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'phosphate', 'A2', 'A4'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'din-iso-public-standard-index'
   },
   {
@@ -722,7 +743,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'phosphate', 'A2', 'A4'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'din-iso-public-standard-index'
   },
   {
@@ -733,11 +754,11 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     code: 'ASME B18.2.1 / SAE J429',
     standards: { ASME: 'ASME B18.2.1', SAE: 'SAE J429' },
     description: 'Inch hex cap screw / hex bolt',
-    sizes: { metric: metricStructuralSizes, imperial: ['1/4-20', '5/16-18', '3/8-16', '7/16-14', '1/2-13', '5/8-11', '3/4-10', '7/8-9', '1-8'] },
+    sizes: { metric: metricStructuralSizes, imperial: inchNominalStructuralSizes },
     lengths: { metric: metricLengths, imperial: inchLengths },
     materials: ['steel', 'alloy steel', 'stainless steel'],
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'yellow zinc plated', 'hot-dip galvanized', 'black oxide', '18-8', '316'], boltClass: saeBoltClassOptions },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: saeBoltClassOptions },
     sourceId: 'asme-sae-public-reference'
   },
   {
@@ -748,11 +769,11 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     code: 'ASME B18.6.3',
     standards: { ASME: 'ASME B18.6.3', SAE: 'SAE J933' },
     description: 'Inch machine screw',
-    sizes: { metric: metricMachineSizes, imperial: [...inchMachineSizes, ...inchFineSizes] },
+    sizes: { metric: metricMachineSizes, imperial: inchNominalMachineSizes },
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'nickel plated', 'chrome plated', 'black oxide', '18-8', '316', 'natural'], boltClass: saeBoltClassOptions },
+    specs: { materialType: nonferrousFastenerMaterialTypes, boltClass: saeBoltClassOptions },
     sourceId: 'asme-sae-public-reference'
   },
   {
@@ -767,7 +788,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: { metric: ['tapping'], imperial: ['tapping'] },
-    specs: { materialType: ['zinc plated', 'black oxide', 'nickel plated', '18-8', '316'], boltClass: [''] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: [''] },
     sourceId: 'asme-sae-public-reference'
   },
   {
@@ -778,11 +799,11 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     code: 'ASME B18.2.2 / SAE J995',
     standards: { ASME: 'ASME B18.2.2', SAE: 'SAE J995' },
     description: 'Inch hex nut',
-    sizes: { metric: metricStructuralSizes, imperial: ['1/4-20', '5/16-18', '3/8-16', '7/16-14', '1/2-13', '5/8-11', '3/4-10', '7/8-9', '1-8'] },
+    sizes: { metric: metricStructuralSizes, imperial: inchNominalStructuralSizes },
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'yellow zinc plated', 'hot-dip galvanized', '18-8', '316', 'nickel plated'], boltClass: ['grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'asme-sae-public-reference'
   },
   {
@@ -812,7 +833,7 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: ['1/4"', '3/8"', '1/2"', '5/8"', '3/4"', '1"', '1-1/4"', '1-1/2"', '2"', '2-1/2"', '3"'] },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', '18-8', '316', 'nickel plated'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'asme-sae-public-reference'
   },
   {
@@ -827,13 +848,10 @@ const coreStandardsCatalog: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'alloy steel', 'stainless steel'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'black oxide', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'asme-sae-public-reference'
   }
-];
-
-
-const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
+,
   {
     id: 'asme-b-18-2-1-6',
     category: 'screw',
@@ -876,7 +894,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -891,7 +909,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -906,7 +924,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -921,7 +939,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -936,7 +954,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -951,7 +969,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -966,7 +984,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -981,7 +999,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1446,7 +1464,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1461,7 +1479,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1476,7 +1494,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1491,7 +1509,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1506,7 +1524,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1521,7 +1539,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1536,7 +1554,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1551,7 +1569,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1581,7 +1599,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1626,7 +1644,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1641,7 +1659,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1671,7 +1689,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1686,7 +1704,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1701,7 +1719,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1791,7 +1809,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1806,7 +1824,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1821,7 +1839,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1866,7 +1884,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1896,7 +1914,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1911,7 +1929,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1956,7 +1974,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1971,7 +1989,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -1986,7 +2004,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2001,7 +2019,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2076,7 +2094,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2091,7 +2109,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2106,7 +2124,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2136,7 +2154,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2151,7 +2169,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2166,7 +2184,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2331,7 +2349,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2346,7 +2364,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2361,7 +2379,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2376,7 +2394,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2391,7 +2409,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2406,7 +2424,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2436,7 +2454,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2451,7 +2469,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2511,7 +2529,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2526,7 +2544,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2541,7 +2559,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2586,7 +2604,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2601,7 +2619,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2616,7 +2634,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2661,7 +2679,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2676,7 +2694,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2691,7 +2709,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2856,7 +2874,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2871,7 +2889,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2886,7 +2904,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2901,7 +2919,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2916,7 +2934,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2931,7 +2949,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2946,7 +2964,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2961,7 +2979,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -2976,7 +2994,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -3006,7 +3024,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -3021,7 +3039,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -3036,7 +3054,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -3051,7 +3069,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -3066,7 +3084,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -3081,7 +3099,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -3096,7 +3114,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -3111,7 +3129,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -3126,7 +3144,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -3141,7 +3159,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -3156,7 +3174,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: metricShortLengths, imperial: inchLengths },
     materials: ['steel', 'stainless steel', 'brass'],
     pitches: noPitch,
-    specs: { materialType: ['plain', 'zinc plated', 'black oxide', 'A2', 'A4', '18-8', '316'] },
+    specs: { materialType: steelStainlessMaterialTypes },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -3171,7 +3189,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
   {
@@ -3186,10 +3204,7 @@ const freecadWorkbenchCatalogEntries: StandardCatalogEntry[] = [
     lengths: { metric: ['standard'], imperial: ['standard'] },
     materials: nonferrousFastenerMaterials,
     pitches: { metric: metricCoarsePitches, imperial: inchPitches },
-    specs: { materialType: ['plain', 'zinc plated', 'hot-dip galvanized', 'black oxide', 'A2', 'A4', '18-8', '316'], boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
+    specs: { materialType: steelStainlessMaterialTypes, boltClass: ['4', '5', '6', '8', '10', '12', 'grade 2', 'grade 5', 'grade 8', 'A2-70', 'A4-70'] },
     sourceId: 'freecad-fasteners-workbench'
   },
 ];
-
-export const standardsCatalog: StandardCatalogEntry[] = [...coreStandardsCatalog, ...freecadWorkbenchCatalogEntries];
-

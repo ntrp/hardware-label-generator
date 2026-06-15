@@ -1,4 +1,4 @@
-# Standalone Fastener Label Generator
+# Makers Label Generator
 
 Browser-only React/Vite app for creating organizer labels for fasteners and hardware bins.
 

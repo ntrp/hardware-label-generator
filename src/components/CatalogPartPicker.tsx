@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { standardsCatalog } from '../data/catalog';
 import {
   catalogAssetUrlForEntry,
   missingCatalogAssetDataUrl
@@ -19,6 +20,8 @@ const catalogSearchText = (entry: StandardCatalogEntry, selectedStandards: AppSt
     .filter(Boolean)
     .join(' ')
     .toLowerCase();
+
+const catalogStandardsTitle = (entry: StandardCatalogEntry) => combinedStandardCode(entry.standards) || entry.code;
 
 const fuzzyScore = (text: string, query: string) => {
   const normalizedQuery = query.trim().toLowerCase();
@@ -149,14 +152,12 @@ interface CatalogPartPickerProps {
 export function CatalogPartPicker({ entries, selectedId, selectedStandards, onSelect, includeCustom = false }: CatalogPartPickerProps) {
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
-  const selectedEntry = entries.find((entry) => entry.id === selectedId);
+  const selectedEntry = standardsCatalog.find((entry) => entry.id === selectedId);
   const matches = entries
     .map((entry) => ({ entry, score: fuzzyScore(catalogSearchText(entry, selectedStandards), query) }))
     .filter(({ score }) => score > 0)
     .sort((left, right) => right.score - left.score || left.entry.code.localeCompare(right.entry.code))
     .slice(0, 80);
-
-  const selectedLabel = selectedEntry ? `${combinedStandardCode(selectedEntry.standards, selectedStandards)} · ${selectedEntry.description}` : 'Custom item';
 
   return (
     <div className="catalog-picker" onBlur={(event) => {
@@ -167,8 +168,8 @@ export function CatalogPartPicker({ entries, selectedId, selectedStandards, onSe
       <button type="button" className="catalog-picker-button" onClick={() => setOpen((current) => !current)}>
         {selectedEntry ? <CatalogDrawing entry={selectedEntry} /> : <span className="catalog-custom-drawing">Custom</span>}
         <span>
-          <strong>{selectedLabel}</strong>
-          <small>{selectedEntry ? selectedEntry.code : 'Free text hardware item'}</small>
+          <strong>{selectedEntry ? catalogStandardsTitle(selectedEntry) : 'Custom item'}</strong>
+          <small>{selectedEntry ? selectedEntry.description : 'Free text hardware item'}</small>
         </span>
       </button>
       {open && (
@@ -212,7 +213,7 @@ export function CatalogPartPicker({ entries, selectedId, selectedStandards, onSe
               >
                 <CatalogDrawing entry={entry} />
                 <span>
-                  <strong>{combinedStandardCode(entry.standards, selectedStandards) || entry.code}</strong>
+                  <strong>{catalogStandardsTitle(entry)}</strong>
                   <small>{entry.description}</small>
                 </span>
                 <em>{entry.category}</em>

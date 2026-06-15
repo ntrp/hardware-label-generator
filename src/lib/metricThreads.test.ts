@@ -8,7 +8,7 @@ describe('metric thread pitch table', () => {
   });
 
   it('names coarse, fine, and extra fine pitch values for a size', () => {
-    expect(metricThreadPitchNamesForSize('M10')).toEqual(['coarse (1.50)', 'fine (1.25)', 'extra fine (1.00)', 'extra fine 2 (0.75)']);
-    expect(findMetricThreadPitch('M10', 'extra fine (1.00)')).toEqual({ size: 'M10', name: 'extra fine', value: '1.00' });
+    expect(metricThreadPitchNamesForSize('M10')).toEqual(['coarse (1.50 mm)', 'fine (1.25 mm)', 'extra fine (1.00 mm)', 'extra fine 2 (0.75 mm)']);
+    expect(findMetricThreadPitch('M10', 'extra fine (1.00 mm)')).toEqual({ size: 'M10', name: 'extra fine', value: '1.00' });
   });
 });

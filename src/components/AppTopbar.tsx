@@ -1,13 +1,10 @@
 import type { ChangeEvent } from 'react';
 import { useRef } from 'react';
 import { Download, Save, Upload } from 'lucide-react';
-import { standardsCatalog } from '../data/catalog';
 import { useAppState } from '../app/AppStateContext';
-import { constrainLabelSettings, uniqueValues } from '../lib/labelLayout';
+import { constrainLabelSettings } from '../lib/labelLayout';
 import { downloadBlob } from '../lib/export';
 import { syncHardwareSpecs } from '../lib/specs';
-import { standardFamilies } from '../lib/standards';
-import { catalogMatchesSelectedStandards } from '../lib/standards';
 import { parseBackup, saveState, serializeBackup } from '../lib/storage';
 import { getCatalogEntryForItem } from './hardware/hardwareLogic';
 import type { AppState } from '../types';
@@ -22,7 +19,7 @@ export function AppTopbar() {
   };
 
   const exportPersistedData = () => {
-    downloadBlob(new Blob([serializeBackup(state)], { type: 'application/json' }), 'fastener-label-generator-backup.json');
+    downloadBlob(new Blob([serializeBackup(state)], { type: 'application/json' }), 'makers-label-generator-backup.json');
   };
 
   const importPersistedData = async (file: File | undefined) => {
@@ -47,22 +44,6 @@ export function AppTopbar() {
         importInputRef.current.value = '';
       }
     }
-  };
-
-  const updateStandardFilter = (family: AppState['selectedStandards'][number], checked: boolean) => {
-    setState((current) => {
-      const selectedStandards = checked
-        ? uniqueValues([...current.selectedStandards, family]) as AppState['selectedStandards']
-        : current.selectedStandards.filter((entry) => entry !== family);
-      const nextCatalog = standardsCatalog.find((entry) => entry.id === current.batchCatalogId && catalogMatchesSelectedStandards(entry, selectedStandards)) ??
-        standardsCatalog.find((entry) => catalogMatchesSelectedStandards(entry, selectedStandards));
-
-      return {
-        ...current,
-        selectedStandards,
-        ...(nextCatalog ? { batchCatalogId: nextCatalog.id } : {})
-      };
-    });
   };
 
   const updateUnitSystem = (unitSystem: AppState['unitSystem']) => {
@@ -99,22 +80,9 @@ export function AppTopbar() {
     <header className="topbar">
       <div>
         <p className="eyebrow">Browser-only organizer labels</p>
-        <h1>Fastener Label Generator</h1>
+        <h1>Makers Label Generator</h1>
       </div>
       <div className="topbar-actions">
-        <fieldset className="standard-filter">
-          <legend>Standards</legend>
-          {standardFamilies.map((family) => (
-            <label key={family}>
-              <input
-                type="checkbox"
-                checked={state.selectedStandards.includes(family)}
-                onChange={(event) => updateStandardFilter(family, event.target.checked)}
-              />
-              {family}
-            </label>
-          ))}
-        </fieldset>
         <fieldset className="standard-filter unit-filter">
           <legend>Units</legend>
           <select value={state.unitSystem} onChange={(event) => updateUnitSystem(event.target.value as AppState['unitSystem'])}>

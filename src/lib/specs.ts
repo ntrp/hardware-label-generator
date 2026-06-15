@@ -1,6 +1,8 @@
 import { standardsCatalog } from '../data/catalog';
 import type { HardwareCategory, HardwareItem, HardwareSpecKey, StandardCatalogEntry, UnitSystem } from '../types';
 import { defaultLengthUnit, defaultThreadPitchUnit, formatLength, splitLengthAndUnit, splitThreadPitchAndUnit } from './format';
+import { imperialThreadPitchNamesForSize, imperialThreadPitchesForSize, isUnifiedImperialThreadPitchList } from './imperialThreads';
+import { getAllFinishOptions } from './materials';
 import { metricThreadPitchNamesForSize, metricThreadPitchesForSize } from './metricThreads';
 
 export interface SpecDefinition {
@@ -18,6 +20,7 @@ export const specDefinitions: Record<HardwareSpecKey, SpecDefinition> = {
   threadPitchUnit: { key: 'threadPitchUnit', label: 'Pitch unit', placeholder: 'threadPitchUnit' },
   material: { key: 'material', label: 'Material', placeholder: 'material' },
   materialType: { key: 'materialType', label: 'Material type', placeholder: 'materialType' },
+  finish: { key: 'finish', label: 'Finish', placeholder: 'finish' },
   boltClass: { key: 'boltClass', label: 'Bolt class', placeholder: 'boltClass' },
   thickness: { key: 'thickness', label: 'Thickness', placeholder: 'thickness' },
   innerDiameter: { key: 'innerDiameter', label: 'ID', placeholder: 'innerDiameter' },
@@ -26,16 +29,16 @@ export const specDefinitions: Record<HardwareSpecKey, SpecDefinition> = {
 };
 
 export const categorySpecKeys: Record<HardwareCategory, HardwareSpecKey[]> = {
-  screw: ['size', 'length', 'threadPitchName', 'threadPitch', 'threadPitchUnit', 'material', 'materialType', 'boltClass'],
-  bolt: ['size', 'length', 'threadPitchName', 'threadPitch', 'threadPitchUnit', 'material', 'materialType', 'boltClass'],
-  nut: ['size', 'threadPitchName', 'threadPitch', 'threadPitchUnit', 'material', 'materialType'],
-  washer: ['size', 'thickness', 'innerDiameter', 'outerDiameter', 'material', 'materialType'],
-  rivet: ['size', 'length', 'gripRange', 'material', 'materialType'],
-  pin: ['size', 'length', 'material', 'materialType'],
-  anchor: ['size', 'length', 'material', 'materialType'],
-  insert: ['size', 'length', 'threadPitchName', 'threadPitch', 'threadPitchUnit', 'material', 'materialType'],
-  clip: ['size', 'material', 'materialType'],
-  custom: ['size', 'length', 'material', 'materialType']
+  screw: ['size', 'length', 'threadPitchName', 'material', 'materialType', 'finish', 'boltClass'],
+  bolt: ['size', 'length', 'threadPitchName', 'material', 'materialType', 'finish', 'boltClass'],
+  nut: ['size', 'threadPitchName', 'material', 'materialType', 'finish'],
+  washer: ['size', 'thickness', 'innerDiameter', 'outerDiameter', 'material', 'materialType', 'finish'],
+  rivet: ['size', 'length', 'gripRange', 'material', 'materialType', 'finish'],
+  pin: ['size', 'length', 'material', 'materialType', 'finish'],
+  anchor: ['size', 'length', 'material', 'materialType', 'finish'],
+  insert: ['size', 'length', 'threadPitchName', 'material', 'materialType', 'finish'],
+  clip: ['size', 'material', 'materialType', 'finish'],
+  custom: ['size', 'length', 'material', 'materialType', 'finish']
 };
 
 export const categoryDefaultPreset: Record<HardwareCategory, string> = {
@@ -71,6 +74,10 @@ const catalogSpecValues = (entry: StandardCatalogEntry | undefined, key: Hardwar
       const tableValues = [...new Set(entry.sizes.metric.flatMap((size) => metricThreadPitchesForSize(size).map((pitch) => pitch.value)))];
       if (tableValues.length > 0) return tableValues;
     }
+    if (unitSystem === 'imperial' && isUnifiedImperialThreadPitchList(entry.pitches.imperial)) {
+      const tableValues = [...new Set(entry.sizes.imperial.flatMap((size) => imperialThreadPitchesForSize(size).map((pitch) => pitch.tpi)))];
+      if (tableValues.length > 0) return tableValues;
+    }
     return entry.pitches[unitSystem]
       .map((value) => splitThreadPitchAndUnit(value, defaultThreadPitchUnit(unitSystem)).threadPitch)
       .filter(Boolean);
@@ -78,6 +85,10 @@ const catalogSpecValues = (entry: StandardCatalogEntry | undefined, key: Hardwar
   if (entry && key === 'threadPitchName') {
     if (unitSystem === 'metric') {
       const tableValues = [...new Set(entry.sizes.metric.flatMap((size) => metricThreadPitchNamesForSize(size)))];
+      if (tableValues.length > 0) return tableValues;
+    }
+    if (unitSystem === 'imperial' && isUnifiedImperialThreadPitchList(entry.pitches.imperial)) {
+      const tableValues = [...new Set(entry.sizes.imperial.flatMap((size) => imperialThreadPitchNamesForSize(size)))];
       if (tableValues.length > 0) return tableValues;
     }
     return entry.pitches[unitSystem]
@@ -90,6 +101,7 @@ const catalogSpecValues = (entry: StandardCatalogEntry | undefined, key: Hardwar
       .filter(Boolean);
   }
   if (entry && key === 'material') return entry.materials;
+  if (entry && key === 'finish') return getAllFinishOptions();
   return undefined;
 };
 
@@ -134,6 +146,7 @@ export const getItemSpecValue = (item: HardwareItem, key: HardwareSpecKey) => {
   if (key === 'threadPitchUnit') return item.specs?.threadPitchUnit ?? item.threadPitchUnit;
   if (key === 'material') return item.specs?.material ?? item.material;
   if (key === 'materialType') return item.specs?.materialType ?? item.materialType;
+  if (key === 'finish') return item.specs?.finish ?? item.finish;
   if (key === 'boltClass') return item.specs?.boltClass ?? item.boltClass;
   return item.specs?.[key] ?? '';
 };
@@ -170,6 +183,7 @@ export const syncHardwareSpecs = (item: HardwareItem): HardwareItem => ({
   threadPitchUnit: getItemSpecValue(item, 'threadPitchUnit'),
   material: getItemSpecValue(item, 'material'),
   materialType: getItemSpecValue(item, 'materialType'),
+  finish: getItemSpecValue(item, 'finish'),
   boltClass: getItemSpecValue(item, 'boltClass'),
   specs: {
     ...item.specs,
@@ -180,6 +194,7 @@ export const syncHardwareSpecs = (item: HardwareItem): HardwareItem => ({
     threadPitchUnit: getItemSpecValue(item, 'threadPitchUnit'),
     material: getItemSpecValue(item, 'material'),
     materialType: getItemSpecValue(item, 'materialType'),
+    finish: getItemSpecValue(item, 'finish'),
     boltClass: getItemSpecValue(item, 'boltClass')
   }
 });
@@ -193,6 +208,7 @@ export const patchItemSpec = (item: HardwareItem, key: HardwareSpecKey, value: s
   if (key === 'threadPitchUnit') patch.threadPitchUnit = value;
   if (key === 'material') patch.material = value;
   if (key === 'materialType') patch.materialType = value;
+  if (key === 'finish') patch.finish = value;
   if (key === 'boltClass') patch.boltClass = value;
   if (key === 'length') patch.length = value;
   return patch;

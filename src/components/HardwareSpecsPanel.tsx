@@ -1,14 +1,22 @@
 import { FileText, QrCode } from 'lucide-react';
+import { useEffect } from 'react';
 import { standardsCatalog } from '../data/catalog';
 import { useAppState } from '../app/AppStateContext';
 import { uniqueValues } from '../lib/labelLayout';
 import { hardwareCategories } from './hardware/hardwareConstants';
-import { baseMaterials, getMaterialTreatmentOptions } from '../lib/materials';
-import { defaultMaterialTreatment, isValidMaterialTreatment } from '../lib/materials';
+import { baseMaterials, getFinishOptions, getMaterialTreatmentOptions } from '../lib/materials';
+import { defaultFinish, defaultMaterialTreatment, isValidFinish, isValidMaterialTreatment } from '../lib/materials';
 import { getBoltClassOptions } from '../lib/boltClasses';
 import { defaultBoltClass, isValidBoltClass } from '../lib/boltClasses';
 import { splitLengthAndUnit } from '../lib/format';
 import { effectivePurchaseLink } from '../lib/export';
+import {
+  defaultImperialThreadPitch,
+  findImperialThreadPitch,
+  formatImperialThreadPitchOption,
+  imperialThreadPitchNamesForSize,
+  isUnifiedImperialThreadPitchList
+} from '../lib/imperialThreads';
 import { formatMetricThreadPitchOption, metricThreadPitchNamesForSize } from '../lib/metricThreads';
 import { defaultMetricThreadPitch, findMetricThreadPitch } from '../lib/metricThreads';
 import {
@@ -23,7 +31,7 @@ import {
   patchItemSpec,
   syncHardwareSpecs
 } from '../lib/specs';
-import { catalogMatchesSelectedStandards } from '../lib/standards';
+import { catalogMatchesSelectedFilters } from '../lib/standards';
 import {
   catalogAssetLabel,
   catalogAssetSources,
@@ -40,6 +48,23 @@ import type { AppState, HardwareCategory, HardwareItem, HardwareSpecKey, Standar
 
 type StandardImageReference = NonNullable<ReturnType<typeof standardImageReferenceForItem>>;
 
+const categoryLabel = (category: HardwareCategory) => category[0].toUpperCase() + category.slice(1);
+
+const formattedPitchName = (item: HardwareItem, unitSystem: AppState['unitSystem']) => {
+  if (unitSystem === 'metric') {
+    return formatMetricThreadPitchOption(
+      findMetricThreadPitch(item.size, item.threadPitchName) ??
+      findMetricThreadPitch(item.size, item.threadPitch) ??
+      { size: item.size, name: item.threadPitchName, value: item.threadPitch }
+    );
+  }
+
+  const imperialPitch = findImperialThreadPitch(item.size, item.threadPitchName) ?? findImperialThreadPitch(item.size, item.threadPitch);
+  if (imperialPitch) return formatImperialThreadPitchOption(imperialPitch);
+  if (!['UNC', 'UNF'].includes(item.threadPitchName.toUpperCase())) return item.threadPitchName;
+  return formatImperialThreadPitchOption({ size: item.size, series: item.threadPitchName === 'UNF' ? 'UNF' : 'UNC', tpi: item.threadPitch });
+};
+
 const catalogAssetPreviewUrl = (reference: StandardImageReference, source: (typeof catalogAssetSources)[number]) => {
   if (source === 'isoRender') return reference.isoRenderUrl;
   if (source === 'iso') return reference.isoUrl;
@@ -53,11 +78,29 @@ export function HardwareSpecsPanel() {
   const selectedCatalogEntry = getCatalogEntryForItem(selectedItem);
   const selectedStandardImageReference = selectedItem ? standardImageReferenceForItem(selectedItem) : undefined;
   const selectedSpecUnitSystem = selectedCatalogEntry?.unitSystem ?? state.unitSystem;
-  const filteredCatalog = standardsCatalog.filter((entry) => catalogMatchesSelectedStandards(entry, state.selectedStandards));
+  const filteredCatalog = standardsCatalog.filter((entry) =>
+    catalogMatchesSelectedFilters(entry, state.selectedStandards, state.selectedCategories)
+  );
   const selectedCatalogLocked = Boolean(selectedCatalogEntry);
+  const selectedUsesUnifiedImperialPitches =
+    !selectedCatalogLocked || !selectedCatalogEntry || isUnifiedImperialThreadPitchList(selectedCatalogEntry.pitches.imperial);
   const activeSpecDefinitions = getCategorySpecDefinitions(selectedItem?.category ?? 'custom');
   const selectedPurchaseLink = selectedItem ? effectivePurchaseLink(state.purchaseLinks, selectedItem) : '';
   const hasQrElement = state.labelSettings.fields.some((field) => field.kind === 'image' && field.imageSource === 'qr' && field.style.visible);
+
+  useEffect(() => {
+    if (!selectedItem || !selectedCatalogEntry) return;
+
+    const sizeOptions = getCatalogSpecOptions(selectedCatalogEntry, selectedItem.category, 'size', selectedSpecUnitSystem);
+    if (sizeOptions.length === 0 || sizeOptions.includes(selectedItem.size)) return;
+
+    setState((current) => ({
+      ...current,
+      hardwareItems: current.hardwareItems.map((item) =>
+        item.id === selectedItem.id ? syncHardwareSpecs({ ...item, ...buildCatalogItemPatch(selectedCatalogEntry, item) }) : item
+      )
+    }));
+  }, [selectedCatalogEntry, selectedItem, selectedSpecUnitSystem, setState]);
 
   const updateSelectedItem = (patch: Partial<HardwareItem>) => {
     if (!selectedItem) return;
@@ -71,6 +114,12 @@ export function HardwareSpecsPanel() {
     if (!selectedItem) return;
     if (key === 'size') {
       const metricPitch = selectedSpecUnitSystem === 'metric' ? defaultMetricThreadPitch(value) : undefined;
+      const imperialPitch =
+        selectedSpecUnitSystem === 'imperial' && selectedUsesUnifiedImperialPitches ? defaultImperialThreadPitch(value) : undefined;
+      const boltClassItem = { ...selectedItem, size: value };
+      const boltClass = isValidBoltClass(boltClassItem, selectedSpecUnitSystem)
+        ? selectedItem.boltClass
+        : defaultBoltClass(boltClassItem, selectedSpecUnitSystem);
       const washerDimensionSpecs =
         selectedCatalogEntry?.category === 'washer'
           ? Object.fromEntries(
@@ -82,16 +131,24 @@ export function HardwareSpecsPanel() {
           : {};
       updateSelectedItem({
         size: value,
+        boltClass,
         ...(metricPitch
           ? {
               threadPitchName: metricPitch.name,
               threadPitch: metricPitch.value,
               threadPitchUnit: 'mm'
             }
+          : imperialPitch
+            ? {
+                threadPitchName: imperialPitch.series,
+                threadPitch: imperialPitch.tpi,
+                threadPitchUnit: 'TPI'
+              }
           : {}),
         specs: {
           ...selectedItem.specs,
           size: value,
+          boltClass,
           ...washerDimensionSpecs,
           ...(metricPitch
             ? {
@@ -99,6 +156,12 @@ export function HardwareSpecsPanel() {
                 threadPitch: metricPitch.value,
                 threadPitchUnit: 'mm'
               }
+            : imperialPitch
+              ? {
+                  threadPitchName: imperialPitch.series,
+                  threadPitch: imperialPitch.tpi,
+                  threadPitchUnit: 'TPI'
+                }
             : {})
         }
       });
@@ -116,13 +179,16 @@ export function HardwareSpecsPanel() {
 
     if (key === 'threadPitchName') {
       const metricPitch = selectedSpecUnitSystem === 'metric' ? findMetricThreadPitch(selectedItem.size, value) : undefined;
+      const imperialPitch = selectedSpecUnitSystem === 'imperial' ? findImperialThreadPitch(selectedItem.size, value) : undefined;
       updateSelectedItem({
-        threadPitchName: metricPitch?.name ?? value,
+        threadPitchName: metricPitch?.name ?? imperialPitch?.series ?? value,
         ...(metricPitch ? { threadPitch: metricPitch.value, threadPitchUnit: 'mm' } : {}),
+        ...(imperialPitch ? { threadPitch: imperialPitch.tpi, threadPitchUnit: 'TPI' } : {}),
         specs: {
           ...selectedItem.specs,
-          threadPitchName: metricPitch?.name ?? value,
-          ...(metricPitch ? { threadPitch: metricPitch.value, threadPitchUnit: 'mm' } : {})
+          threadPitchName: metricPitch?.name ?? imperialPitch?.series ?? value,
+          ...(metricPitch ? { threadPitch: metricPitch.value, threadPitchUnit: 'mm' } : {}),
+          ...(imperialPitch ? { threadPitch: imperialPitch.tpi, threadPitchUnit: 'TPI' } : {})
         }
       });
       return;
@@ -130,16 +196,19 @@ export function HardwareSpecsPanel() {
 
     if (key === 'material') {
       const materialType = isValidMaterialTreatment(value, selectedItem.materialType) ? selectedItem.materialType : defaultMaterialTreatment(value);
+      const finish = isValidFinish(value, selectedItem.finish) ? selectedItem.finish : defaultFinish(value);
       const boltClassItem = { ...selectedItem, material: value, materialType };
       const boltClass = isValidBoltClass(boltClassItem, selectedSpecUnitSystem) ? selectedItem.boltClass : defaultBoltClass(boltClassItem, selectedSpecUnitSystem);
       updateSelectedItem({
         material: value,
         materialType,
+        finish,
         boltClass,
         specs: {
           ...selectedItem.specs,
           material: value,
           materialType,
+          finish,
           boltClass
         }
       });
@@ -251,7 +320,7 @@ export function HardwareSpecsPanel() {
           >
             {hardwareCategories.map((category) => (
               <option key={category} value={category}>
-                {category}
+                {categoryLabel(category)}
               </option>
             ))}
           </select>
@@ -265,10 +334,6 @@ export function HardwareSpecsPanel() {
           />
         </label>
         {activeSpecDefinitions.map((definition) => {
-          if (definition.key === 'threadPitchUnit') {
-            return null;
-          }
-
           const catalogOptions = selectedCatalogLocked
             ? getCatalogSpecOptions(selectedCatalogEntry, selectedItem.category, definition.key, selectedSpecUnitSystem)
             : getAllCatalogSpecOptions(selectedCatalogEntry, selectedItem.category, definition.key);
@@ -276,11 +341,15 @@ export function HardwareSpecsPanel() {
           const datalistId = `spec-options-${definition.key}`;
           const materialTypeOptions =
             definition.key === 'materialType'
-              ? getMaterialTreatmentOptions(selectedItem.material).filter((value) => options.length === 0 || options.includes(value))
+              ? getMaterialTreatmentOptions(selectedItem.material)
               : [];
           const boltClassOptions =
             definition.key === 'boltClass'
               ? getBoltClassOptions(selectedItem, selectedSpecUnitSystem).filter((value) => options.length === 0 || options.includes(value))
+              : [];
+          const finishOptions =
+            definition.key === 'finish'
+              ? getFinishOptions(selectedItem.material).filter((value) => options.length === 0 || options.includes(value))
               : [];
           const lengthUnitOptions =
             definition.key === 'length'
@@ -295,29 +364,30 @@ export function HardwareSpecsPanel() {
                 ...options.map((value) => splitLengthAndUnit(value, selectedItem.lengthUnit).length)
               ])
             : [];
-          const threadPitchOptions = definition.key === 'threadPitch' ? uniqueValues([selectedItem.threadPitch, ...options]) : [];
           const threadPitchNameOptions =
             definition.key === 'threadPitchName'
               ? uniqueValues([
-                  selectedItem.threadPitchName && selectedItem.threadPitch
-                    ? formatMetricThreadPitchOption({ size: selectedItem.size, name: selectedItem.threadPitchName, value: selectedItem.threadPitch })
-                    : selectedItem.threadPitchName,
-                  ...(selectedSpecUnitSystem === 'metric' ? metricThreadPitchNamesForSize(selectedItem.size) : options)
-                ])
-              : [];
-          const threadPitchUnitOptions =
-            definition.key === 'threadPitch'
-              ? uniqueValues([
-                  selectedItem.threadPitchUnit,
-                  ...(selectedCatalogLocked
-                    ? getCatalogSpecOptions(selectedCatalogEntry, selectedItem.category, 'threadPitchUnit', selectedSpecUnitSystem)
-                    : getAllCatalogSpecOptions(selectedCatalogEntry, selectedItem.category, 'threadPitchUnit'))
+                  ...(selectedSpecUnitSystem === 'metric'
+                    ? metricThreadPitchNamesForSize(selectedItem.size)
+                    : selectedUsesUnifiedImperialPitches
+                      ? imperialThreadPitchNamesForSize(selectedItem.size)
+                      : options),
+                  formattedPitchName(selectedItem, selectedSpecUnitSystem),
+                  ...(selectedCatalogLocked ? [] : options)
                 ])
               : [];
           const materialOptions = definition.key === 'material' ? uniqueValues([selectedItem.material, ...options]) : [];
+          const selectedFinishOptions =
+            definition.key === 'finish'
+              ? uniqueValues([isValidFinish(selectedItem.material, selectedItem.finish) ? selectedItem.finish : defaultFinish(selectedItem.material), ...finishOptions])
+              : [];
           const genericOptions = uniqueValues([getItemSpecValue(selectedItem, definition.key), ...options]);
           const isReadonlyWasherDimension =
             selectedCatalogLocked && selectedCatalogEntry?.category === 'washer' && isWasherDimensionKey(definition.key);
+
+          if (definition.key === 'boltClass' && boltClassOptions.length === 0) {
+            return null;
+          }
 
           return (
             <label key={definition.key}>
@@ -376,9 +446,7 @@ export function HardwareSpecsPanel() {
                 selectedCatalogLocked ? (
                   <select
                     value={
-                      selectedItem.threadPitchName && selectedItem.threadPitch
-                        ? formatMetricThreadPitchOption({ size: selectedItem.size, name: selectedItem.threadPitchName, value: selectedItem.threadPitch })
-                        : selectedItem.threadPitchName
+                      formattedPitchName(selectedItem, selectedSpecUnitSystem)
                     }
                     onChange={(event) => updateSelectedSpec('threadPitchName', event.target.value)}
                   >
@@ -402,56 +470,6 @@ export function HardwareSpecsPanel() {
                     </datalist>
                   </>
                 )
-              ) : definition.key === 'threadPitch' ? (
-                <>
-                  <div className="length-row">
-                    {selectedCatalogLocked ? (
-                      <select value={selectedItem.threadPitch} onChange={(event) => updateSelectedSpec('threadPitch', event.target.value)}>
-                        {threadPitchOptions.map((value) => (
-                          <option key={value} value={value}>
-                            {value}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <input
-                        list={datalistId}
-                        value={selectedItem.threadPitch}
-                        onChange={(event) => updateSelectedSpec('threadPitch', event.target.value)}
-                      />
-                    )}
-                    {selectedCatalogLocked ? (
-                      <select
-                        value={selectedItem.threadPitchUnit}
-                        aria-label="Thread pitch unit"
-                        onChange={(event) => updateSelectedSpec('threadPitchUnit', event.target.value)}
-                      >
-                        {threadPitchUnitOptions.map((value) => (
-                          <option key={value} value={value}>
-                            {value || 'n/a'}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <input
-                        list="thread-pitch-unit-options"
-                        value={selectedItem.threadPitchUnit}
-                        aria-label="Thread pitch unit"
-                        onChange={(event) => updateSelectedSpec('threadPitchUnit', event.target.value)}
-                      />
-                    )}
-                  </div>
-                  <datalist id={datalistId}>
-                    {options.map((value) => (
-                      <option key={value} value={value} />
-                    ))}
-                  </datalist>
-                  <datalist id="thread-pitch-unit-options">
-                    {getAllCatalogSpecOptions(selectedCatalogEntry, selectedItem.category, 'threadPitchUnit').map((value) => (
-                      <option key={value} value={value} />
-                    ))}
-                  </datalist>
-                </>
               ) : definition.key === 'materialType' ? (
                 <>
                   {selectedCatalogLocked ? (
@@ -502,6 +520,34 @@ export function HardwareSpecsPanel() {
                       />
                       <datalist id={datalistId}>
                         {boltClassOptions.map((value) => (
+                          <option key={value} value={value} />
+                        ))}
+                      </datalist>
+                    </>
+                  )}
+                </>
+              ) : definition.key === 'finish' ? (
+                <>
+                  {selectedCatalogLocked ? (
+                    <select
+                      value={selectedItem.finish}
+                      onChange={(event) => updateSelectedSpec('finish', event.target.value)}
+                    >
+                      {selectedFinishOptions.map((value) => (
+                        <option key={value} value={value}>
+                          {value || 'n/a'}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <>
+                      <input
+                        list={datalistId}
+                        value={selectedItem.finish}
+                        onChange={(event) => updateSelectedSpec('finish', event.target.value)}
+                      />
+                      <datalist id={datalistId}>
+                        {selectedFinishOptions.map((value) => (
                           <option key={value} value={value} />
                         ))}
                       </datalist>

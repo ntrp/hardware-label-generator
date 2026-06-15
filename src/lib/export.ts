@@ -21,10 +21,10 @@ export const downloadBlob = (blob: Blob, filename: string) => {
 };
 
 export const labelFilename = (item: HardwareItem, extension: string) =>
-  `${safeFilePart([item.standard, item.size, formatLength(item.length, item.lengthUnit), item.material, item.materialType, item.boltClass].filter(Boolean).join('-'))}.${extension}`;
+  `${safeFilePart([item.standard, item.size, formatLength(item.length, item.lengthUnit), item.material, item.materialType, item.finish, item.boltClass].filter(Boolean).join('-'))}.${extension}`;
 
 export const labelArchiveFolderName = (item: HardwareItem, index: number) =>
-  `${String(index + 1).padStart(3, '0')}-${safeFilePart([item.standard, item.size, formatLength(item.length, item.lengthUnit), item.material, item.materialType, item.boltClass].filter(Boolean).join('-'))}`;
+  `${String(index + 1).padStart(3, '0')}-${safeFilePart([item.standard, item.size, formatLength(item.length, item.lengthUnit), item.material, item.materialType, item.finish, item.boltClass].filter(Boolean).join('-'))}`;
 
 export const effectivePurchaseLink = (links: PurchaseLinkState, item: HardwareItem) => links[item.id] ?? '';
 

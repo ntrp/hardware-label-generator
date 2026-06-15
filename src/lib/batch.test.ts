@@ -29,7 +29,8 @@ describe('batch generation', () => {
       standardCodes: { DIN: 'DIN 125', ISO: 'ISO 7089', EN: 'EN ISO 7089' },
       size: 'M2',
       material: 'steel',
-      materialType: 'zinc plated',
+      materialType: 'low carbon',
+      finish: 'zinc plated',
       boltClass: '',
       threadPitch: '',
       threadPitchName: '',
@@ -40,7 +41,8 @@ describe('batch generation', () => {
         innerDiameter: '2.2 mm',
         outerDiameter: '5 mm',
         material: 'steel',
-        materialType: 'zinc plated'
+        materialType: 'low carbon',
+        finish: 'zinc plated'
       }
     };
 
@@ -50,7 +52,8 @@ describe('batch generation', () => {
       innerDiameter: '2.2 mm, 6.4 mm',
       outerDiameter: '5 mm, 12 mm',
       material: 'steel',
-      materialType: 'zinc plated'
+      materialType: 'low carbon',
+      finish: 'zinc plated'
     });
 
     expect(items).toHaveLength(2);

@@ -26,6 +26,7 @@ export type HardwareSpecKey =
   | 'threadPitchUnit'
   | 'material'
   | 'materialType'
+  | 'finish'
   | 'boltClass'
   | 'thickness'
   | 'innerDiameter'
@@ -47,6 +48,7 @@ export interface HardwareItem {
   lengthUnit: string;
   material: string;
   materialType: string;
+  finish: string;
   boltClass: string;
   threadPitch: string;
   threadPitchName: string;
@@ -131,13 +133,14 @@ export interface AppState {
   customPresets: LabelPreset[];
   unitSystem: UnitSystem;
   selectedStandards: StandardFamily[];
+  selectedCategories: HardwareCategory[];
   batchCatalogId: string;
   batchSpecs: Partial<Record<HardwareSpecKey, string>>;
 }
 
 export interface AppBackup {
-  app: 'standalone-fastener-label-generator';
-  version: 9;
+  app: 'makers-label-generator';
+  version: 12;
   exportedAt: string;
   state: AppState;
 }

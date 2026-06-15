@@ -36,6 +36,7 @@ export const defaultHardwareItem: HardwareItem = {
   lengthUnit: 'mm',
   material: 'stainless steel',
   materialType: 'A2',
+  finish: 'plain',
   boltClass: 'A2-70',
   threadPitch: '0.5',
   threadPitchName: 'coarse',
@@ -45,6 +46,7 @@ export const defaultHardwareItem: HardwareItem = {
     length: '12',
     material: 'stainless steel',
     materialType: 'A2',
+    finish: 'plain',
     boltClass: 'A2-70',
     threadPitch: '0.5',
     threadPitchName: 'coarse',
@@ -64,7 +66,7 @@ export const templateFields: Record<string, PlacedField[]> = {
     { id: 'field-standard', kind: 'text', text: '{standardDin} {standardIso}', x: 3, y: 4, width: 44, height: 6, style: { ...defaultFieldStyle, fontSize: 5, fontWeight: 700 } },
     { id: 'field-size', kind: 'text', text: '{size}', x: 3, y: 12, width: 20, height: 8, style: { ...defaultFieldStyle, fontSize: 9, fontWeight: 800 } },
     { id: 'field-length', kind: 'text', text: '{length} {lengthUnit}', x: 28, y: 12, width: 19, height: 8, style: { ...defaultFieldStyle, fontSize: 8, align: 'end' } },
-    { id: 'field-pitch', kind: 'text', text: '{threadPitch} {threadPitchUnit}', x: 3, y: 22, width: 20, height: 5, style: { ...defaultFieldStyle, fontSize: 4.5, fontWeight: 600 } },
+    { id: 'field-pitch', kind: 'text', text: '{threadPitchName}', x: 3, y: 22, width: 20, height: 5, style: { ...defaultFieldStyle, fontSize: 4.5, fontWeight: 600 } },
     { id: 'field-material', kind: 'text', text: '{material}', x: 27, y: 22, width: 20, height: 5, style: { ...defaultFieldStyle, fontSize: 4.5, align: 'end' } }
   ],
   'large-size': [
@@ -235,16 +237,16 @@ export const defaultAppState: AppState = {
   labelSettings: defaultLabelSettings,
   customPresets: [],
   unitSystem: 'metric',
-  selectedStandards: ['DIN', 'ISO'],
+  selectedStandards: [],
+  selectedCategories: [],
   batchCatalogId: 'din-912',
   batchSpecs: {
     size: 'M2, M2.5, M3, M4, M5, M6',
     length: '6, 8, 10, 12, 16, 20',
     threadPitchName: 'coarse',
-    threadPitch: '0.5',
-    threadPitchUnit: 'mm',
     material: 'stainless steel',
     materialType: 'A2',
+    finish: 'plain',
     boltClass: 'A2-70'
   }
 };

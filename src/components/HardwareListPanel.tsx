@@ -17,7 +17,7 @@ import {
   isWasherDimensionKey,
   syncHardwareSpecs
 } from '../lib/specs';
-import { catalogMatchesSelectedStandards } from '../lib/standards';
+import { catalogMatchesSelectedFilters } from '../lib/standards';
 import { renderLabelSvg } from '../lib/svg';
 import { uniqueValues } from '../lib/labelLayout';
 import {
@@ -34,7 +34,9 @@ export function HardwareListPanel() {
   const [printSvgs, setPrintSvgs] = useState<string[]>([]);
   const [batchModalOpen, setBatchModalOpen] = useState(false);
   const selectedItem = state.hardwareItems.find((item) => item.id === selectedId) ?? state.hardwareItems[0];
-  const filteredCatalog = standardsCatalog.filter((entry) => catalogMatchesSelectedStandards(entry, state.selectedStandards));
+  const filteredCatalog = standardsCatalog.filter((entry) =>
+    catalogMatchesSelectedFilters(entry, state.selectedStandards, state.selectedCategories)
+  );
   const batchCatalogEntry = filteredCatalog.find((entry) => entry.id === state.batchCatalogId) ?? filteredCatalog[0] ?? standardsCatalog[0];
   const batchSpecDefinitions = getCategorySpecDefinitions(batchCatalogEntry.category);
   const isBatchReadonlyWasherDimension = (key: HardwareSpecKey) => batchCatalogEntry.category === 'washer' && isWasherDimensionKey(key);

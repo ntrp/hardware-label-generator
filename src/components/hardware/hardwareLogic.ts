@@ -1,8 +1,9 @@
 import { standardsCatalog } from '../../data/catalog';
 import { builtInLabelPresets } from '../../lib/defaults';
 import { defaultLengthUnit, formatLength } from '../../lib/format';
-import { defaultMaterialTreatment, isValidMaterialTreatment } from '../../lib/materials';
+import { defaultFinish, defaultMaterialTreatment, isValidFinish, isValidMaterialTreatment } from '../../lib/materials';
 import { defaultBoltClass, isValidBoltClass } from '../../lib/boltClasses';
+import { defaultImperialThreadPitch } from '../../lib/imperialThreads';
 import { defaultMetricThreadPitch } from '../../lib/metricThreads';
 import { combinedStandardCode } from '../../lib/standards';
 import {
@@ -52,14 +53,16 @@ export const buildCatalogItemPatch = (entry: StandardCatalogEntry, item: Hardwar
   const materialType = isValidMaterialTreatment(material, specs.materialType ?? item.materialType)
     ? specs.materialType ?? item.materialType
     : defaultMaterialTreatment(material);
-  const boltClassCandidate = specs.boltClass ?? item.boltClass;
-  const boltClassItem = { ...item, material, materialType, unitSystem: entry.unitSystem, boltClass: boltClassCandidate };
-  const boltClass = isValidBoltClass(boltClassItem, entry.unitSystem) ? boltClassCandidate : defaultBoltClass(boltClassItem, entry.unitSystem);
+  const finish = isValidFinish(material, specs.finish ?? item.finish) ? specs.finish ?? item.finish : defaultFinish(material);
   const size = specs.size ?? item.size;
+  const boltClassCandidate = specs.boltClass ?? item.boltClass;
+  const boltClassItem = { ...item, material, materialType, size, unitSystem: entry.unitSystem, boltClass: boltClassCandidate };
+  const boltClass = isValidBoltClass(boltClassItem, entry.unitSystem) ? boltClassCandidate : defaultBoltClass(boltClassItem, entry.unitSystem);
   const metricPitch = entry.unitSystem === 'metric' ? defaultMetricThreadPitch(size) : undefined;
-  const threadPitchName = metricPitch?.name ?? specs.threadPitchName ?? item.threadPitchName;
-  const threadPitch = metricPitch?.value ?? specs.threadPitch ?? item.threadPitch;
-  const threadPitchUnit = metricPitch ? 'mm' : specs.threadPitchUnit ?? item.threadPitchUnit;
+  const imperialPitch = entry.unitSystem === 'imperial' ? defaultImperialThreadPitch(size) : undefined;
+  const threadPitchName = metricPitch?.name ?? imperialPitch?.series ?? specs.threadPitchName ?? item.threadPitchName;
+  const threadPitch = metricPitch?.value ?? imperialPitch?.tpi ?? specs.threadPitch ?? item.threadPitch;
+  const threadPitchUnit = metricPitch ? 'mm' : imperialPitch ? 'TPI' : specs.threadPitchUnit ?? item.threadPitchUnit;
 
   return {
     catalogId: entry.id,
@@ -73,6 +76,7 @@ export const buildCatalogItemPatch = (entry: StandardCatalogEntry, item: Hardwar
       length: normalizedLength.length,
       material,
       materialType,
+      finish,
       boltClass,
       threadPitchName,
       threadPitch,
@@ -83,6 +87,7 @@ export const buildCatalogItemPatch = (entry: StandardCatalogEntry, item: Hardwar
     lengthUnit: normalizedLength.lengthUnit,
     material,
     materialType,
+    finish,
     boltClass,
     threadPitchName,
     threadPitch,

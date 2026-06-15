@@ -177,7 +177,7 @@ const generatePropXml = () => {
   <meta:appName>${appName}</meta:appName>
   <dc:title></dc:title>
   <dc:subject></dc:subject>
-  <dc:creator>standalone-fastener-label-generator</dc:creator>
+  <dc:creator>makers-label-generator</dc:creator>
   <meta:keyword></meta:keyword>
   <dc:description></dc:description>
   <meta:template></meta:template>

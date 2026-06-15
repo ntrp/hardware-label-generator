@@ -34,8 +34,8 @@ describe('storage', () => {
     const backup = createBackup(defaultAppState, '2026-06-12T00:00:00.000Z');
     const imported = parseBackup(JSON.stringify(backup));
 
-    expect(backup.app).toBe('standalone-fastener-label-generator');
-    expect(backup.version).toBe(9);
+    expect(backup.app).toBe('makers-label-generator');
+    expect(backup.version).toBe(12);
     expect(backup.exportedAt).toBe('2026-06-12T00:00:00.000Z');
     expect(imported.hardwareItems).toEqual(defaultAppState.hardwareItems);
     expect(imported.purchaseLinks).toEqual(defaultAppState.purchaseLinks);
