@@ -15,7 +15,9 @@
     "research:assets:render": "python3 research/catalog-assets/scripts/run_freecad.py render --all",
     "research:assets:boltsparts": "python3 research/catalog-assets/scripts/catalog_assets.py boltsparts-sync --write-status",
     "research:assets:boltsparts:generate": "python3 research/catalog-assets/scripts/run_freecad.py boltsparts-generate --all",
-    "research:assets:boltsparts:render": "python3 research/catalog-assets/scripts/run_freecad.py boltsparts-generate --all --render"
+    "research:assets:boltsparts:render": "python3 research/catalog-assets/scripts/run_freecad.py boltsparts-generate --all --render",
+    "research:assets:fasteners:generate": "python3 research/catalog-assets/scripts/run_freecad.py fasteners-generate --all --threads",
+    "research:assets:fasteners:render": "python3 research/catalog-assets/scripts/run_freecad.py fasteners-generate --all --threads --render"
   },
   "dependencies": {
     "jszip": "^3.10.1",

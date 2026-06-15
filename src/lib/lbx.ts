@@ -51,7 +51,7 @@ const lbxExportedImageFields = (item: HardwareItem, settings: LabelSettings, pur
 
 const imageExtension = (field: PlacedField) => {
   if (field.imageSource === 'qr') return 'png';
-  if (isStandardImageSource(field.imageSource)) return 'jpg';
+  if (isStandardImageSource(field.imageSource)) return 'svg';
 
   const nameExtension = field.imageName?.split('.').pop()?.toLowerCase();
   if (nameExtension === 'bmp' || nameExtension === 'png' || nameExtension === 'svg') {
@@ -231,7 +231,7 @@ const imageFieldBytes = async (field: PlacedField, item: HardwareItem, purchaseL
     const url = standardImageUrlForItem(item, field.imageSource);
     if (!url) throw new Error(`${standardImageLabel(field.imageSource)} is not available for this catalog part.`);
     const response = await fetch(url);
-    if (!response.ok) throw new Error(`Unable to fetch ${standardImageLabel(field.imageSource).toLowerCase()} from fasteners.eu.`);
+    if (!response.ok) throw new Error(`Unable to fetch ${standardImageLabel(field.imageSource).toLowerCase()} from local catalog assets.`);
     return new Uint8Array(await response.arrayBuffer());
   }
 

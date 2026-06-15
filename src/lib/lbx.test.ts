@@ -116,8 +116,8 @@ describe('LBX export adapter', () => {
     );
 
     expect(labelXml).toContain('<image:image>');
-    expect(labelXml).toContain('originalName="Object0.jpg"');
-    expect(labelXml).toContain('fileName="Object0.jpg"');
+    expect(labelXml).toContain('originalName="Object0.svg"');
+    expect(labelXml).toContain('fileName="Object0.svg"');
   });
 
   it('stores custom image bytes with their original supported file type', async () => {

@@ -50,7 +50,7 @@ import { defaultMetricThreadPitch, findMetricThreadPitch, formatMetricThreadPitc
 import { catalogMatchesSelectedStandards, combinedStandardCode, standardFamilies, standardPlaceholderKeys } from './lib/standards';
 import { loadState, parseBackup, saveState, serializeBackup, storageMeta } from './lib/storage';
 import { renderLabelSvg } from './lib/svg';
-import { standardImageLabel, standardImageReferenceForItem, standardImageSources, standardImageUrlForItem } from './lib/standardImages';
+import { catalogAssetLabel, catalogAssetSources, catalogAssetUrlForEntry, standardImageLabel, standardImageReferenceForItem, standardImageSources, standardImageUrlForItem } from './lib/standardImages';
 import type {
   AppState,
   FrameLineStyle,
@@ -318,6 +318,11 @@ const drawingKindForEntry = (entry: StandardCatalogEntry) => {
 };
 
 const CatalogDrawing = ({ entry }: { entry: StandardCatalogEntry }) => {
+  const sideUrl = catalogAssetUrlForEntry(entry, 'side');
+  if (sideUrl) {
+    return <img className="catalog-drawing" src={sideUrl} alt={`${entry.description} side drawing`} loading="lazy" />;
+  }
+
   const kind = drawingKindForEntry(entry);
 
   return (
@@ -383,6 +388,12 @@ const CatalogDrawing = ({ entry }: { entry: StandardCatalogEntry }) => {
       )}
     </svg>
   );
+};
+
+const catalogAssetPreviewUrl = (reference: NonNullable<ReturnType<typeof standardImageReferenceForItem>>, source: (typeof catalogAssetSources)[number]) => {
+  if (source === 'iso') return reference.isoUrl;
+  if (source === 'side') return reference.sideUrl;
+  return reference.topUrl;
 };
 
 interface CatalogPartPickerProps {
@@ -2098,23 +2109,18 @@ export function App() {
             {selectedStandardImageReference && (
               <section className="standard-images-section">
                 <div className="standard-images-title">
-                  <span>Standard images</span>
-                  <a href={selectedStandardImageReference.pageUrl} target="_blank" rel="noreferrer">
-                    {selectedStandardImageReference.family} {selectedStandardImageReference.number}
-                  </a>
+                  <span>Catalog assets</span>
+                  <span>{selectedItem.catalogId}</span>
                 </div>
                 <div className="standard-image-grid">
-                  {standardImageSources.map((source) => (
-                    <a
+                  {catalogAssetSources.map((source) => (
+                    <div
                       key={source}
                       className="standard-image-card"
-                      href={standardImageUrlForItem(selectedItem, source)}
-                      target="_blank"
-                      rel="noreferrer"
                     >
-                      <img src={standardImageUrlForItem(selectedItem, source)} alt={`${standardImageLabel(source)} for ${selectedItem.standard}`} loading="lazy" />
-                      <span>{standardImageLabel(source)}</span>
-                    </a>
+                      <img src={catalogAssetPreviewUrl(selectedStandardImageReference, source)} alt={`${catalogAssetLabel(source)} for ${selectedItem.standard}`} loading="lazy" />
+                      <span>{catalogAssetLabel(source)}</span>
+                    </div>
                   ))}
                 </div>
               </section>

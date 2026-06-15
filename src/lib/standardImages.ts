@@ -1,60 +1,59 @@
-import type { HardwareItem, ImageSource, StandardCodeMap, StandardFamily } from '../types';
+import { catalogAssetManifest } from '../data/catalogAssets';
+import type { HardwareItem, ImageSource, StandardCatalogEntry } from '../types';
 
-const fastenersBaseUrl = 'https://www.fasteners.eu';
-const imageFamilies: StandardFamily[] = ['DIN', 'ISO', 'EN', 'ASME', 'ASTM', 'SAE', 'JIS'];
 export const standardImageSources = ['side', 'top'] as const;
 export type StandardImageSource = (typeof standardImageSources)[number];
+export const catalogAssetSources = ['iso', 'side', 'top'] as const;
+export type CatalogAssetSource = (typeof catalogAssetSources)[number];
 
 export interface StandardImageReference {
-  family: StandardFamily;
-  number: string;
-  pageUrl: string;
+  catalogId: string;
+  isoUrl: string;
   sideUrl: string;
   topUrl: string;
 }
 
-const standardNumberFromCode = (family: StandardFamily, code: string) => {
-  const withoutFamily = code.replace(new RegExp(`^\\s*${family}\\s+`, 'i'), '').trim();
-  const withoutCommonPrefixes = withoutFamily.replace(/^(EN|ISO)\s+/i, '').trim();
-  return withoutCommonPrefixes.match(/[A-Za-z]?\d[A-Za-z0-9./-]*/)?.[0];
+const assetBaseUrl = './catalog-assets/';
+
+export const catalogAssetUrlForId = (catalogId: string | undefined, source: CatalogAssetSource) => {
+  if (!catalogId) return '';
+  const manifestEntry = catalogAssetManifest[catalogId];
+  const filename = manifestEntry?.[source];
+  return filename ? `${assetBaseUrl}${catalogId}/${filename}` : '';
 };
 
-const productSlug = (family: StandardFamily, number: string) => `${family.toLowerCase()}${number.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+export const catalogAssetUrlForEntry = (entry: StandardCatalogEntry | undefined, source: CatalogAssetSource) =>
+  catalogAssetUrlForId(entry?.id, source);
 
-const drawingSlug = (family: StandardFamily, number: string) => `${family.toLowerCase()}-${number.toLowerCase().replace(/\//g, '-')}`;
+export const catalogAssetUrlForItem = (item: HardwareItem | undefined, source: CatalogAssetSource) =>
+  catalogAssetUrlForId(item?.catalogId, source);
 
-export const standardImageReferenceFromCodes = (codes: StandardCodeMap): StandardImageReference | undefined => {
-  for (const family of imageFamilies) {
-    const code = codes[family];
-    if (!code) continue;
-    const number = standardNumberFromCode(family, code);
-    if (!number) continue;
-
-    return {
-      family,
-      number,
-      pageUrl: `${fastenersBaseUrl}/standards/${family}/${encodeURIComponent(number)}/`,
-      sideUrl: `${fastenersBaseUrl}/img/products/3d/${productSlug(family, number)}.jpg`,
-      topUrl: `${fastenersBaseUrl}/img/products/${drawingSlug(family, number)}.jpg`
-    };
-  }
-
-  return undefined;
+export const standardImageReferenceForCatalogId = (catalogId: string | undefined): StandardImageReference | undefined => {
+  if (!catalogId || !catalogAssetManifest[catalogId]) return undefined;
+  return {
+    catalogId,
+    isoUrl: catalogAssetUrlForId(catalogId, 'iso'),
+    sideUrl: catalogAssetUrlForId(catalogId, 'side'),
+    topUrl: catalogAssetUrlForId(catalogId, 'top')
+  };
 };
 
-export const standardImageReferenceForItem = (item: HardwareItem) => standardImageReferenceFromCodes(item.standardCodes);
+export const standardImageReferenceForItem = (item: HardwareItem) => standardImageReferenceForCatalogId(item.catalogId);
 
 export const standardImageUrlForItem = (item: HardwareItem, source: ImageSource | undefined) => {
-  const reference = standardImageReferenceForItem(item);
-  if (!reference) return '';
-  if (source === 'side') return reference.sideUrl;
-  if (source === 'top') return reference.topUrl;
+  if (source === 'side' || source === 'top') return catalogAssetUrlForItem(item, source);
   return '';
 };
 
+export const catalogAssetLabel = (source: CatalogAssetSource) => {
+  if (source === 'iso') return 'ISO render';
+  if (source === 'side') return 'Side drawing';
+  return 'Top drawing';
+};
+
 export const standardImageLabel = (source: ImageSource | undefined) => {
-  if (source === 'side') return 'Side image';
-  if (source === 'top') return 'Top image';
+  if (source === 'side') return 'Side drawing';
+  if (source === 'top') return 'Top drawing';
   if (source === 'custom') return 'Custom image';
   return 'Purchase link QR';
 };

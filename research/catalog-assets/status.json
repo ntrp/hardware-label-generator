@@ -47,7 +47,6 @@
         {
           "code": "DIN 912",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/912/",
           "number": "912",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+912+Socket+head+cap+screw",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+912+Socket+head+cap+screw"
@@ -55,7 +54,6 @@
         {
           "code": "ISO 4762",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/4762/",
           "number": "4762",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+4762+Socket+head+cap+screw",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+4762+Socket+head+cap+screw"
@@ -63,7 +61,6 @@
         {
           "code": "EN ISO 4762",
           "family": "EN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/EN/4762/",
           "number": "4762",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+ISO+4762+Socket+head+cap+screw",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+ISO+4762+Socket+head+cap+screw"
@@ -139,7 +136,6 @@
         {
           "code": "DIN 933",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/933/",
           "number": "933",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+933+Hex+head+screw%2C+full+thread",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+933+Hex+head+screw%2C+full+thread"
@@ -147,7 +143,6 @@
         {
           "code": "ISO 4017",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/4017/",
           "number": "4017",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+4017+Hex+head+screw%2C+full+thread",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+4017+Hex+head+screw%2C+full+thread"
@@ -155,7 +150,6 @@
         {
           "code": "EN ISO 4017",
           "family": "EN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/EN/4017/",
           "number": "4017",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+ISO+4017+Hex+head+screw%2C+full+thread",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+ISO+4017+Hex+head+screw%2C+full+thread"
@@ -219,7 +213,6 @@
         {
           "code": "DIN 934",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/934/",
           "number": "934",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+934+Hex+nut",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+934+Hex+nut"
@@ -227,7 +220,6 @@
         {
           "code": "ISO 4032",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/4032/",
           "number": "4032",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+4032+Hex+nut",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+4032+Hex+nut"
@@ -235,7 +227,6 @@
         {
           "code": "EN ISO 4032",
           "family": "EN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/EN/4032/",
           "number": "4032",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+ISO+4032+Hex+nut",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+ISO+4032+Hex+nut"
@@ -318,7 +309,6 @@
         {
           "code": "DIN 125",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/125/",
           "number": "125",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+125+Plain+washer",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+125+Plain+washer"
@@ -326,7 +316,6 @@
         {
           "code": "ISO 7089",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/7089/",
           "number": "7089",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+7089+Plain+washer",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+7089+Plain+washer"
@@ -334,7 +323,6 @@
         {
           "code": "EN ISO 7089",
           "family": "EN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/EN/7089/",
           "number": "7089",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+ISO+7089+Plain+washer",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+ISO+7089+Plain+washer"
@@ -371,7 +359,6 @@
         {
           "code": "ASME B18.3",
           "family": "ASME",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ASME/B18.3/",
           "number": "B18.3",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ASME+B18.3+Socket+head+cap+screw%2C+inch+series",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ASME+B18.3+Socket+head+cap+screw%2C+inch+series"
@@ -379,7 +366,6 @@
         {
           "code": "ASTM A574",
           "family": "ASTM",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ASTM/A574/",
           "number": "A574",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ASTM+A574+Socket+head+cap+screw%2C+inch+series",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ASTM+A574+Socket+head+cap+screw%2C+inch+series"
@@ -387,7 +373,6 @@
         {
           "code": "SAE J429",
           "family": "SAE",
-          "fastenersUrl": "https://www.fasteners.eu/standards/SAE/J429/",
           "number": "J429",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=SAE+J429+Socket+head+cap+screw%2C+inch+series",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/SAE+J429+Socket+head+cap+screw%2C+inch+series"
@@ -420,7 +405,6 @@
         {
           "code": "DIN 7337",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/7337/",
           "number": "7337",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+7337+Blind+rivet",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+7337+Blind+rivet"
@@ -428,7 +412,6 @@
         {
           "code": "ISO 15977",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/15977/",
           "number": "15977",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+15977+Blind+rivet",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+15977+Blind+rivet"
@@ -436,7 +419,6 @@
         {
           "code": "EN ISO 15977",
           "family": "EN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/EN/15977/",
           "number": "15977",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+ISO+15977+Blind+rivet",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+ISO+15977+Blind+rivet"
@@ -469,7 +451,6 @@
         {
           "code": "DIN 6325",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/6325/",
           "number": "6325",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+6325+Parallel+dowel+pin",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+6325+Parallel+dowel+pin"
@@ -477,7 +458,6 @@
         {
           "code": "ISO 8734",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/8734/",
           "number": "8734",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+8734+Parallel+dowel+pin",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+8734+Parallel+dowel+pin"
@@ -485,7 +465,6 @@
         {
           "code": "EN ISO 8734",
           "family": "EN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/EN/8734/",
           "number": "8734",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+ISO+8734+Parallel+dowel+pin",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+ISO+8734+Parallel+dowel+pin"
@@ -493,7 +472,6 @@
         {
           "code": "JIS B 1354",
           "family": "JIS",
-          "fastenersUrl": "https://www.fasteners.eu/standards/JIS/1354/",
           "number": "1354",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=JIS+B+1354+Parallel+dowel+pin",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/JIS+B+1354+Parallel+dowel+pin"
@@ -627,7 +605,6 @@
         {
           "code": "DIN 931",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/931/",
           "number": "931",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+931+Hex+head+bolt%2C+partial+thread",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+931+Hex+head+bolt%2C+partial+thread"
@@ -635,7 +612,6 @@
         {
           "code": "ISO 4014",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/4014/",
           "number": "4014",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+4014+Hex+head+bolt%2C+partial+thread",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+4014+Hex+head+bolt%2C+partial+thread"
@@ -643,7 +619,6 @@
         {
           "code": "EN ISO 4014",
           "family": "EN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/EN/4014/",
           "number": "4014",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+ISO+4014+Hex+head+bolt%2C+partial+thread",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+ISO+4014+Hex+head+bolt%2C+partial+thread"
@@ -680,7 +655,6 @@
         {
           "code": "DIN 960",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/960/",
           "number": "960",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+960+Hex+head+bolt%2C+partial+thread%2C+fine+pitch",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+960+Hex+head+bolt%2C+partial+thread%2C+fine+pitch"
@@ -688,7 +662,6 @@
         {
           "code": "ISO 8765",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/8765/",
           "number": "8765",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+8765+Hex+head+bolt%2C+partial+thread%2C+fine+pitch",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+8765+Hex+head+bolt%2C+partial+thread%2C+fine+pitch"
@@ -696,7 +669,6 @@
         {
           "code": "EN ISO 8765",
           "family": "EN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/EN/8765/",
           "number": "8765",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+ISO+8765+Hex+head+bolt%2C+partial+thread%2C+fine+pitch",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+ISO+8765+Hex+head+bolt%2C+partial+thread%2C+fine+pitch"
@@ -729,7 +701,6 @@
         {
           "code": "DIN 961",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/961/",
           "number": "961",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+961+Hex+head+screw%2C+full+thread%2C+fine+pitch",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+961+Hex+head+screw%2C+full+thread%2C+fine+pitch"
@@ -737,7 +708,6 @@
         {
           "code": "ISO 8676",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/8676/",
           "number": "8676",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+8676+Hex+head+screw%2C+full+thread%2C+fine+pitch",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+8676+Hex+head+screw%2C+full+thread%2C+fine+pitch"
@@ -745,7 +715,6 @@
         {
           "code": "EN ISO 8676",
           "family": "EN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/EN/8676/",
           "number": "8676",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+ISO+8676+Hex+head+screw%2C+full+thread%2C+fine+pitch",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+ISO+8676+Hex+head+screw%2C+full+thread%2C+fine+pitch"
@@ -823,7 +792,6 @@
         {
           "code": "DIN 7991",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/7991/",
           "number": "7991",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+7991+Hex+socket+countersunk+head+screw",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+7991+Hex+socket+countersunk+head+screw"
@@ -831,7 +799,6 @@
         {
           "code": "ISO 10642",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/10642/",
           "number": "10642",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+10642+Hex+socket+countersunk+head+screw",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+10642+Hex+socket+countersunk+head+screw"
@@ -839,7 +806,6 @@
         {
           "code": "EN ISO 10642",
           "family": "EN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/EN/10642/",
           "number": "10642",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+ISO+10642+Hex+socket+countersunk+head+screw",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+ISO+10642+Hex+socket+countersunk+head+screw"
@@ -876,7 +842,6 @@
         {
           "code": "DIN 7984",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/7984/",
           "number": "7984",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+7984+Low+head+hex+socket+cap+screw",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+7984+Low+head+hex+socket+cap+screw"
@@ -907,7 +872,6 @@
         {
           "code": "ISO 7380",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/7380/",
           "number": "7380",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+7380+Hex+socket+button+head+screw",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+7380+Hex+socket+button+head+screw"
@@ -974,7 +938,6 @@
         {
           "code": "DIN 913",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/913/",
           "number": "913",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+913+Hex+socket+set+screw%2C+flat+point",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+913+Hex+socket+set+screw%2C+flat+point"
@@ -982,7 +945,6 @@
         {
           "code": "ISO 4026",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/4026/",
           "number": "4026",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+4026+Hex+socket+set+screw%2C+flat+point",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+4026+Hex+socket+set+screw%2C+flat+point"
@@ -1054,7 +1016,6 @@
         {
           "code": "DIN 914",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/914/",
           "number": "914",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+914+Hex+socket+set+screw%2C+cone+point",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+914+Hex+socket+set+screw%2C+cone+point"
@@ -1062,7 +1023,6 @@
         {
           "code": "ISO 4027",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/4027/",
           "number": "4027",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+4027+Hex+socket+set+screw%2C+cone+point",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+4027+Hex+socket+set+screw%2C+cone+point"
@@ -1134,7 +1094,6 @@
         {
           "code": "DIN 915",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/915/",
           "number": "915",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+915+Hex+socket+set+screw%2C+dog+point",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+915+Hex+socket+set+screw%2C+dog+point"
@@ -1142,7 +1101,6 @@
         {
           "code": "ISO 4028",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/4028/",
           "number": "4028",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+4028+Hex+socket+set+screw%2C+dog+point",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+4028+Hex+socket+set+screw%2C+dog+point"
@@ -1214,7 +1172,6 @@
         {
           "code": "DIN 916",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/916/",
           "number": "916",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+916+Hex+socket+set+screw%2C+cup+point",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+916+Hex+socket+set+screw%2C+cup+point"
@@ -1222,7 +1179,6 @@
         {
           "code": "ISO 4029",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/4029/",
           "number": "4029",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+4029+Hex+socket+set+screw%2C+cup+point",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+4029+Hex+socket+set+screw%2C+cup+point"
@@ -1258,7 +1214,6 @@
         {
           "code": "DIN 963",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/963/",
           "number": "963",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+963+Slotted+countersunk+head+machine+screw",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+963+Slotted+countersunk+head+machine+screw"
@@ -1266,7 +1221,6 @@
         {
           "code": "ISO 2009",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/2009/",
           "number": "2009",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+2009+Slotted+countersunk+head+machine+screw",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+2009+Slotted+countersunk+head+machine+screw"
@@ -1298,7 +1252,6 @@
         {
           "code": "DIN 965",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/965/",
           "number": "965",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+965+Cross+recessed+countersunk+head+machine+screw",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+965+Cross+recessed+countersunk+head+machine+screw"
@@ -1306,7 +1259,6 @@
         {
           "code": "ISO 7046",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/7046/",
           "number": "7046",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+7046+Cross+recessed+countersunk+head+machine+screw",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+7046+Cross+recessed+countersunk+head+machine+screw"
@@ -1338,7 +1290,6 @@
         {
           "code": "DIN 7985",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/7985/",
           "number": "7985",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+7985+Cross+recessed+pan+head+machine+screw",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+7985+Cross+recessed+pan+head+machine+screw"
@@ -1346,7 +1297,6 @@
         {
           "code": "ISO 7045",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/7045/",
           "number": "7045",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+7045+Cross+recessed+pan+head+machine+screw",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+7045+Cross+recessed+pan+head+machine+screw"
@@ -1378,7 +1328,6 @@
         {
           "code": "DIN 7500",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/7500/",
           "number": "7500",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+7500+Thread+forming+screw+for+metric+thread",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+7500+Thread+forming+screw+for+metric+thread"
@@ -1409,7 +1358,6 @@
         {
           "code": "DIN 7504",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/7504/",
           "number": "7504",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+7504+Self-drilling+screw",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+7504+Self-drilling+screw"
@@ -1417,7 +1365,6 @@
         {
           "code": "ISO 15480",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/15480/",
           "number": "15480",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+15480+Self-drilling+screw",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+15480+Self-drilling+screw"
@@ -1480,7 +1427,6 @@
         {
           "code": "DIN 439",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/439/",
           "number": "439",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+439+Hex+thin+nut+%2F+jam+nut",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+439+Hex+thin+nut+%2F+jam+nut"
@@ -1488,7 +1434,6 @@
         {
           "code": "ISO 4035",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/4035/",
           "number": "4035",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+4035+Hex+thin+nut+%2F+jam+nut",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+4035+Hex+thin+nut+%2F+jam+nut"
@@ -1556,7 +1501,6 @@
         {
           "code": "DIN 982",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/982/",
           "number": "982",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+982+Prevailing+torque+hex+nut%2C+non-metallic+insert%2C+high+type",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+982+Prevailing+torque+hex+nut%2C+non-metallic+insert%2C+high+type"
@@ -1564,7 +1508,6 @@
         {
           "code": "ISO 7040",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/7040/",
           "number": "7040",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+7040+Prevailing+torque+hex+nut%2C+non-metallic+insert%2C+high+type",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+7040+Prevailing+torque+hex+nut%2C+non-metallic+insert%2C+high+type"
@@ -1600,7 +1543,6 @@
         {
           "code": "DIN 985",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/985/",
           "number": "985",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+985+Prevailing+torque+hex+nut%2C+non-metallic+insert%2C+low+type",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+985+Prevailing+torque+hex+nut%2C+non-metallic+insert%2C+low+type"
@@ -1608,7 +1550,6 @@
         {
           "code": "ISO 10511",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/10511/",
           "number": "10511",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+10511+Prevailing+torque+hex+nut%2C+non-metallic+insert%2C+low+type",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+10511+Prevailing+torque+hex+nut%2C+non-metallic+insert%2C+low+type"
@@ -1640,7 +1581,6 @@
         {
           "code": "DIN 1587",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/1587/",
           "number": "1587",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+1587+Hex+cap+nut%2C+domed",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+1587+Hex+cap+nut%2C+domed"
@@ -1671,7 +1611,6 @@
         {
           "code": "DIN 6923",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/6923/",
           "number": "6923",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+6923+Hex+flange+nut",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+6923+Hex+flange+nut"
@@ -1679,7 +1618,6 @@
         {
           "code": "EN 1661",
           "family": "EN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/EN/1661/",
           "number": "1661",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+1661+Hex+flange+nut",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+1661+Hex+flange+nut"
@@ -1711,7 +1649,6 @@
         {
           "code": "DIN 9021",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/9021/",
           "number": "9021",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+9021+Large+diameter+flat+washer",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+9021+Large+diameter+flat+washer"
@@ -1719,7 +1656,6 @@
         {
           "code": "ISO 7093",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/7093/",
           "number": "7093",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+7093+Large+diameter+flat+washer",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+7093+Large+diameter+flat+washer"
@@ -1751,7 +1687,6 @@
         {
           "code": "DIN 127",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/127/",
           "number": "127",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+127+Split+spring+lock+washer",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+127+Split+spring+lock+washer"
@@ -1782,7 +1717,6 @@
         {
           "code": "DIN 6796",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/6796/",
           "number": "6796",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+6796+Conical+spring+washer+for+bolted+connections",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+6796+Conical+spring+washer+for+bolted+connections"
@@ -1839,7 +1773,6 @@
         {
           "code": "DIN 7349",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/7349/",
           "number": "7349",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+7349+Heavy+washer+for+bolts+with+heavy+clamping+sleeves",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+7349+Heavy+washer+for+bolts+with+heavy+clamping+sleeves"
@@ -1874,7 +1807,6 @@
         {
           "code": "DIN 7",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/7/",
           "number": "7",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+7+Parallel+dowel+pin%2C+unhardened",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+7+Parallel+dowel+pin%2C+unhardened"
@@ -1882,7 +1814,6 @@
         {
           "code": "ISO 2338",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/2338/",
           "number": "2338",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+2338+Parallel+dowel+pin%2C+unhardened",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+2338+Parallel+dowel+pin%2C+unhardened"
@@ -1914,7 +1845,6 @@
         {
           "code": "DIN 94",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/94/",
           "number": "94",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+94+Split+cotter+pin",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+94+Split+cotter+pin"
@@ -1922,7 +1852,6 @@
         {
           "code": "ISO 1234",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/1234/",
           "number": "1234",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+1234+Split+cotter+pin",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+1234+Split+cotter+pin"
@@ -1954,7 +1883,6 @@
         {
           "code": "DIN 1481",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/1481/",
           "number": "1481",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+1481+Slotted+spring+pin%2C+heavy+duty",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+1481+Slotted+spring+pin%2C+heavy+duty"
@@ -1962,7 +1890,6 @@
         {
           "code": "ISO 8752",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/8752/",
           "number": "8752",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+8752+Slotted+spring+pin%2C+heavy+duty",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+8752+Slotted+spring+pin%2C+heavy+duty"
@@ -1994,7 +1921,6 @@
         {
           "code": "DIN 7343",
           "family": "DIN",
-          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/7343/",
           "number": "7343",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+7343+Coiled+spring+pin%2C+standard+duty",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+7343+Coiled+spring+pin%2C+standard+duty"
@@ -2002,7 +1928,6 @@
         {
           "code": "ISO 8750",
           "family": "ISO",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/8750/",
           "number": "8750",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+8750+Coiled+spring+pin%2C+standard+duty",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+8750+Coiled+spring+pin%2C+standard+duty"
@@ -2034,7 +1959,6 @@
         {
           "code": "ASME B18.2.1",
           "family": "ASME",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ASME/B18.2.1/",
           "number": "B18.2.1",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ASME+B18.2.1+Inch+hex+cap+screw+%2F+hex+bolt",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ASME+B18.2.1+Inch+hex+cap+screw+%2F+hex+bolt"
@@ -2042,7 +1966,6 @@
         {
           "code": "SAE J429",
           "family": "SAE",
-          "fastenersUrl": "https://www.fasteners.eu/standards/SAE/J429/",
           "number": "J429",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=SAE+J429+Inch+hex+cap+screw+%2F+hex+bolt",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/SAE+J429+Inch+hex+cap+screw+%2F+hex+bolt"
@@ -2074,7 +1997,6 @@
         {
           "code": "ASME B18.6.3",
           "family": "ASME",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ASME/B18.6.3/",
           "number": "B18.6.3",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ASME+B18.6.3+Inch+machine+screw",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ASME+B18.6.3+Inch+machine+screw"
@@ -2082,7 +2004,6 @@
         {
           "code": "SAE J933",
           "family": "SAE",
-          "fastenersUrl": "https://www.fasteners.eu/standards/SAE/J933/",
           "number": "J933",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=SAE+J933+Inch+machine+screw",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/SAE+J933+Inch+machine+screw"
@@ -2114,7 +2035,6 @@
         {
           "code": "ASME B18.6.4",
           "family": "ASME",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ASME/B18.6.4/",
           "number": "B18.6.4",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ASME+B18.6.4+Inch+tapping+screw",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ASME+B18.6.4+Inch+tapping+screw"
@@ -2122,7 +2042,6 @@
         {
           "code": "SAE J933",
           "family": "SAE",
-          "fastenersUrl": "https://www.fasteners.eu/standards/SAE/J933/",
           "number": "J933",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=SAE+J933+Inch+tapping+screw",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/SAE+J933+Inch+tapping+screw"
@@ -2184,7 +2103,6 @@
         {
           "code": "ASME B18.2.2",
           "family": "ASME",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ASME/B18.2.2/",
           "number": "B18.2.2",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ASME+B18.2.2+Inch+hex+nut",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ASME+B18.2.2+Inch+hex+nut"
@@ -2192,7 +2110,6 @@
         {
           "code": "SAE J995",
           "family": "SAE",
-          "fastenersUrl": "https://www.fasteners.eu/standards/SAE/J995/",
           "number": "J995",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=SAE+J995+Inch+hex+nut",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/SAE+J995+Inch+hex+nut"
@@ -2228,7 +2145,6 @@
         {
           "code": "ASME B18.21.1",
           "family": "ASME",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ASME/B18.21.1/",
           "number": "B18.21.1",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ASME+B18.21.1+Inch+flat+washer%2C+SAE+pattern",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ASME+B18.21.1+Inch+flat+washer%2C+SAE+pattern"
@@ -2260,7 +2176,6 @@
         {
           "code": "ASME B18.8.1",
           "family": "ASME",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ASME/B18.8.1/",
           "number": "B18.8.1",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ASME+B18.8.1+Inch+cotter+pin",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ASME+B18.8.1+Inch+cotter+pin"
@@ -2292,7 +2207,6 @@
         {
           "code": "ASME B18.8.2",
           "family": "ASME",
-          "fastenersUrl": "https://www.fasteners.eu/standards/ASME/B18.8.2/",
           "number": "B18.8.2",
           "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ASME+B18.8.2+Inch+dowel+pin",
           "tracepartsSearchUrl": "https://www.traceparts.com/search/ASME+B18.8.2+Inch+dowel+pin"

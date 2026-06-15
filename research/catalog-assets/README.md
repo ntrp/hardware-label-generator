@@ -20,6 +20,7 @@ research/catalog-assets/
   status.json
   sources.json
   boltsparts/          # mirrored BOLTS data and FreeCAD generator sources
+  fasteners-workbench/ # FreeCAD Fasteners workbench experiment outputs
   models/              # ignored by git except .gitkeep
   renders/             # ignored by git except .gitkeep
   scripts/
@@ -28,7 +29,7 @@ research/catalog-assets/
 
 ## Commands
 
-Commands that generate or render geometry require FreeCAD. Rendering uses FreeCAD to export an STL working mesh and Blender in background mode to produce PNG views when available.
+Commands that generate or render geometry require FreeCAD. Rendering uses FreeCAD to export an STL working mesh and Blender in background mode for the shaded ISO image. Side and top views are exported as FreeCAD technical drawing SVGs.
 
 Seed or refresh status from the current TypeScript catalog:
 
@@ -60,6 +61,15 @@ Generate STEP models and render images in one pass:
 ```bash
 python3 research/catalog-assets/scripts/run_freecad.py boltsparts-generate --all --render
 ```
+
+Generate STEP models from the installed FreeCAD Fasteners workbench:
+
+```bash
+python3 research/catalog-assets/scripts/run_freecad.py fasteners-generate --all
+python3 research/catalog-assets/scripts/run_freecad.py fasteners-generate --all --render
+```
+
+Fasteners workbench output is isolated under `fasteners-workbench/` so it can be compared against the Boltsparts/BOLTS provider without overwriting its status, models, or renders.
 
 Try to discover/download model sources:
 
@@ -99,9 +109,9 @@ python3 research/catalog-assets/scripts/catalog_assets.py pipeline --all
 
 Each rendered catalog part should produce:
 
-- `renders/<catalogId>/iso.png`: orthographic shaded isometric view.
-- `renders/<catalogId>/side.png`: orthographic wireframe side view.
-- `renders/<catalogId>/top.png`: orthographic wireframe top view.
+- `renders/<catalogId>/iso.png`: perspective shaded isometric render on a white background.
+- `renders/<catalogId>/side.svg`: FreeCAD technical drawing side view.
+- `renders/<catalogId>/top.svg`: FreeCAD technical drawing top view.
 
 ## Source Policy
 

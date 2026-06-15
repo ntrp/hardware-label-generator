@@ -113,8 +113,8 @@ describe('SVG rendering', () => {
       'metric'
     );
 
-    expect(svg).toContain('https://www.fasteners.eu/img/products/3d/din1587.jpg');
-    expect(svg).toContain('https://www.fasteners.eu/img/products/din-1587.jpg');
+    expect(svg).toContain('./catalog-assets/din-912/side.svg');
+    expect(svg).toContain('./catalog-assets/din-912/top.svg');
   });
 
   it('can render a raster-safe SVG for PNG export', async () => {

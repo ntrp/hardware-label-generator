@@ -40,14 +40,14 @@ describe('catalog asset research status', () => {
     expect(status.entries.map((entry) => entry.catalogId).sort()).toEqual(standardsCatalog.map((entry) => entry.id).sort());
   });
 
-  it('keeps candidate source URLs for catalog entries with standard codes', () => {
+  it('keeps candidate source metadata for catalog entries with standard codes', () => {
     const status = readStatus();
     const din1587 = status.entries.find((entry) => entry.catalogId === 'din-1587');
     expect(din1587).toBeDefined();
     expect(din1587?.candidateSources[0]).toMatchObject({
       family: 'DIN',
       number: '1587',
-      fastenersUrl: 'https://www.fasteners.eu/standards/DIN/1587/'
+      code: 'DIN 1587'
     });
 
     const customInsert = status.entries.find((entry) => entry.catalogId === 'threaded-insert');

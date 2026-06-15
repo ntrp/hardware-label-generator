@@ -4,6 +4,8 @@ dist
 coverage
 *.local
 *.tsbuildinfo
+__pycache__/
+*.pyc
 vite.config.js
 vite.config.d.ts
 package-lock.json
@@ -11,3 +13,7 @@ research/catalog-assets/models/*
 !research/catalog-assets/models/.gitkeep
 research/catalog-assets/renders/*
 !research/catalog-assets/renders/.gitkeep
+research/catalog-assets/fasteners-workbench/models/*
+!research/catalog-assets/fasteners-workbench/models/.gitkeep
+research/catalog-assets/fasteners-workbench/renders/*
+!research/catalog-assets/fasteners-workbench/renders/.gitkeep

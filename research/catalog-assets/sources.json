@@ -8,13 +8,6 @@
       "licenseNote": "Repository is GPL-3.0; individual .blt data headers are LGPL 2.1+. Review mirrored license files before redistribution."
     },
     {
-      "id": "fasteners-eu",
-      "name": "Fasteners.eu",
-      "baseUrl": "https://www.fasteners.eu/",
-      "strategy": "Inspect standards/<STANDARD>/<NUMBER>/ pages for public 3D embeds or direct CAD links.",
-      "licenseNote": "Use only assets that are publicly downloadable and allowed by the provider terms."
-    },
-    {
       "id": "traceparts",
       "name": "TraceParts",
       "baseUrl": "https://www.traceparts.com/",

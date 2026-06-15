@@ -1,0 +1,1624 @@
+{
+  "counts": {
+    "failed": 0,
+    "matched": 33,
+    "normalized": 33,
+    "pending": 12,
+    "rendered": 33,
+    "total": 45
+  },
+  "entries": [
+    {
+      "catalogId": "din-912",
+      "category": "screw",
+      "description": "Socket head cap screw",
+      "error": "",
+      "fastenersType": "ISO4762",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-912/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "Length": "20",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ISO4762",
+        "baseType": "ISO4762",
+        "calc_diam": "M6",
+        "calc_len": 20.0,
+        "dimTable": [
+          1.0,
+          24.0,
+          10.0,
+          6.8,
+          5.82,
+          5.72,
+          0.68,
+          6.0,
+          0.25,
+          5.06,
+          3.0,
+          0.6,
+          9.38,
+          2.3
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-912/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-912/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-912/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 912",
+        "EN": "EN ISO 4762",
+        "ISO": "ISO 4762"
+      },
+      "updatedAt": "2026-06-15T00:46:27Z"
+    },
+    {
+      "catalogId": "din-933",
+      "category": "bolt",
+      "description": "Hex head screw, full thread",
+      "error": "",
+      "fastenersType": "DIN933",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-933/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "Length": "20",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "DIN933",
+        "baseType": "DIN933",
+        "calc_diam": "M6",
+        "calc_len": 20.0,
+        "dimTable": [
+          1.0,
+          0.2,
+          9.5,
+          11.05,
+          4.0,
+          0.25,
+          10.0
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-933/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-933/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-933/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 933",
+        "EN": "EN ISO 4017",
+        "ISO": "ISO 4017"
+      },
+      "updatedAt": "2026-06-15T00:46:41Z"
+    },
+    {
+      "catalogId": "din-934",
+      "category": "nut",
+      "description": "Hex nut",
+      "error": "",
+      "fastenersType": "DIN934",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-934/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "DIN934",
+        "baseType": "DIN934",
+        "calc_diam": "M6",
+        "dimTable": [
+          1.0,
+          0.0,
+          6.75,
+          8.8,
+          11.05,
+          5.0,
+          3.76,
+          10.0
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-934/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-934/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-934/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 934",
+        "EN": "EN ISO 4032",
+        "ISO": "ISO 4032"
+      },
+      "updatedAt": "2026-06-15T00:46:49Z"
+    },
+    {
+      "catalogId": "din-125",
+      "category": "washer",
+      "description": "Plain washer",
+      "error": "",
+      "fastenersType": "ISO7089",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-125/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": false,
+        "Type": "ISO7089",
+        "baseType": "ISO7089",
+        "calc_diam": "M6",
+        "dimTable": [
+          6.4,
+          12.0,
+          1.6,
+          1.8
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-125/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-125/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-125/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 125",
+        "EN": "EN ISO 7089",
+        "ISO": "ISO 7089"
+      },
+      "updatedAt": "2026-06-15T00:46:52Z"
+    },
+    {
+      "catalogId": "unc-socket-cap",
+      "category": "screw",
+      "description": "Socket head cap screw, inch series",
+      "error": "",
+      "fastenersType": "ASMEB18.3.1A",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/unc-socket-cap/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "1/4in",
+        "LeftHanded": false,
+        "Length": "1in",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ASMEB18.3.1A",
+        "baseType": "ASMEB18.3.1A",
+        "calc_diam": "1/4in",
+        "calc_len": 25.4,
+        "dimTable": [
+          1.27,
+          25.4,
+          9.525,
+          6.2738,
+          0.3175,
+          4.7752,
+          3.048,
+          0.635,
+          9.04875
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/unc-socket-cap/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/unc-socket-cap/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/unc-socket-cap/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "ASME": "ASME B18.3",
+        "ASTM": "ASTM A574",
+        "SAE": "SAE J429"
+      },
+      "updatedAt": "2026-06-15T00:47:05Z"
+    },
+    {
+      "catalogId": "blind-rivet",
+      "category": "rivet",
+      "description": "Blind rivet",
+      "error": "",
+      "fastenersType": null,
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "parameters": {},
+      "renderPaths": {},
+      "renderStatus": "pending",
+      "standardCodes": {
+        "DIN": "DIN 7337",
+        "EN": "EN ISO 15977",
+        "ISO": "ISO 15977"
+      },
+      "updatedAt": ""
+    },
+    {
+      "catalogId": "dowel-pin",
+      "category": "pin",
+      "description": "Parallel dowel pin",
+      "error": "",
+      "fastenersType": "ISO8734",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/dowel-pin/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "6 mm",
+        "LeftHanded": false,
+        "Length": "20",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ISO8734",
+        "baseType": "ISO8734",
+        "calc_diam": "6 mm",
+        "calc_len": 20.0,
+        "dimTable": [
+          6.0,
+          1.2
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/dowel-pin/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/dowel-pin/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/dowel-pin/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 6325",
+        "EN": "EN ISO 8734",
+        "ISO": "ISO 8734",
+        "JIS": "JIS B 1354"
+      },
+      "updatedAt": "2026-06-15T00:47:08Z"
+    },
+    {
+      "catalogId": "threaded-insert",
+      "category": "insert",
+      "description": "Brass threaded insert for plastic",
+      "error": "",
+      "fastenersType": null,
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "parameters": {},
+      "renderPaths": {},
+      "renderStatus": "pending",
+      "standardCodes": {},
+      "updatedAt": ""
+    },
+    {
+      "catalogId": "wall-anchor",
+      "category": "anchor",
+      "description": "Expansion wall anchor",
+      "error": "",
+      "fastenersType": null,
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "parameters": {},
+      "renderPaths": {},
+      "renderStatus": "pending",
+      "standardCodes": {},
+      "updatedAt": ""
+    },
+    {
+      "catalogId": "retaining-clip",
+      "category": "clip",
+      "description": "Assorted retaining and spring clips",
+      "error": "",
+      "fastenersType": null,
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "parameters": {},
+      "renderPaths": {},
+      "renderStatus": "pending",
+      "standardCodes": {},
+      "updatedAt": ""
+    },
+    {
+      "catalogId": "din-931",
+      "category": "bolt",
+      "description": "Hex head bolt, partial thread",
+      "error": "",
+      "fastenersType": "ISO4014",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-931/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "Length": "65",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ISO4014",
+        "baseType": "ISO4014",
+        "calc_diam": "M6",
+        "calc_len": 65.0,
+        "dimTable": [
+          1.0,
+          18.0,
+          24.0,
+          37.0,
+          0.2,
+          8.9,
+          11.05,
+          4.0,
+          0.25,
+          10.0
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-931/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-931/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-931/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 931",
+        "EN": "EN ISO 4014",
+        "ISO": "ISO 4014"
+      },
+      "updatedAt": "2026-06-15T00:47:21Z"
+    },
+    {
+      "catalogId": "din-960",
+      "category": "bolt",
+      "description": "Hex head bolt, partial thread, fine pitch",
+      "error": "",
+      "fastenersType": "ISO8765",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-960/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M8x1",
+        "LeftHanded": false,
+        "Length": "60",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ISO8765",
+        "baseType": "ISO8765",
+        "calc_diam": "M8x1",
+        "calc_len": 60.0,
+        "dimTable": [
+          1.0,
+          22.0,
+          28.0,
+          41.0,
+          0.6,
+          0.15,
+          9.2,
+          8.0,
+          7.78,
+          7.64,
+          11.63,
+          11.47,
+          14.38,
+          14.2,
+          2.0,
+          5.3,
+          5.45,
+          5.15,
+          5.54,
+          5.06,
+          3.61,
+          3.54,
+          0.4,
+          13.0,
+          12.73,
+          12.57
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-960/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-960/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-960/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 960",
+        "EN": "EN ISO 8765",
+        "ISO": "ISO 8765"
+      },
+      "updatedAt": "2026-06-15T00:47:38Z"
+    },
+    {
+      "catalogId": "din-961",
+      "category": "bolt",
+      "description": "Hex head screw, full thread, fine pitch",
+      "error": "",
+      "fastenersType": "DIN961",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-961/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M8x1",
+        "LeftHanded": false,
+        "Length": "20",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "DIN961",
+        "baseType": "DIN961",
+        "calc_diam": "M8x1",
+        "calc_len": 20.0,
+        "dimTable": [
+          1.0,
+          0.3,
+          11.6,
+          14.38,
+          5.3,
+          0.4,
+          13.0
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-961/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-961/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-961/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 961",
+        "EN": "EN ISO 8676",
+        "ISO": "ISO 8676"
+      },
+      "updatedAt": "2026-06-15T00:47:54Z"
+    },
+    {
+      "catalogId": "din-7991",
+      "category": "screw",
+      "description": "Hex socket countersunk head screw",
+      "error": "",
+      "fastenersType": "ISO10642",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-7991/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "Length": "20",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ISO10642",
+        "baseType": "ISO10642",
+        "calc_diam": "M6",
+        "calc_len": 20.0,
+        "dimTable": [
+          1.0,
+          24.0,
+          13.44,
+          12.0,
+          6.6,
+          5.82,
+          4.59,
+          3.72,
+          0.25,
+          4.06,
+          2.2,
+          0.7
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-7991/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-7991/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-7991/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 7991",
+        "EN": "EN ISO 10642",
+        "ISO": "ISO 10642"
+      },
+      "updatedAt": "2026-06-15T00:48:06Z"
+    },
+    {
+      "catalogId": "din-7984",
+      "category": "screw",
+      "description": "Low head hex socket cap screw",
+      "error": "",
+      "fastenersType": "DIN7984",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-7984/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "Length": "20",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "DIN7984",
+        "baseType": "DIN7984",
+        "calc_diam": "M6",
+        "calc_len": 20.0,
+        "dimTable": [
+          1.0,
+          18.0,
+          10.0,
+          6.8,
+          5.82,
+          4.58,
+          4.0,
+          0.25,
+          4.0,
+          3.0,
+          0.6,
+          9.2
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-7984/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-7984/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-7984/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 7984"
+      },
+      "updatedAt": "2026-06-15T00:48:19Z"
+    },
+    {
+      "catalogId": "iso-7380",
+      "category": "screw",
+      "description": "Hex socket button head screw",
+      "error": "",
+      "fastenersType": "ISO7380-1",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/iso-7380/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "Length": "20",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ISO7380-1",
+        "baseType": "ISO7380-1",
+        "calc_diam": "M6",
+        "calc_len": 20.0,
+        "dimTable": [
+          1.0,
+          24.0,
+          2.0,
+          6.8,
+          10.5,
+          10.3,
+          4.05,
+          2.08,
+          0.25,
+          3.3,
+          4.58,
+          0.74
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/iso-7380/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/iso-7380/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/iso-7380/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "ISO": "ISO 7380"
+      },
+      "updatedAt": "2026-06-15T00:48:33Z"
+    },
+    {
+      "catalogId": "din-913",
+      "category": "screw",
+      "description": "Hex socket set screw, flat point",
+      "error": "",
+      "fastenersType": "ISO4026",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-913/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "Length": "20",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ISO4026",
+        "baseType": "ISO4026",
+        "calc_diam": "M6",
+        "calc_len": 20.0,
+        "dimTable": [
+          1.0,
+          2.75,
+          4.0,
+          1.2,
+          4.9,
+          3.0
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-913/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-913/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-913/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 913",
+        "ISO": "ISO 4026"
+      },
+      "updatedAt": "2026-06-15T00:49:11Z"
+    },
+    {
+      "catalogId": "din-914",
+      "category": "screw",
+      "description": "Hex socket set screw, cone point",
+      "error": "",
+      "fastenersType": "ISO4027",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-914/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "Length": "20",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ISO4027",
+        "baseType": "ISO4027",
+        "calc_diam": "M6",
+        "calc_len": 20.0,
+        "dimTable": [
+          1.0,
+          2.75,
+          4.0,
+          1.2,
+          4.9,
+          3.0
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-914/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-914/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-914/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 914",
+        "ISO": "ISO 4027"
+      },
+      "updatedAt": "2026-06-15T00:49:46Z"
+    },
+    {
+      "catalogId": "din-915",
+      "category": "screw",
+      "description": "Hex socket set screw, dog point",
+      "error": "",
+      "fastenersType": "ISO4028",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-915/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "Length": "20",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ISO4028",
+        "baseType": "ISO4028",
+        "calc_diam": "M6",
+        "calc_len": 20.0,
+        "dimTable": [
+          1.0,
+          4.0,
+          3.7,
+          3.443,
+          3.0,
+          3.08,
+          3.02,
+          2.0,
+          3.5,
+          1.75,
+          1.5,
+          3.25,
+          3.0
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-915/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-915/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-915/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 915",
+        "ISO": "ISO 4028"
+      },
+      "updatedAt": "2026-06-15T00:50:14Z"
+    },
+    {
+      "catalogId": "din-916",
+      "category": "screw",
+      "description": "Hex socket set screw, cup point",
+      "error": "",
+      "fastenersType": "ISO4029",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-916/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "Length": "20",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ISO4029",
+        "baseType": "ISO4029",
+        "calc_diam": "M6",
+        "calc_len": 20.0,
+        "dimTable": [
+          1.0,
+          2.75,
+          4.0,
+          1.2,
+          4.9,
+          3.0
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-916/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-916/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-916/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 916",
+        "ISO": "ISO 4029"
+      },
+      "updatedAt": "2026-06-15T00:50:52Z"
+    },
+    {
+      "catalogId": "din-963",
+      "category": "screw",
+      "description": "Slotted countersunk head machine screw",
+      "error": "",
+      "fastenersType": "ISO2009",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-963/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "Length": "20",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ISO2009",
+        "baseType": "ISO2009",
+        "calc_diam": "M6",
+        "calc_len": 20.0,
+        "dimTable": [
+          1.0,
+          2.0,
+          38.0,
+          12.6,
+          11.2,
+          3.3,
+          1.66,
+          0.7,
+          1.4,
+          2.5
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-963/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-963/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-963/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 963",
+        "ISO": "ISO 2009"
+      },
+      "updatedAt": "2026-06-15T00:51:04Z"
+    },
+    {
+      "catalogId": "din-965",
+      "category": "screw",
+      "description": "Cross recessed countersunk head machine screw",
+      "error": "",
+      "fastenersType": "ISO7046",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-965/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "Length": "20",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ISO7046",
+        "baseType": "ISO7046",
+        "calc_diam": "M6",
+        "calc_len": 20.0,
+        "dimTable": [
+          1.0,
+          2.0,
+          38.0,
+          12.6,
+          11.2,
+          3.3,
+          1.66,
+          0.7,
+          1.4,
+          2.5
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-965/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-965/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-965/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 965",
+        "ISO": "ISO 7046"
+      },
+      "updatedAt": "2026-06-15T00:51:16Z"
+    },
+    {
+      "catalogId": "din-7985",
+      "category": "screw",
+      "description": "Cross recessed pan head machine screw",
+      "error": "",
+      "fastenersType": "ISO7045",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-7985/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "Length": "20",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ISO7045",
+        "baseType": "ISO7045",
+        "calc_diam": "M6",
+        "calc_len": 20.0,
+        "dimTable": [
+          1.0,
+          2.0,
+          38.0,
+          12.0,
+          6.8,
+          4.6,
+          0.25,
+          10.0,
+          2.5,
+          "3",
+          6.9,
+          6.7
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-7985/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-7985/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-7985/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 7985",
+        "ISO": "ISO 7045"
+      },
+      "updatedAt": "2026-06-15T00:51:30Z"
+    },
+    {
+      "catalogId": "din-7500",
+      "category": "screw",
+      "description": "Thread forming screw for metric thread",
+      "error": "",
+      "fastenersType": null,
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "parameters": {},
+      "renderPaths": {},
+      "renderStatus": "pending",
+      "standardCodes": {
+        "DIN": "DIN 7500"
+      },
+      "updatedAt": ""
+    },
+    {
+      "catalogId": "din-7504",
+      "category": "screw",
+      "description": "Self-drilling screw",
+      "error": "",
+      "fastenersType": null,
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "parameters": {},
+      "renderPaths": {},
+      "renderStatus": "pending",
+      "standardCodes": {
+        "DIN": "DIN 7504",
+        "ISO": "ISO 15480"
+      },
+      "updatedAt": ""
+    },
+    {
+      "catalogId": "din-439",
+      "category": "nut",
+      "description": "Hex thin nut / jam nut",
+      "error": "",
+      "fastenersType": "ISO4035",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-439/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ISO4035",
+        "baseType": "ISO4035",
+        "calc_diam": "M6",
+        "dimTable": [
+          1.0,
+          0.2,
+          6.75,
+          9.5,
+          11.05,
+          3.2,
+          3.9,
+          10.0
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-439/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-439/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-439/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 439",
+        "ISO": "ISO 4035"
+      },
+      "updatedAt": "2026-06-15T00:51:36Z"
+    },
+    {
+      "catalogId": "din-982",
+      "category": "nut",
+      "description": "Prevailing torque hex nut, non-metallic insert, high type",
+      "error": "",
+      "fastenersType": "ISO7040",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-982/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ISO7040",
+        "baseType": "ISO7040",
+        "calc_diam": "M6",
+        "dimTable": [
+          1.0,
+          6.75,
+          6.0,
+          8.88,
+          11.05,
+          8.0,
+          7.42,
+          4.9,
+          3.92,
+          10.0,
+          9.78
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-982/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-982/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-982/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 982",
+        "ISO": "ISO 7040"
+      },
+      "updatedAt": "2026-06-15T00:51:47Z"
+    },
+    {
+      "catalogId": "din-985",
+      "category": "nut",
+      "description": "Prevailing torque hex nut, non-metallic insert, low type",
+      "error": "",
+      "fastenersType": "DIN985",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-985/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "DIN985",
+        "baseType": "DIN985",
+        "calc_diam": "M6",
+        "dimTable": [
+          1.0,
+          6.75,
+          8.9,
+          11.05,
+          4.0,
+          6.0,
+          10.0
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-985/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-985/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-985/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 985",
+        "ISO": "ISO 10511"
+      },
+      "updatedAt": "2026-06-15T00:51:56Z"
+    },
+    {
+      "catalogId": "din-1587",
+      "category": "nut",
+      "description": "Hex cap nut, domed",
+      "error": "",
+      "fastenersType": "DIN1587",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-1587/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "DIN1587",
+        "baseType": "DIN1587",
+        "calc_diam": "M6",
+        "dimTable": [
+          1.0,
+          9.5,
+          12.0,
+          4.85,
+          10.0,
+          8.0,
+          2.0
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-1587/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-1587/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-1587/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 1587"
+      },
+      "updatedAt": "2026-06-15T00:52:07Z"
+    },
+    {
+      "catalogId": "din-6923",
+      "category": "nut",
+      "description": "Hex flange nut",
+      "error": "",
+      "fastenersType": "EN1661",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-6923/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "EN1661",
+        "baseType": "EN1661",
+        "calc_diam": "M6",
+        "dimTable": [
+          1.0,
+          6.75,
+          1.1,
+          14.2,
+          12.2,
+          11.05,
+          6.0,
+          3.1,
+          0.36,
+          10.0
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-6923/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-6923/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-6923/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 6923",
+        "EN": "EN 1661"
+      },
+      "updatedAt": "2026-06-15T00:52:15Z"
+    },
+    {
+      "catalogId": "din-9021",
+      "category": "washer",
+      "description": "Large diameter flat washer",
+      "error": "",
+      "fastenersType": "ISO7093-1",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-9021/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "M6",
+        "LeftHanded": false,
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": false,
+        "Type": "ISO7093-1",
+        "baseType": "ISO7093-1",
+        "calc_diam": "M6",
+        "dimTable": [
+          6.4,
+          18.0,
+          1.6,
+          1.8
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-9021/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-9021/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-9021/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 9021",
+        "ISO": "ISO 7093"
+      },
+      "updatedAt": "2026-06-15T00:52:19Z"
+    },
+    {
+      "catalogId": "din-127",
+      "category": "washer",
+      "description": "Split spring lock washer",
+      "error": "",
+      "fastenersType": null,
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "parameters": {},
+      "renderPaths": {},
+      "renderStatus": "pending",
+      "standardCodes": {
+        "DIN": "DIN 127"
+      },
+      "updatedAt": ""
+    },
+    {
+      "catalogId": "din-6796",
+      "category": "washer",
+      "description": "Conical spring washer for bolted connections",
+      "error": "",
+      "fastenersType": null,
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "parameters": {},
+      "renderPaths": {},
+      "renderStatus": "pending",
+      "standardCodes": {
+        "DIN": "DIN 6796"
+      },
+      "updatedAt": ""
+    },
+    {
+      "catalogId": "din-7349",
+      "category": "washer",
+      "description": "Heavy washer for bolts with heavy clamping sleeves",
+      "error": "",
+      "fastenersType": null,
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "parameters": {},
+      "renderPaths": {},
+      "renderStatus": "pending",
+      "standardCodes": {
+        "DIN": "DIN 7349"
+      },
+      "updatedAt": ""
+    },
+    {
+      "catalogId": "din-7",
+      "category": "pin",
+      "description": "Parallel dowel pin, unhardened",
+      "error": "",
+      "fastenersType": "ISO2338",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-7/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "6 mm",
+        "LeftHanded": false,
+        "Length": "20",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ISO2338",
+        "baseType": "ISO2338",
+        "calc_diam": "6 mm",
+        "calc_len": 20.0,
+        "dimTable": [
+          6.0,
+          1.2
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-7/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-7/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-7/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 7",
+        "ISO": "ISO 2338"
+      },
+      "updatedAt": "2026-06-15T00:52:22Z"
+    },
+    {
+      "catalogId": "din-94",
+      "category": "pin",
+      "description": "Split cotter pin",
+      "error": "",
+      "fastenersType": "ISO1234",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-94/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "0.6 mm",
+        "LeftHanded": false,
+        "Length": "8",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ISO1234",
+        "baseType": "ISO1234",
+        "calc_diam": "0.6 mm",
+        "calc_len": 8.0,
+        "dimTable": [
+          1.2,
+          2.0,
+          0.95,
+          0.45
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-94/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-94/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-94/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 94",
+        "ISO": "ISO 1234"
+      },
+      "updatedAt": "2026-06-15T00:52:25Z"
+    },
+    {
+      "catalogId": "din-1481",
+      "category": "pin",
+      "description": "Slotted spring pin, heavy duty",
+      "error": "",
+      "fastenersType": "ISO8752",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-1481/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "6 mm",
+        "LeftHanded": false,
+        "Length": "20",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ISO8752",
+        "baseType": "ISO8752",
+        "calc_diam": "6 mm",
+        "calc_len": 20.0,
+        "dimTable": [
+          6.55,
+          4.0,
+          1.3,
+          1.2
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-1481/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-1481/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-1481/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 1481",
+        "ISO": "ISO 8752"
+      },
+      "updatedAt": "2026-06-15T00:52:28Z"
+    },
+    {
+      "catalogId": "din-7343",
+      "category": "pin",
+      "description": "Coiled spring pin, standard duty",
+      "error": "",
+      "fastenersType": "ISO8750",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/din-7343/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "6 mm",
+        "LeftHanded": false,
+        "Length": "20",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ISO8750",
+        "baseType": "ISO8750",
+        "calc_diam": "6 mm",
+        "calc_len": 20.0,
+        "dimTable": [
+          6.375,
+          5.85,
+          1.5,
+          0.5
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/din-7343/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/din-7343/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/din-7343/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "DIN": "DIN 7343",
+        "ISO": "ISO 8750"
+      },
+      "updatedAt": "2026-06-15T00:52:33Z"
+    },
+    {
+      "catalogId": "asme-b18-2-1-hex-cap",
+      "category": "bolt",
+      "description": "Inch hex cap screw / hex bolt",
+      "error": "",
+      "fastenersType": "ASMEB18.2.1.1",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/asme-b18-2-1-hex-cap/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "1/4in",
+        "LeftHanded": false,
+        "Length": "1in",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ASMEB18.2.1.1",
+        "baseType": "ASMEB18.2.1.1",
+        "calc_diam": "1/4in",
+        "calc_len": 25.4,
+        "dimTable": [
+          20.0,
+          0.375,
+          0.171875,
+          0.02,
+          0.75,
+          1.0
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/asme-b18-2-1-hex-cap/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/asme-b18-2-1-hex-cap/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/asme-b18-2-1-hex-cap/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "ASME": "ASME B18.2.1",
+        "SAE": "SAE J429"
+      },
+      "updatedAt": "2026-06-15T00:52:44Z"
+    },
+    {
+      "catalogId": "asme-b18-6-3-machine-screw",
+      "category": "screw",
+      "description": "Inch machine screw",
+      "error": "",
+      "fastenersType": "ASMEB18.6.3.1A",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/asme-b18-6-3-machine-screw/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "1/4in",
+        "LeftHanded": false,
+        "Length": "1in",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ASMEB18.6.3.1A",
+        "baseType": "ASMEB18.6.3.1A",
+        "calc_diam": "1/4in",
+        "calc_len": 25.4,
+        "dimTable": [
+          1.27,
+          15.4,
+          12.1158,
+          11.6713,
+          3.8862,
+          1.7653,
+          0.635,
+          1.4732
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/asme-b18-6-3-machine-screw/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/asme-b18-6-3-machine-screw/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/asme-b18-6-3-machine-screw/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "ASME": "ASME B18.6.3",
+        "SAE": "SAE J933"
+      },
+      "updatedAt": "2026-06-15T00:52:54Z"
+    },
+    {
+      "catalogId": "asme-b18-6-4-tapping-screw",
+      "category": "screw",
+      "description": "Inch tapping screw",
+      "error": "",
+      "fastenersType": null,
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "parameters": {},
+      "renderPaths": {},
+      "renderStatus": "pending",
+      "standardCodes": {
+        "ASME": "ASME B18.6.4",
+        "SAE": "SAE J933"
+      },
+      "updatedAt": ""
+    },
+    {
+      "catalogId": "asme-b18-2-2-hex-nut",
+      "category": "nut",
+      "description": "Inch hex nut",
+      "error": "",
+      "fastenersType": "ASMEB18.2.2.1A",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/asme-b18-2-2-hex-nut/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "1/4in",
+        "LeftHanded": false,
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ASMEB18.2.2.1A",
+        "baseType": "ASMEB18.2.2.1A",
+        "calc_diam": "1/4in",
+        "dimTable": [
+          1.27,
+          7.14375,
+          12.5349,
+          4.7117,
+          10.9347
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/asme-b18-2-2-hex-nut/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/asme-b18-2-2-hex-nut/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/asme-b18-2-2-hex-nut/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "ASME": "ASME B18.2.2",
+        "SAE": "SAE J995"
+      },
+      "updatedAt": "2026-06-15T00:53:00Z"
+    },
+    {
+      "catalogId": "asme-b18-21-1-washer",
+      "category": "washer",
+      "description": "Inch flat washer, SAE pattern",
+      "error": "",
+      "fastenersType": "ASMEB18.2.1.1",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/fasteners-workbench/models/asme-b18-21-1-washer/normalized.step",
+      "parameters": {
+        "Blind": false,
+        "Diameter": "1/4in",
+        "LeftHanded": false,
+        "Length": "1in",
+        "MatchOuter": false,
+        "NumStarts": 1,
+        "Thread": true,
+        "Type": "ASMEB18.2.1.1",
+        "baseType": "ASMEB18.2.1.1",
+        "calc_diam": "1/4in",
+        "calc_len": 25.4,
+        "dimTable": [
+          20.0,
+          0.375,
+          0.171875,
+          0.02,
+          0.75,
+          1.0
+        ]
+      },
+      "renderPaths": {
+        "iso": "research/catalog-assets/fasteners-workbench/renders/asme-b18-21-1-washer/iso.png",
+        "side": "research/catalog-assets/fasteners-workbench/renders/asme-b18-21-1-washer/side.svg",
+        "top": "research/catalog-assets/fasteners-workbench/renders/asme-b18-21-1-washer/top.svg"
+      },
+      "renderStatus": "rendered",
+      "standardCodes": {
+        "ASME": "ASME B18.21.1",
+        "SAE": "SAE washer pattern"
+      },
+      "updatedAt": "2026-06-15T00:53:11Z"
+    },
+    {
+      "catalogId": "asme-b18-8-1-cotter-pin",
+      "category": "pin",
+      "description": "Inch cotter pin",
+      "error": "",
+      "fastenersType": null,
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "parameters": {},
+      "renderPaths": {},
+      "renderStatus": "pending",
+      "standardCodes": {
+        "ASME": "ASME B18.8.1",
+        "SAE": "SAE cotter pin"
+      },
+      "updatedAt": ""
+    },
+    {
+      "catalogId": "asme-b18-8-2-dowel-pin",
+      "category": "pin",
+      "description": "Inch dowel pin",
+      "error": "",
+      "fastenersType": null,
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "parameters": {},
+      "renderPaths": {},
+      "renderStatus": "pending",
+      "standardCodes": {
+        "ASME": "ASME B18.8.2",
+        "SAE": "SAE dowel pin"
+      },
+      "updatedAt": ""
+    }
+  ],
+  "provider": "freecad-fasteners-workbench",
+  "updatedAt": "2026-06-15T00:53:11Z",
+  "version": 1
+}
