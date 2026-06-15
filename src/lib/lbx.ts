@@ -3,6 +3,7 @@ import type { HardwareItem, LabelSettings, PlacedField, UnitSystem } from '../ty
 import { defaultFrameStyle } from './defaults';
 import { renderTextTemplate } from './format';
 import { buildQrPayload, createQrPngDataUrl } from './qr';
+import { isStandardImageSource, standardImageLabel, standardImageUrlForItem } from './standardImages';
 
 export interface LbxXmlFiles {
   'label.xml': string;
@@ -37,14 +38,20 @@ const lineStyle = (style: string) => {
   return 'SOLID';
 };
 
-const lbxImageFields = (settings: LabelSettings) =>
-  settings.fields.filter((field) => field.kind === 'image' && field.style.visible && (field.imageSource === 'qr' || (field.imageSource === 'custom' && field.imageBase64)));
+const lbxImageFields = (item: HardwareItem, settings: LabelSettings) =>
+  settings.fields.filter(
+    (field) =>
+      field.kind === 'image' &&
+      field.style.visible &&
+      (field.imageSource === 'qr' || isStandardImageSource(field.imageSource) || (field.imageSource === 'custom' && field.imageBase64))
+  ).filter((field) => !isStandardImageSource(field.imageSource) || Boolean(standardImageUrlForItem(item, field.imageSource)));
 
-const lbxExportedImageFields = (settings: LabelSettings, purchaseLink: string) =>
-  lbxImageFields(settings).filter((field) => field.imageSource !== 'qr' || purchaseLink.trim());
+const lbxExportedImageFields = (item: HardwareItem, settings: LabelSettings, purchaseLink: string) =>
+  lbxImageFields(item, settings).filter((field) => field.imageSource !== 'qr' || purchaseLink.trim());
 
 const imageExtension = (field: PlacedField) => {
   if (field.imageSource === 'qr') return 'png';
+  if (isStandardImageSource(field.imageSource)) return 'jpg';
 
   const nameExtension = field.imageName?.split('.').pop()?.toLowerCase();
   if (nameExtension === 'bmp' || nameExtension === 'png' || nameExtension === 'svg') {
@@ -105,7 +112,7 @@ const renderFrameObject = (field: PlacedField, index: number) => {
 
 const renderImageObject = (field: PlacedField, index: number, imageIndex: number) => {
   const fileName = imageFileName(imageIndex, field);
-  const originalName = field.imageSource === 'qr' ? fileName : field.imageName?.trim() || fileName;
+  const originalName = field.imageSource === 'qr' || isStandardImageSource(field.imageSource) ? fileName : field.imageName?.trim() || fileName;
 
   return `<image:image>
   ${objectStyleXml(field, `Bitmap${index + 1}`)}
@@ -124,8 +131,8 @@ const renderObjects = (item: HardwareItem, settings: LabelSettings, purchaseLink
     .filter((field) => field.style.visible)
     .map((field, index) => {
       if (field.kind === 'frame') return renderFrameObject({ ...field, width: settings.widthMm, height: settings.heightMm }, index);
-      if (field.kind === 'image' && (field.imageSource === 'qr' || (field.imageSource === 'custom' && field.imageBase64))) {
-        const imageIndex = lbxExportedImageFields(settings, purchaseLink).findIndex((candidate) => candidate.id === field.id);
+      if (field.kind === 'image' && (field.imageSource === 'qr' || isStandardImageSource(field.imageSource) || (field.imageSource === 'custom' && field.imageBase64))) {
+        const imageIndex = lbxExportedImageFields(item, settings, purchaseLink).findIndex((candidate) => candidate.id === field.id);
         return imageIndex >= 0 ? renderImageObject(field, index, imageIndex) : '';
       }
       if (field.kind === 'text') return renderTextObject(field, item, unitSystem, index);
@@ -207,17 +214,25 @@ export const createLbxBlob = async (item: HardwareItem, settings: LabelSettings,
 
 const generateImageFiles = async (item: HardwareItem, settings: LabelSettings, purchaseLink: string) => {
   const entries = await Promise.all(
-    lbxExportedImageFields(settings, purchaseLink).map(async (field, index) => [imageFileName(index, field), await imageFieldBytes(field, purchaseLink)] as const)
+    lbxExportedImageFields(item, settings, purchaseLink).map(async (field, index) => [imageFileName(index, field), await imageFieldBytes(field, item, purchaseLink)] as const)
   );
 
   return Object.fromEntries(entries) as Partial<LbxXmlFiles>;
 };
 
-const imageFieldBytes = async (field: PlacedField, purchaseLink: string) => {
+const imageFieldBytes = async (field: PlacedField, item: HardwareItem, purchaseLink: string) => {
   if (field.imageSource === 'qr') {
     const payload = buildQrPayload(purchaseLink);
     if (!payload.target) return new Uint8Array();
     return dataUrlToBytes(await createQrPngDataUrl(payload.target));
+  }
+
+  if (isStandardImageSource(field.imageSource)) {
+    const url = standardImageUrlForItem(item, field.imageSource);
+    if (!url) throw new Error(`${standardImageLabel(field.imageSource)} is not available for this catalog part.`);
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Unable to fetch ${standardImageLabel(field.imageSource).toLowerCase()} from fasteners.eu.`);
+    return new Uint8Array(await response.arrayBuffer());
   }
 
   if (!field.imageBase64) {

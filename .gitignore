@@ -7,3 +7,7 @@ coverage
 vite.config.js
 vite.config.d.ts
 package-lock.json
+research/catalog-assets/models/*
+!research/catalog-assets/models/.gitkeep
+research/catalog-assets/renders/*
+!research/catalog-assets/renders/.gitkeep

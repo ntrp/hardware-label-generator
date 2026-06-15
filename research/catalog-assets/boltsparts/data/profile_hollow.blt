@@ -1,0 +1,328 @@
+# ******************************************************************************
+# BOLTS - Open Library of Technical Specifications                             *
+#                                                                              *
+# Copyright (C) 2016 Bernd Hahnebach <bernd@bimstatik.org>                     *
+#                                                                              *
+# This library is free software; you can redistribute it and/or                *
+# modify it under the terms of the GNU Lesser General Public                   *
+# License as published by the Free Software Foundation; either                 *
+# version 2.1 of the License, or any later version.                            *
+#                                                                              *
+# This library is distributed in the hope that it will be useful,              *
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               *
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU             *
+# Lesser General Public License for more details.                              *
+#                                                                              *
+# You should have received a copy of the GNU Lesser General Public             *
+# License along with this library; if not, write to the Free Software          *
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA *
+# ******************************************************************************
+
+author:
+- Bernd Hahnebach <bernd@bimstatik.org>
+- Johannes Reinhardt <jreinhardt@ist-dein-freund.de>
+blt-version: 0.4
+description: Hot finished structural hollow profiles
+id: profile_hollow
+license: LGPL 2.1+ <http://www.gnu.org/licenses/lgpl-2.1>
+name: Profiles Hollow
+classes:
+- id: hollow_generic_circle
+  names:
+    description: A generic circular hollow profile to put in your own values
+    labeling: Circular hollow profile %(D)s/%(t)s l=%(l)s
+    name: Generic circular hollow profile
+  parameters:
+    defaults:
+      D: 21.3
+      l: 1000
+      t: 2.3
+    description:
+      D: outside diameter
+      l: profile length
+      t: thickness
+    free: [D, t, l]
+    types:
+      D: Length (mm)
+      l: Length (mm)
+      t: Length (mm)
+  source: No source information used
+- id: hollow_generic_square
+  names:
+    description: A generic square hollow profile to put in your own values
+    labeling: Square hollow profile %(b)s/%(t)s l=%(l)s
+    name: Generic square hollow profile
+  parameters:
+    defaults:
+      b: 40
+      l: 1000
+      t: 2.6
+    description:
+      b: outside dimension
+      l: profile length
+      t: web thickness
+    free: [b, t, l]
+    types:
+      b: Length (mm)
+      l: Length (mm)
+      t: Length (mm)
+  source: No source information used
+- id: hollow_generic_rectangular
+  names:
+    description: A generic rectangular hollow profile to put in your own values
+    labeling: Rectangular hollow profile %(h)s-%(b)s-%(t)s, l=%(l)s
+    name: Generic rectangular hollow
+  parameters:
+    defaults:
+      b: 100
+      h: 100
+      l: 1000
+      t: 6.3
+    description:
+      b: section width
+      h: section height
+      l: profile length
+      t: web thickness
+    free: [h, b, t, l]
+    types:
+      b: Length (mm)
+      h: Length (mm)
+      l: Length (mm)
+      t: Length (mm)
+  source: No source information used
+- id: hollow_bluescope_circle
+  names:
+    description: BlueScope hot finished structural circular hollow sections of non-alloy and
+      fine grain steel
+    labeling: '%(type)s, l=%(l)s'
+    name: BlueScope Circular Hollow Section (CHS)
+  notes: http://en.wikipedia.org/wiki/Structural_steel
+  parameters:
+    defaults:
+      l: 1000
+      type: 165.1x5.4 CHS
+    description:
+      D: outside diameter
+      l: profile length
+      t: thickness
+      type: profile type
+    free: [type, l]
+    tables:
+      columns: [D, t]
+      data: !include profile_hollow/hollow_bluescope_circle.yaml
+      index: type
+    types:
+      D: Length (mm)
+      l: Length (mm)
+      t: Length (mm)
+      type: Table Index
+  source: https://www.steel.org.au/resources/elibrary/resources/design-capacity-tables-for-structural-steel-hollow/ (pages 28-30)
+  standards:
+    body: None
+    description: BlueScope hot finished structural circular hollow sections of non-alloy and fine grain steel
+    group: Company BlueScope
+    labeling: BlueScope %(type)s, l=%(l)s
+    standard: BlueScope circular hollow
+- id: hollow_bluescope_square
+  names:
+    description: BlueScope hot finished structural square hollow sections of non-alloy and fine grain steel
+    labeling: '%(type)s, l=%(l)s'
+    name: BlueScope Square Hollow Section (SHS)
+  notes: http://en.wikipedia.org/wiki/Structural_steel
+  parameters:
+    defaults:
+      l: 1000
+      type: 50x6.0 SHS
+    description:
+      ri: inner fillet radius
+      ro: outer fillet radius
+      b: outside dimension
+      l: profile length
+      t: web thickness
+      type: profile type
+    free: [type, l]
+    tables:
+      columns: [ri, ro, b, t]
+      data: !include profile_hollow/hollow_bluescope_square.yaml
+      index: type
+    types:
+      ri: Length (mm)
+      ro: Length (mm)
+      b: Length (mm)
+      l: Length (mm)
+      t: Length (mm)
+      type: Table Index
+  source: https://www.steel.org.au/resources/elibrary/resources/design-capacity-tables-for-structural-steel-hollow/ (pages 35-38)
+  standards:
+    body: None
+    description: BlueScope hot finished structural square hollow sections of non-alloy and fine grain steel
+    group: Company BlueScope
+    labeling: BlueScope %(type)s, l=%(l)s
+    standard: BlueScope square hollow
+- id: hollow_bluescope_rectangular
+  names:
+    description: BlueScope hot finished structural rectangular hollow sections of non-alloy and fine grain steel
+    labeling: '%(type)s, l=%(l)s'
+    name: BlueScope Rectangular Hollow Section (RHS)
+  notes: http://en.wikipedia.org/wiki/Structural_steel
+  parameters:
+    defaults:
+      l: 1000
+      type: 75x25x2.5 RHS
+    description:
+      ri: inner fillet radius
+      ro: outer fillet radius
+      b: outside dimension width
+      h: outside dimension height
+      l: profile length
+      t: web thickness
+      type: profile type
+    free: [type, l]
+    tables:
+      columns: [ri, ro, b, h, t]
+      data: !include profile_hollow/hollow_bluescope_rectangular.yaml
+      index: type
+    types:
+      ri: Length (mm)
+      ro: Length (mm)
+      b: Length (mm)
+      h: Length (mm)
+      l: Length (mm)
+      t: Length (mm)
+      type: Table Index
+  source: https://www.steel.org.au/resources/elibrary/resources/design-capacity-tables-for-structural-steel-hollow/ (pages 31-34)
+  standards:
+    body: None
+    description: BlueScope hot finished structural rectangular hollow sections of non-alloy and fine grain steel
+    group: Company BlueScope
+    labeling: BlueScope %(type)s, l=%(l)s
+    standard: BlueScope rectangular hollow
+- id: hollow_circle
+  names:
+    description: Hot finished structural circular hollow sections of non-alloy and fine grain steel
+    labeling: '%(type)s, l=%(l)s'
+    name: Circular Hollow Section (CHS)
+  notes: http://en.wikipedia.org/wiki/Structural_steel
+  parameters:
+    defaults:
+      l: 1000
+      type: 168.3-12.5
+    description:
+      D: outside diameter
+      l: profile length
+      t: thickness
+      type: profile type
+    free: [type, l]
+    tables:
+      columns: [D, t]
+      data: !include profile_hollow/hollow_circle.yaml
+      index: type
+    types:
+      D: Length (mm)
+      l: Length (mm)
+      t: Length (mm)
+      type: Table Index
+  source: EN 10210-2:2006, Table B.1
+  standards:
+  - body: DINEN
+    description: Circular Hollow Section (CHS)
+    group: DIN EN 10210-2
+    labeling: CHS DIN EN 10210-2 %(type)s, l=%(l)s
+    standard: DIN EN 10210-2 circular
+    year: 2006
+  - body: EN
+    description: Circular Hollow Section (CHS)
+    group: EN 10210-2
+    labeling: CHS EN 10210-2 %(type)s, l=%(l)s
+    standard: EN 10210-2 circular
+    year: 2006
+- id: hollow_square
+  names:
+    description: Hot finished structural square hollow sections of non-alloy and fine
+      grain steel
+    labeling: '%(type)s, l=%(l)s'
+    name: Square Hollow Section (SHS)
+  notes: http://en.wikipedia.org/wiki/Structural_steel
+  parameters:
+    defaults:
+      l: 1000
+      type: 160-16.0
+    description:
+      b: outside dimension
+      l: profile length
+      t: web thickness
+      ri: inner radius
+      ro: outer radius
+      type: profile type
+    free: [type, l]
+    tables:
+      columns: [b, t, ri, ro]
+      data: !include profile_hollow/hollow_square.yaml
+      index: type
+    types:
+      b: Length (mm)
+      l: Length (mm)
+      t: Length (mm)
+      ri: Length (mm)
+      ro: Length (mm)
+      type: Table Index
+  source: EN 10210-2:2006, Table B.2
+  standards:
+  - body: DINEN
+    description: Square Hollow Section (SHS)
+    group: DIN EN 10210-2
+    labeling: SHS DIN EN 10210-2 %(type)s, l=%(l)s
+    standard: DIN EN 10210-2 square
+    year: 2006
+  - body: EN
+    description: Square Hollow Section (SHS)
+    group: EN 10210-2
+    labeling: SHS EN 10210-2 %(type)s, l=%(l)s
+    standard: EN 10210-2 square
+    year: 2006
+- id: hollow_rectangular
+  names:
+    description: Hot finished structural rectangular hollow sections of non-alloy and
+      fine grain steel
+    labeling: '%(type)s, l=%(l)s'
+    name: Rectangular Hollow Section (RHS)
+  notes: http://en.wikipedia.org/wiki/Structural_steel
+  parameters:
+    defaults:
+      l: 1000
+      type: 200-120-12.5
+    description:
+      b: outside dimension width
+      h: outside dimension height
+      l: profile length
+      t: web thickness
+      ri: inner radius
+      ro: outer radius
+      type: profile type
+    free: [type, l]
+    tables:
+      columns: [h, b, t, ri, ro]
+      data: !include profile_hollow/hollow_rectangular.yaml
+      index: type
+    types:
+      b: Length (mm)
+      h: Length (mm)
+      l: Length (mm)
+      t: Length (mm)
+      ri: Length (mm)
+      ro: Length (mm)
+      type: Table Index
+  source: EN 10210-2:2006, Table B.3
+  standards:
+  - body: DINEN
+    description: Rectangular Hollow Section (RHS)
+    group: DIN EN 10210-2
+    labeling: RHS DIN EN 10210-2 %(type)s, l=%(l)s
+    standard: DIN EN 10210-2 rectangular
+    year: 2006
+  - body: EN
+    description: Rectangular Hollow Section (RHS)
+    group: EN 10210-2
+    labeling: RHS EN 10210-2 %(type)s, l=%(l)s
+    standard: EN 10210-2 rectangular
+    year: 2006

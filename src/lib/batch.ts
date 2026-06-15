@@ -1,9 +1,10 @@
 import type { HardwareItem, HardwareSpecKey } from '../types';
+import { standardsCatalog } from '../data/catalog';
 import { createId } from './defaults';
 import { parseList, splitLengthAndUnit } from './format';
 import { isValidBoltClass } from './boltClasses';
 import { isValidMaterialTreatment } from './materials';
-import { categorySpecKeys, patchItemSpec, syncHardwareSpecs } from './specs';
+import { categorySpecKeys, getCatalogWasherDimensionValue, isWasherDimensionKey, patchItemSpec, syncHardwareSpecs } from './specs';
 
 const cartesian = <T,>(entries: T[][]): T[][] =>
   entries.reduce<T[][]>((sets, values) => sets.flatMap((set) => values.map((value) => [...set, value])), [[]]);
@@ -15,8 +16,31 @@ const normalizeSpecList = (base: HardwareItem, key: HardwareSpecKey, text: strin
   return [base.specs?.[key] ?? ''].filter(Boolean);
 };
 
-export const generateBatchItems = (base: HardwareItem, specsText: Partial<Record<HardwareSpecKey, string>>): HardwareItem[] => {
+const getBatchCatalogEntry = (item: HardwareItem) =>
+  item.catalogId ? standardsCatalog.find((entry) => entry.id === item.catalogId) : undefined;
+
+const batchSpecKeys = (base: HardwareItem) => {
+  const entry = getBatchCatalogEntry(base);
   const keys = categorySpecKeys[base.category];
+  if (entry?.category !== 'washer') return keys;
+  return keys.filter((key) => !isWasherDimensionKey(key));
+};
+
+const applyCatalogWasherDimensions = (item: HardwareItem): HardwareItem => {
+  const entry = getBatchCatalogEntry(item);
+  if (entry?.category !== 'washer') return item;
+
+  const specs = { ...item.specs };
+  for (const key of ['thickness', 'innerDiameter', 'outerDiameter'] as HardwareSpecKey[]) {
+    const value = getCatalogWasherDimensionValue(entry, key, entry.unitSystem, item.size);
+    if (value) specs[key] = value;
+  }
+
+  return syncHardwareSpecs({ ...item, specs });
+};
+
+export const generateBatchItems = (base: HardwareItem, specsText: Partial<Record<HardwareSpecKey, string>>): HardwareItem[] => {
+  const keys = batchSpecKeys(base);
   const valueLists = keys.map((key) => normalizeSpecList(base, key, specsText[key]));
 
   return cartesian(valueLists).flatMap((values) => {
@@ -44,7 +68,7 @@ export const generateBatchItems = (base: HardwareItem, specsText: Partial<Record
       };
     });
 
-    const syncedItem = syncHardwareSpecs(item);
+    const syncedItem = applyCatalogWasherDimensions(syncHardwareSpecs(item));
     return isValidMaterialTreatment(syncedItem.material, syncedItem.materialType) && isValidBoltClass(syncedItem) ? [syncedItem] : [];
   });
 };

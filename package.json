@@ -8,7 +8,14 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "test": "vitest run",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "research:assets:status": "python3 research/catalog-assets/scripts/catalog_assets.py status --write",
+    "research:assets:audit": "python3 research/catalog-assets/scripts/catalog_assets.py audit",
+    "research:assets:discover": "python3 research/catalog-assets/scripts/catalog_assets.py discover --all",
+    "research:assets:render": "python3 research/catalog-assets/scripts/run_freecad.py render --all",
+    "research:assets:boltsparts": "python3 research/catalog-assets/scripts/catalog_assets.py boltsparts-sync --write-status",
+    "research:assets:boltsparts:generate": "python3 research/catalog-assets/scripts/run_freecad.py boltsparts-generate --all",
+    "research:assets:boltsparts:render": "python3 research/catalog-assets/scripts/run_freecad.py boltsparts-generate --all --render"
   },
   "dependencies": {
     "jszip": "^3.10.1",

@@ -36,17 +36,21 @@ import {
   firstSpecValue,
   getAllCatalogSpecOptions,
   getCatalogSpecOptions,
+  getCatalogWasherDimensionValue,
   getCategorySpecDefinitions,
   getItemSpecValue,
+  isWasherDimensionKey,
   normalizeLengthSpec,
   patchItemSpec,
   syncHardwareSpecs
 } from './lib/specs';
 import { baseMaterials, defaultMaterialTreatment, getMaterialTreatmentOptions, isValidMaterialTreatment } from './lib/materials';
 import { defaultBoltClass, getBoltClassOptions, isValidBoltClass } from './lib/boltClasses';
+import { defaultMetricThreadPitch, findMetricThreadPitch, formatMetricThreadPitchOption, metricThreadPitchNamesForSize } from './lib/metricThreads';
 import { catalogMatchesSelectedStandards, combinedStandardCode, standardFamilies, standardPlaceholderKeys } from './lib/standards';
 import { loadState, parseBackup, saveState, serializeBackup, storageMeta } from './lib/storage';
 import { renderLabelSvg } from './lib/svg';
+import { standardImageLabel, standardImageReferenceForItem, standardImageSources, standardImageUrlForItem } from './lib/standardImages';
 import type {
   AppState,
   FrameLineStyle,
@@ -235,7 +239,7 @@ const getElementSummary = (field: PlacedField) => {
   }
 
   if (field.kind === 'image') {
-    return field.imageSource === 'custom' ? field.imageName || 'Custom image' : 'Purchase link QR';
+    return field.imageSource === 'custom' ? field.imageName || 'Custom image' : standardImageLabel(field.imageSource);
   }
 
   const frameShape = field.frameStyle?.shape === 'rounded' ? 'Rounded' : 'Box';
@@ -251,6 +255,221 @@ const presetMatchesSettings = (preset: LabelPreset, settings: AppState['labelSet
     presetSettings.tapeWidthMm === settings.tapeWidthMm &&
     presetSettings.marginMm === settings.marginMm &&
     JSON.stringify(presetSettings.fields) === JSON.stringify(settings.fields)
+  );
+};
+
+const catalogSearchText = (entry: StandardCatalogEntry, selectedStandards: AppState['selectedStandards']) =>
+  [
+    entry.id,
+    entry.family,
+    entry.code,
+    combinedStandardCode(entry.standards, selectedStandards),
+    ...Object.values(entry.standards),
+    entry.category,
+    entry.description
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+
+const fuzzyScore = (text: string, query: string) => {
+  const normalizedQuery = query.trim().toLowerCase();
+  if (!normalizedQuery) return 1;
+  const terms = normalizedQuery.split(/\s+/).filter(Boolean);
+  let score = 0;
+
+  for (const term of terms) {
+    const index = text.indexOf(term);
+    if (index >= 0) {
+      score += 100 - Math.min(index, 60);
+      continue;
+    }
+
+    let cursor = 0;
+    let matched = 0;
+    for (const character of term) {
+      const nextIndex = text.indexOf(character, cursor);
+      if (nextIndex === -1) break;
+      matched += 1;
+      cursor = nextIndex + 1;
+    }
+
+    if (matched !== term.length) return 0;
+    score += matched * 3;
+  }
+
+  return score;
+};
+
+const drawingKindForEntry = (entry: StandardCatalogEntry) => {
+  const text = `${entry.code} ${entry.description}`.toLowerCase();
+  if (entry.category === 'washer') return text.includes('spring') || text.includes('lock') || text.includes('conical') ? 'lock-washer' : 'washer';
+  if (entry.category === 'nut') return text.includes('cap') ? 'cap-nut' : text.includes('flange') ? 'flange-nut' : 'nut';
+  if (entry.category === 'pin') return text.includes('cotter') || text.includes('split') ? 'cotter-pin' : text.includes('spring') || text.includes('coiled') || text.includes('slotted') ? 'spring-pin' : 'pin';
+  if (entry.category === 'rivet') return 'rivet';
+  if (entry.category === 'clip') return 'clip';
+  if (entry.category === 'anchor') return 'anchor';
+  if (entry.category === 'insert') return 'insert';
+  if (text.includes('countersunk')) return 'countersunk-screw';
+  if (text.includes('button')) return 'button-screw';
+  if (text.includes('set screw')) return 'set-screw';
+  if (text.includes('hex head') || text.includes('hex cap') || entry.category === 'bolt') return 'hex-bolt';
+  return 'socket-screw';
+};
+
+const CatalogDrawing = ({ entry }: { entry: StandardCatalogEntry }) => {
+  const kind = drawingKindForEntry(entry);
+
+  return (
+    <svg className="catalog-drawing" viewBox="0 0 80 44" role="img" aria-label={`${entry.description} drawing`}>
+      <rect x="0" y="0" width="80" height="44" rx="4" fill="#f8fafb" />
+      {kind === 'washer' && (
+        <>
+          <circle cx="40" cy="22" r="16" fill="none" stroke="#1f2933" strokeWidth="3" />
+          <circle cx="40" cy="22" r="7" fill="none" stroke="#1f2933" strokeWidth="3" />
+        </>
+      )}
+      {kind === 'lock-washer' && (
+        <>
+          <path d="M24 22a16 16 0 1 1 29 9" fill="none" stroke="#1f2933" strokeWidth="3" />
+          <path d="M49 12l8-5M24 32l8-5" stroke="#1f2933" strokeWidth="3" strokeLinecap="round" />
+        </>
+      )}
+      {(kind === 'nut' || kind === 'flange-nut' || kind === 'cap-nut') && (
+        <>
+          {kind === 'flange-nut' && <rect x="18" y="28" width="44" height="5" fill="#1f2933" />}
+          <polygon points="25,12 55,12 66,22 55,32 25,32 14,22" fill="none" stroke="#1f2933" strokeWidth="3" />
+          <circle cx="40" cy="22" r="7" fill="none" stroke="#1f2933" strokeWidth="3" />
+          {kind === 'cap-nut' && <path d="M27 14q13-13 26 0" fill="none" stroke="#1f2933" strokeWidth="3" />}
+        </>
+      )}
+      {(kind === 'pin' || kind === 'spring-pin' || kind === 'cotter-pin') && (
+        <>
+          <rect x="15" y="17" width="50" height="10" rx="5" fill="none" stroke="#1f2933" strokeWidth="3" />
+          {kind === 'spring-pin' && <path d="M24 17v10M35 17v10M46 17v10M57 17v10" stroke="#1f2933" strokeWidth="2" />}
+          {kind === 'cotter-pin' && <path d="M58 17q12 5 0 10M22 17v10" fill="none" stroke="#1f2933" strokeWidth="3" />}
+        </>
+      )}
+      {kind === 'rivet' && (
+        <>
+          <path d="M18 22h36" stroke="#1f2933" strokeWidth="8" strokeLinecap="round" />
+          <circle cx="18" cy="22" r="10" fill="none" stroke="#1f2933" strokeWidth="3" />
+          <path d="M54 16l12 6-12 6" fill="none" stroke="#1f2933" strokeWidth="3" strokeLinejoin="round" />
+        </>
+      )}
+      {kind === 'clip' && <path d="M24 14h30q8 0 8 8t-8 8H28q-9 0-9-8t9-8" fill="none" stroke="#1f2933" strokeWidth="4" strokeLinecap="round" />}
+      {kind === 'anchor' && (
+        <>
+          <path d="M16 22h48" stroke="#1f2933" strokeWidth="8" strokeLinecap="round" />
+          <path d="M31 12l8 20 8-20" fill="none" stroke="#1f2933" strokeWidth="3" />
+        </>
+      )}
+      {kind === 'insert' && (
+        <>
+          <rect x="24" y="10" width="32" height="24" rx="4" fill="none" stroke="#1f2933" strokeWidth="3" />
+          <path d="M30 15h20M30 22h20M30 29h20" stroke="#1f2933" strokeWidth="2" />
+        </>
+      )}
+      {['hex-bolt', 'socket-screw', 'countersunk-screw', 'button-screw', 'set-screw'].includes(kind) && (
+        <>
+          {kind === 'hex-bolt' && <polygon points="10,14 24,14 30,22 24,30 10,30 4,22" fill="none" stroke="#1f2933" strokeWidth="3" />}
+          {kind === 'socket-screw' && <rect x="6" y="12" width="20" height="20" rx="4" fill="none" stroke="#1f2933" strokeWidth="3" />}
+          {kind === 'countersunk-screw' && <path d="M6 12h24l-8 20h-8z" fill="none" stroke="#1f2933" strokeWidth="3" />}
+          {kind === 'button-screw' && <path d="M6 24q10-18 24 0v6H6z" fill="none" stroke="#1f2933" strokeWidth="3" />}
+          {kind === 'set-screw' && <rect x="9" y="16" width="48" height="12" rx="2" fill="none" stroke="#1f2933" strokeWidth="3" />}
+          {kind !== 'set-screw' && <rect x="28" y="18" width="42" height="8" fill="none" stroke="#1f2933" strokeWidth="3" />}
+          <path d="M37 18v8M46 18v8M55 18v8M64 18v8" stroke="#1f2933" strokeWidth="2" />
+        </>
+      )}
+    </svg>
+  );
+};
+
+interface CatalogPartPickerProps {
+  entries: StandardCatalogEntry[];
+  selectedId: string;
+  selectedStandards: AppState['selectedStandards'];
+  onSelect: (id: string) => void;
+  includeCustom?: boolean;
+}
+
+const CatalogPartPicker = ({ entries, selectedId, selectedStandards, onSelect, includeCustom = false }: CatalogPartPickerProps) => {
+  const [query, setQuery] = useState('');
+  const [open, setOpen] = useState(false);
+  const selectedEntry = entries.find((entry) => entry.id === selectedId);
+  const matches = entries
+    .map((entry) => ({ entry, score: fuzzyScore(catalogSearchText(entry, selectedStandards), query) }))
+    .filter(({ score }) => score > 0)
+    .sort((left, right) => right.score - left.score || left.entry.code.localeCompare(right.entry.code))
+    .slice(0, 80);
+
+  const selectedLabel = selectedEntry ? `${combinedStandardCode(selectedEntry.standards, selectedStandards)} · ${selectedEntry.description}` : 'Custom item';
+
+  return (
+    <div className="catalog-picker" onBlur={(event) => {
+      if (!event.currentTarget.contains(event.relatedTarget)) {
+        setOpen(false);
+      }
+    }}>
+      <button type="button" className="catalog-picker-button" onClick={() => setOpen((current) => !current)}>
+        {selectedEntry ? <CatalogDrawing entry={selectedEntry} /> : <span className="catalog-custom-drawing">Custom</span>}
+        <span>
+          <strong>{selectedLabel}</strong>
+          <small>{selectedEntry ? selectedEntry.code : 'Free text hardware item'}</small>
+        </span>
+      </button>
+      {open && (
+        <div className="catalog-picker-popover">
+          <input
+            autoFocus
+            value={query}
+            placeholder="Search standard or description..."
+            onChange={(event) => setQuery(event.target.value)}
+          />
+          <div className="catalog-picker-list">
+            {includeCustom && (
+              <button
+                type="button"
+                className={!selectedId ? 'catalog-picker-row active' : 'catalog-picker-row'}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => {
+                  onSelect('');
+                  setOpen(false);
+                  setQuery('');
+                }}
+              >
+                <span className="catalog-custom-drawing">Custom</span>
+                <span>
+                  <strong>Custom item</strong>
+                  <small>Use free text with completions</small>
+                </span>
+              </button>
+            )}
+            {matches.map(({ entry }) => (
+              <button
+                type="button"
+                key={entry.id}
+                className={entry.id === selectedId ? 'catalog-picker-row active' : 'catalog-picker-row'}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => {
+                  onSelect(entry.id);
+                  setOpen(false);
+                  setQuery('');
+                }}
+              >
+                <CatalogDrawing entry={entry} />
+                <span>
+                  <strong>{combinedStandardCode(entry.standards, selectedStandards) || entry.code}</strong>
+                  <small>{entry.description}</small>
+                </span>
+                <em>{entry.category}</em>
+              </button>
+            ))}
+            {matches.length === 0 && <p className="catalog-empty">No catalog parts match.</p>}
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -325,12 +544,15 @@ export function App() {
 
   const selectedPurchaseLink = selectedItem ? effectivePurchaseLink(state.purchaseLinks, selectedItem) : '';
   const selectedCatalogEntry = getCatalogEntryForItem(selectedItem);
+  const selectedStandardImageReference = selectedItem ? standardImageReferenceForItem(selectedItem) : undefined;
   const selectedSpecUnitSystem = selectedCatalogEntry?.unitSystem ?? state.unitSystem;
   const filteredCatalog = standardsCatalog.filter((entry) => catalogMatchesSelectedStandards(entry, state.selectedStandards));
   const batchCatalogEntry = filteredCatalog.find((entry) => entry.id === state.batchCatalogId) ?? filteredCatalog[0] ?? standardsCatalog[0];
   const selectedCatalogLocked = Boolean(selectedCatalogEntry);
   const activeSpecDefinitions = getCategorySpecDefinitions(selectedItem?.category ?? 'custom');
   const batchSpecDefinitions = getCategorySpecDefinitions(batchCatalogEntry.category);
+  const isBatchReadonlyWasherDimension = (key: HardwareSpecKey) => batchCatalogEntry.category === 'washer' && isWasherDimensionKey(key);
+  const batchCombinationSpecDefinitions = batchSpecDefinitions.filter((definition) => !isBatchReadonlyWasherDimension(definition.key));
   const hasQrElement = state.labelSettings.fields.some((field) => field.kind === 'image' && field.imageSource === 'qr' && field.style.visible);
   const qrInfo = hasQrElement ? buildQrPayload(selectedPurchaseLink) : undefined;
   const previewBaseWidth = state.labelSettings.widthMm * mmToPx;
@@ -644,6 +866,11 @@ export function App() {
     const boltClassCandidate = specs.boltClass ?? item.boltClass;
     const boltClassItem = { ...item, material, materialType, unitSystem: entry.unitSystem, boltClass: boltClassCandidate };
     const boltClass = isValidBoltClass(boltClassItem, entry.unitSystem) ? boltClassCandidate : defaultBoltClass(boltClassItem, entry.unitSystem);
+    const size = specs.size ?? item.size;
+    const metricPitch = entry.unitSystem === 'metric' ? defaultMetricThreadPitch(size) : undefined;
+    const threadPitchName = metricPitch?.name ?? specs.threadPitchName ?? item.threadPitchName;
+    const threadPitch = metricPitch?.value ?? specs.threadPitch ?? item.threadPitch;
+    const threadPitchUnit = metricPitch ? 'mm' : specs.threadPitchUnit ?? item.threadPitchUnit;
 
     return {
       catalogId: entry.id,
@@ -657,26 +884,80 @@ export function App() {
         length: normalizedLength.length,
         material,
         materialType,
-        boltClass
+        boltClass,
+        threadPitchName,
+        threadPitch,
+        threadPitchUnit
       },
-      size: specs.size ?? item.size,
+      size,
       length: normalizedLength.length,
       lengthUnit: normalizedLength.lengthUnit,
       material,
       materialType,
       boltClass,
-      threadPitch: specs.threadPitch ?? item.threadPitch,
-      threadPitchUnit: specs.threadPitchUnit ?? item.threadPitchUnit
+      threadPitchName,
+      threadPitch,
+      threadPitchUnit
     };
   };
 
   const updateSelectedSpec = (key: HardwareSpecKey, value: string) => {
     if (!selectedItem) return;
+    if (key === 'size') {
+      const metricPitch = selectedSpecUnitSystem === 'metric' ? defaultMetricThreadPitch(value) : undefined;
+      const washerDimensionSpecs =
+        selectedCatalogEntry?.category === 'washer'
+          ? Object.fromEntries(
+              ['thickness', 'innerDiameter', 'outerDiameter'].flatMap((dimensionKey) => {
+                const dimensionValue = getCatalogWasherDimensionValue(selectedCatalogEntry, dimensionKey as HardwareSpecKey, selectedSpecUnitSystem, value);
+                return dimensionValue ? [[dimensionKey, dimensionValue]] : [];
+              })
+            )
+          : {};
+      updateSelectedItem({
+        size: value,
+        ...(metricPitch
+          ? {
+              threadPitchName: metricPitch.name,
+              threadPitch: metricPitch.value,
+              threadPitchUnit: 'mm'
+            }
+          : {}),
+        specs: {
+          ...selectedItem.specs,
+          size: value,
+          ...washerDimensionSpecs,
+          ...(metricPitch
+            ? {
+                threadPitchName: metricPitch.name,
+                threadPitch: metricPitch.value,
+                threadPitchUnit: 'mm'
+              }
+            : {})
+        }
+      });
+      return;
+    }
+
     if (key === 'length') {
       const normalized = normalizeLengthSpec(value, selectedItem.lengthUnit);
       updateSelectedItem({
         ...patchItemSpec(selectedItem, key, normalized.length),
         lengthUnit: normalized.lengthUnit
+      });
+      return;
+    }
+
+    if (key === 'threadPitchName') {
+      const metricPitch = selectedSpecUnitSystem === 'metric' ? findMetricThreadPitch(selectedItem.size, value) : undefined;
+      updateSelectedItem({
+        threadPitchName: metricPitch?.name ?? value,
+        ...(metricPitch ? { threadPitch: metricPitch.value, threadPitchUnit: 'mm' } : {}),
+        specs: {
+          ...selectedItem.specs,
+          threadPitchName: metricPitch?.name ?? value,
+          ...(metricPitch ? { threadPitch: metricPitch.value, threadPitchUnit: 'mm' } : {})
+        }
       });
       return;
     }
@@ -1311,6 +1592,18 @@ export function App() {
     });
   };
 
+  const batchWasherDimensionValue = (key: HardwareSpecKey) => {
+    if (!isBatchReadonlyWasherDimension(key)) return state.batchSpecs[key] ?? '';
+    const sizeValues = parseList(state.batchSpecs.size ?? '').length > 0
+      ? parseList(state.batchSpecs.size ?? '')
+      : getCatalogSpecOptions(batchCatalogEntry, batchCatalogEntry.category, 'size', batchCatalogEntry.unitSystem);
+    return uniqueValues(
+      sizeValues
+        .map((size) => getCatalogWasherDimensionValue(batchCatalogEntry, key, batchCatalogEntry.unitSystem, size))
+        .filter((value): value is string => Boolean(value))
+    ).join(', ');
+  };
+
   const createBatch = () => {
     if (!selectedItem || !batchCatalogEntry) return;
     const baseItem = syncHardwareSpecs({
@@ -1491,14 +1784,13 @@ export function App() {
             <div className="form-grid">
               <label>
                 Catalog
-                <select value={selectedItem.catalogId ?? ''} onChange={(event) => applyCatalogEntry(event.target.value)}>
-                  <option value="">Custom item</option>
-                  {filteredCatalog.map((entry) => (
-                    <option key={entry.id} value={entry.id}>
-                      {combinedStandardCode(entry.standards, state.selectedStandards)} · {entry.description}
-                    </option>
-                  ))}
-                </select>
+                <CatalogPartPicker
+                  entries={filteredCatalog}
+                  selectedId={selectedItem.catalogId ?? ''}
+                  selectedStandards={state.selectedStandards}
+                  onSelect={applyCatalogEntry}
+                  includeCustom
+                />
               </label>
               <label>
                 Category
@@ -1554,6 +1846,15 @@ export function App() {
                     ])
                   : [];
                 const threadPitchOptions = definition.key === 'threadPitch' ? uniqueValues([selectedItem.threadPitch, ...options]) : [];
+                const threadPitchNameOptions =
+                  definition.key === 'threadPitchName'
+                    ? uniqueValues([
+                        selectedItem.threadPitchName && selectedItem.threadPitch
+                          ? formatMetricThreadPitchOption({ size: selectedItem.size, name: selectedItem.threadPitchName, value: selectedItem.threadPitch })
+                          : selectedItem.threadPitchName,
+                        ...(selectedSpecUnitSystem === 'metric' ? metricThreadPitchNamesForSize(selectedItem.size) : options)
+                      ])
+                    : [];
                 const threadPitchUnitOptions =
                   definition.key === 'threadPitch'
                     ? uniqueValues([
@@ -1565,6 +1866,8 @@ export function App() {
                     : [];
                 const materialOptions = definition.key === 'material' ? uniqueValues([selectedItem.material, ...options]) : [];
                 const genericOptions = uniqueValues([getItemSpecValue(selectedItem, definition.key), ...options]);
+                const isReadonlyWasherDimension =
+                  selectedCatalogLocked && selectedCatalogEntry?.category === 'washer' && isWasherDimensionKey(definition.key);
 
                 return (
                   <label key={definition.key}>
@@ -1619,6 +1922,36 @@ export function App() {
                           ))}
                         </datalist>
                       </>
+                    ) : definition.key === 'threadPitchName' ? (
+                      selectedCatalogLocked ? (
+                        <select
+                          value={
+                            selectedItem.threadPitchName && selectedItem.threadPitch
+                              ? formatMetricThreadPitchOption({ size: selectedItem.size, name: selectedItem.threadPitchName, value: selectedItem.threadPitch })
+                              : selectedItem.threadPitchName
+                          }
+                          onChange={(event) => updateSelectedSpec('threadPitchName', event.target.value)}
+                        >
+                          {threadPitchNameOptions.map((value) => (
+                            <option key={value} value={value}>
+                              {value}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <>
+                          <input
+                            list={datalistId}
+                            value={selectedItem.threadPitchName}
+                            onChange={(event) => updateSelectedSpec('threadPitchName', event.target.value)}
+                          />
+                          <datalist id={datalistId}>
+                            {threadPitchNameOptions.map((value) => (
+                              <option key={value} value={value} />
+                            ))}
+                          </datalist>
+                        </>
+                      )
                     ) : definition.key === 'threadPitch' ? (
                       <>
                         <div className="length-row">
@@ -1733,6 +2066,8 @@ export function App() {
                           </option>
                         ))}
                       </select>
+                    ) : isReadonlyWasherDimension ? (
+                      <input value={getItemSpecValue(selectedItem, definition.key)} readOnly />
                     ) : selectedCatalogLocked ? (
                       <select value={getItemSpecValue(selectedItem, definition.key)} onChange={(event) => updateSelectedSpec(definition.key, event.target.value)}>
                         {genericOptions.map((value) => (
@@ -1759,6 +2094,31 @@ export function App() {
                 );
               })}
             </div>
+
+            {selectedStandardImageReference && (
+              <section className="standard-images-section">
+                <div className="standard-images-title">
+                  <span>Standard images</span>
+                  <a href={selectedStandardImageReference.pageUrl} target="_blank" rel="noreferrer">
+                    {selectedStandardImageReference.family} {selectedStandardImageReference.number}
+                  </a>
+                </div>
+                <div className="standard-image-grid">
+                  {standardImageSources.map((source) => (
+                    <a
+                      key={source}
+                      className="standard-image-card"
+                      href={standardImageUrlForItem(selectedItem, source)}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <img src={standardImageUrlForItem(selectedItem, source)} alt={`${standardImageLabel(source)} for ${selectedItem.standard}`} loading="lazy" />
+                      <span>{standardImageLabel(source)}</span>
+                    </a>
+                  ))}
+                </div>
+              </section>
+            )}
 
             {hasQrElement && (
               <section className="links-section">
@@ -1970,6 +2330,8 @@ export function App() {
                               Image
                               <select value={field.imageSource ?? 'qr'} onChange={(event) => updateField(field.id, { imageSource: event.target.value as PlacedField['imageSource'] })}>
                                 <option value="qr">Purchase link QR</option>
+                                <option value="side">Side</option>
+                                <option value="top">Top</option>
                                 <option value="custom">Custom image</option>
                               </select>
                             </label>
@@ -1998,6 +2360,9 @@ export function App() {
                                   </button>
                                 )}
                               </div>
+                            )}
+                            {(field.imageSource === 'side' || field.imageSource === 'top') && !standardImageUrlForItem(selectedItem, field.imageSource) && (
+                              <p className="storage-note">No standard image URL is available for this hardware item.</p>
                             )}
                           </div>
                         )}
@@ -2310,30 +2675,33 @@ export function App() {
             <div className="batch-grid">
               <label>
                 Catalog
-                <select value={batchCatalogEntry.id} onChange={(event) => updateBatchCatalog(event.target.value)}>
-                  {filteredCatalog.map((entry) => (
-                    <option key={entry.id} value={entry.id}>
-                      {combinedStandardCode(entry.standards, state.selectedStandards)} · {entry.description}
-                    </option>
-                  ))}
-                </select>
+                <CatalogPartPicker
+                  entries={filteredCatalog}
+                  selectedId={batchCatalogEntry.id}
+                  selectedStandards={state.selectedStandards}
+                  onSelect={updateBatchCatalog}
+                />
               </label>
-              {batchSpecDefinitions.map((definition) => (
-                <label key={definition.key}>
-                  {definition.label}
-                  <textarea
-                    value={state.batchSpecs[definition.key] ?? ''}
-                    onChange={(event) => updateBatchSpec(definition.key, event.target.value)}
-                  />
-                </label>
-              ))}
+              {batchSpecDefinitions.map((definition) => {
+                const readonlyDimension = isBatchReadonlyWasherDimension(definition.key);
+                return (
+                  <label key={definition.key}>
+                    {definition.label}
+                    <textarea
+                      value={readonlyDimension ? batchWasherDimensionValue(definition.key) : state.batchSpecs[definition.key] ?? ''}
+                      readOnly={readonlyDimension}
+                      onChange={(event) => updateBatchSpec(definition.key, event.target.value)}
+                    />
+                  </label>
+                );
+              })}
             </div>
             <p className="storage-note">
-              {batchSpecDefinitions
+              {batchCombinationSpecDefinitions
                 .map((definition) => `${parseList(state.batchSpecs[definition.key] ?? '').length || 1} ${definition.label.toLowerCase()}`)
                 .join(' × ')}{' '}
               ={' '}
-              {batchSpecDefinitions.reduce(
+              {batchCombinationSpecDefinitions.reduce(
                 (total, definition) => total * Math.max(1, parseList(state.batchSpecs[definition.key] ?? '').length),
                 1
               )}{' '}

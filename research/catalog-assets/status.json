@@ -1,0 +1,2324 @@
+{
+  "entries": [
+    {
+      "boltsparts": {
+        "classId": "hexsocketheadcap",
+        "collectionId": "hex_socket",
+        "dataPath": "research/catalog-assets/boltsparts/data/hex_socket.blt",
+        "defaults": {
+          "key": "M3",
+          "l": 20
+        },
+        "freeParameters": [
+          "key",
+          "l"
+        ],
+        "freecadPath": "research/catalog-assets/boltsparts/freecad/hex_socket",
+        "htmlUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/hex_socket.blt",
+        "name": "Metric hex socket head cap screw",
+        "standards": [
+          {
+            "kind": "standard",
+            "standard": "ISO 4762"
+          },
+          {
+            "kind": "standard",
+            "standard": "DINENISO 4762"
+          },
+          {
+            "kind": "standard",
+            "standard": "DIN 912"
+          }
+        ]
+      },
+      "boltspartsParameters": {
+        "L": 20,
+        "b": 18,
+        "d1": 3,
+        "d2": 5.5,
+        "k": 3,
+        "key": "M3",
+        "l": 20,
+        "name": "din-912",
+        "s": 2.5,
+        "t_min": 1.3
+      },
+      "candidateSources": [
+        {
+          "code": "DIN 912",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/912/",
+          "number": "912",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+912+Socket+head+cap+screw",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+912+Socket+head+cap+screw"
+        },
+        {
+          "code": "ISO 4762",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/4762/",
+          "number": "4762",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+4762+Socket+head+cap+screw",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+4762+Socket+head+cap+screw"
+        },
+        {
+          "code": "EN ISO 4762",
+          "family": "EN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/EN/4762/",
+          "number": "4762",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+ISO+4762+Socket+head+cap+screw",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+ISO+4762+Socket+head+cap+screw"
+        }
+      ],
+      "catalogId": "din-912",
+      "category": "screw",
+      "description": "Socket head cap screw",
+      "error": "",
+      "licenseNote": "Boltsparts/BOLTS data and FreeCAD generators are mirrored locally; review GPL/LGPL license files before redistribution.",
+      "modelPath": "",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/models/din-912/normalized.step",
+      "renderPaths": {
+        "iso": "research/catalog-assets/renders/din-912/iso.png",
+        "side": "research/catalog-assets/renders/din-912/side.png",
+        "top": "research/catalog-assets/renders/din-912/top.png"
+      },
+      "renderStatus": "rendered",
+      "sourceFormat": "step",
+      "sourceProvider": "boltsparts",
+      "sourceUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/hex_socket.blt",
+      "standardCodes": {
+        "DIN": "DIN 912",
+        "EN": "EN ISO 4762",
+        "ISO": "ISO 4762"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:35:12Z"
+    },
+    {
+      "boltsparts": {
+        "classId": "hexscrew1",
+        "collectionId": "hex",
+        "dataPath": "research/catalog-assets/boltsparts/data/hex.blt",
+        "defaults": {
+          "key": "M3",
+          "l": 20,
+          "thread_type": "coarse"
+        },
+        "freeParameters": [
+          "key",
+          "l",
+          "thread_type"
+        ],
+        "freecadPath": "research/catalog-assets/boltsparts/freecad/hex",
+        "htmlUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/hex.blt",
+        "name": {
+          "nice": "Hexagon head screw 1",
+          "safe": "hexagonHeadScrew1"
+        },
+        "standards": [
+          {
+            "kind": "standard",
+            "standard": "DIN 933"
+          }
+        ]
+      },
+      "boltspartsParameters": {
+        "d1": 3,
+        "e": 6.01,
+        "h": 1.5,
+        "k": 2,
+        "key": "M3",
+        "l": 20,
+        "name": "din-933",
+        "pitch": 0.5,
+        "pitch_name": "",
+        "s": 5.5,
+        "thread_type": "coarse"
+      },
+      "candidateSources": [
+        {
+          "code": "DIN 933",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/933/",
+          "number": "933",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+933+Hex+head+screw%2C+full+thread",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+933+Hex+head+screw%2C+full+thread"
+        },
+        {
+          "code": "ISO 4017",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/4017/",
+          "number": "4017",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+4017+Hex+head+screw%2C+full+thread",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+4017+Hex+head+screw%2C+full+thread"
+        },
+        {
+          "code": "EN ISO 4017",
+          "family": "EN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/EN/4017/",
+          "number": "4017",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+ISO+4017+Hex+head+screw%2C+full+thread",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+ISO+4017+Hex+head+screw%2C+full+thread"
+        }
+      ],
+      "catalogId": "din-933",
+      "category": "bolt",
+      "description": "Hex head screw, full thread",
+      "error": "",
+      "licenseNote": "Boltsparts/BOLTS data and FreeCAD generators are mirrored locally; review GPL/LGPL license files before redistribution.",
+      "modelPath": "",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/models/din-933/normalized.step",
+      "renderPaths": {
+        "iso": "research/catalog-assets/renders/din-933/iso.png",
+        "side": "research/catalog-assets/renders/din-933/side.png",
+        "top": "research/catalog-assets/renders/din-933/top.png"
+      },
+      "renderStatus": "rendered",
+      "sourceFormat": "step",
+      "sourceProvider": "boltsparts",
+      "sourceUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/hex.blt",
+      "standardCodes": {
+        "DIN": "DIN 933",
+        "EN": "EN ISO 4017",
+        "ISO": "ISO 4017"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:08Z"
+    },
+    {
+      "boltsparts": {
+        "classId": "hexagonnut1",
+        "collectionId": "nut",
+        "dataPath": "research/catalog-assets/boltsparts/data/nut.blt",
+        "defaults": {
+          "key": "M3"
+        },
+        "freeParameters": [
+          "key"
+        ],
+        "freecadPath": "research/catalog-assets/boltsparts/freecad/nut",
+        "htmlUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/nut.blt",
+        "name": "Metric hexagon nut",
+        "standards": [
+          {
+            "kind": "standard",
+            "standard": "ISO 4032"
+          }
+        ]
+      },
+      "boltspartsParameters": {
+        "d1": 3,
+        "e_min": 6.01,
+        "key": "M3",
+        "m_max": 2.4,
+        "name": "din-934",
+        "s": 5.5
+      },
+      "candidateSources": [
+        {
+          "code": "DIN 934",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/934/",
+          "number": "934",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+934+Hex+nut",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+934+Hex+nut"
+        },
+        {
+          "code": "ISO 4032",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/4032/",
+          "number": "4032",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+4032+Hex+nut",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+4032+Hex+nut"
+        },
+        {
+          "code": "EN ISO 4032",
+          "family": "EN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/EN/4032/",
+          "number": "4032",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+ISO+4032+Hex+nut",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+ISO+4032+Hex+nut"
+        }
+      ],
+      "catalogId": "din-934",
+      "category": "nut",
+      "description": "Hex nut",
+      "error": "",
+      "licenseNote": "Boltsparts/BOLTS data and FreeCAD generators are mirrored locally; review GPL/LGPL license files before redistribution.",
+      "modelPath": "",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/models/din-934/normalized.step",
+      "renderPaths": {
+        "iso": "research/catalog-assets/renders/din-934/iso.png",
+        "side": "research/catalog-assets/renders/din-934/side.png",
+        "top": "research/catalog-assets/renders/din-934/top.png"
+      },
+      "renderStatus": "rendered",
+      "sourceFormat": "step",
+      "sourceProvider": "boltsparts",
+      "sourceUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/nut.blt",
+      "standardCodes": {
+        "DIN": "DIN 934",
+        "EN": "EN ISO 4032",
+        "ISO": "ISO 4032"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:11Z"
+    },
+    {
+      "boltsparts": {
+        "classId": "plainwasher1",
+        "collectionId": "washer",
+        "dataPath": "research/catalog-assets/boltsparts/data/washer.blt",
+        "defaults": {
+          "key": "M3"
+        },
+        "freeParameters": [
+          "key"
+        ],
+        "freecadPath": "research/catalog-assets/boltsparts/freecad/washer",
+        "htmlUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/washer.blt",
+        "name": "Metric plain washer",
+        "standards": [
+          {
+            "kind": "standard",
+            "standard": "ISO 7089"
+          },
+          {
+            "kind": "standard",
+            "standard": "EN 7089"
+          },
+          {
+            "kind": "standard",
+            "standard": "DINEN 27089"
+          },
+          {
+            "kind": "standard",
+            "standard": "DINENISO 7089"
+          },
+          {
+            "kind": "standard",
+            "standard": "DIN 125 A"
+          },
+          {
+            "kind": "group",
+            "standard": "DIN 125"
+          }
+        ]
+      },
+      "boltspartsParameters": {
+        "d1": 3.2,
+        "d2": 7,
+        "key": "M3",
+        "name": "din-125",
+        "s": 0.5
+      },
+      "candidateSources": [
+        {
+          "code": "DIN 125",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/125/",
+          "number": "125",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+125+Plain+washer",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+125+Plain+washer"
+        },
+        {
+          "code": "ISO 7089",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/7089/",
+          "number": "7089",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+7089+Plain+washer",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+7089+Plain+washer"
+        },
+        {
+          "code": "EN ISO 7089",
+          "family": "EN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/EN/7089/",
+          "number": "7089",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+ISO+7089+Plain+washer",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+ISO+7089+Plain+washer"
+        }
+      ],
+      "catalogId": "din-125",
+      "category": "washer",
+      "description": "Plain washer",
+      "error": "",
+      "licenseNote": "Boltsparts/BOLTS data and FreeCAD generators are mirrored locally; review GPL/LGPL license files before redistribution.",
+      "modelPath": "",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/models/din-125/normalized.step",
+      "renderPaths": {
+        "iso": "research/catalog-assets/renders/din-125/iso.png",
+        "side": "research/catalog-assets/renders/din-125/side.png",
+        "top": "research/catalog-assets/renders/din-125/top.png"
+      },
+      "renderStatus": "rendered",
+      "sourceFormat": "step",
+      "sourceProvider": "boltsparts",
+      "sourceUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/washer.blt",
+      "standardCodes": {
+        "DIN": "DIN 125",
+        "EN": "EN ISO 7089",
+        "ISO": "ISO 7089"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:15Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "ASME B18.3",
+          "family": "ASME",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ASME/B18.3/",
+          "number": "B18.3",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ASME+B18.3+Socket+head+cap+screw%2C+inch+series",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ASME+B18.3+Socket+head+cap+screw%2C+inch+series"
+        },
+        {
+          "code": "ASTM A574",
+          "family": "ASTM",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ASTM/A574/",
+          "number": "A574",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ASTM+A574+Socket+head+cap+screw%2C+inch+series",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ASTM+A574+Socket+head+cap+screw%2C+inch+series"
+        },
+        {
+          "code": "SAE J429",
+          "family": "SAE",
+          "fastenersUrl": "https://www.fasteners.eu/standards/SAE/J429/",
+          "number": "J429",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=SAE+J429+Socket+head+cap+screw%2C+inch+series",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/SAE+J429+Socket+head+cap+screw%2C+inch+series"
+        }
+      ],
+      "catalogId": "unc-socket-cap",
+      "category": "screw",
+      "description": "Socket head cap screw, inch series",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "ASME": "ASME B18.3",
+        "ASTM": "ASTM A574",
+        "SAE": "SAE J429"
+      },
+      "unitSystem": "imperial",
+      "updatedAt": "2026-06-14T23:33:15Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "DIN 7337",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/7337/",
+          "number": "7337",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+7337+Blind+rivet",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+7337+Blind+rivet"
+        },
+        {
+          "code": "ISO 15977",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/15977/",
+          "number": "15977",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+15977+Blind+rivet",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+15977+Blind+rivet"
+        },
+        {
+          "code": "EN ISO 15977",
+          "family": "EN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/EN/15977/",
+          "number": "15977",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+ISO+15977+Blind+rivet",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+ISO+15977+Blind+rivet"
+        }
+      ],
+      "catalogId": "blind-rivet",
+      "category": "rivet",
+      "description": "Blind rivet",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "DIN": "DIN 7337",
+        "EN": "EN ISO 15977",
+        "ISO": "ISO 15977"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:15Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "DIN 6325",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/6325/",
+          "number": "6325",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+6325+Parallel+dowel+pin",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+6325+Parallel+dowel+pin"
+        },
+        {
+          "code": "ISO 8734",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/8734/",
+          "number": "8734",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+8734+Parallel+dowel+pin",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+8734+Parallel+dowel+pin"
+        },
+        {
+          "code": "EN ISO 8734",
+          "family": "EN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/EN/8734/",
+          "number": "8734",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+ISO+8734+Parallel+dowel+pin",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+ISO+8734+Parallel+dowel+pin"
+        },
+        {
+          "code": "JIS B 1354",
+          "family": "JIS",
+          "fastenersUrl": "https://www.fasteners.eu/standards/JIS/1354/",
+          "number": "1354",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=JIS+B+1354+Parallel+dowel+pin",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/JIS+B+1354+Parallel+dowel+pin"
+        }
+      ],
+      "catalogId": "dowel-pin",
+      "category": "pin",
+      "description": "Parallel dowel pin",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "DIN": "DIN 6325",
+        "EN": "EN ISO 8734",
+        "ISO": "ISO 8734",
+        "JIS": "JIS B 1354"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:15Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [],
+      "catalogId": "threaded-insert",
+      "category": "insert",
+      "description": "Brass threaded insert for plastic",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {},
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:15Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [],
+      "catalogId": "wall-anchor",
+      "category": "anchor",
+      "description": "Expansion wall anchor",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {},
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:15Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [],
+      "catalogId": "retaining-clip",
+      "category": "clip",
+      "description": "Assorted retaining and spring clips",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {},
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:15Z"
+    },
+    {
+      "boltsparts": {
+        "classId": "hexbolt1",
+        "collectionId": "hex",
+        "dataPath": "research/catalog-assets/boltsparts/data/hex.blt",
+        "defaults": {
+          "key": "M3",
+          "l": 20
+        },
+        "freeParameters": [
+          "key",
+          "l"
+        ],
+        "freecadPath": "research/catalog-assets/boltsparts/freecad/hex",
+        "htmlUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/hex.blt",
+        "name": {
+          "nice": "Hexagon head bolt",
+          "safe": "hexagonHeadBolt"
+        },
+        "standards": [
+          {
+            "kind": "standard",
+            "standard": "DIN931"
+          },
+          {
+            "kind": "standard",
+            "standard": "DIN 931"
+          }
+        ]
+      },
+      "boltspartsParameters": {
+        "b1": 12.0,
+        "b2": "None",
+        "b3": "None",
+        "d1": 3.0,
+        "e": 6.01,
+        "k": 2.0,
+        "key": "M3",
+        "l": 20,
+        "name": "din-931",
+        "s": 5.5
+      },
+      "candidateSources": [
+        {
+          "code": "DIN 931",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/931/",
+          "number": "931",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+931+Hex+head+bolt%2C+partial+thread",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+931+Hex+head+bolt%2C+partial+thread"
+        },
+        {
+          "code": "ISO 4014",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/4014/",
+          "number": "4014",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+4014+Hex+head+bolt%2C+partial+thread",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+4014+Hex+head+bolt%2C+partial+thread"
+        },
+        {
+          "code": "EN ISO 4014",
+          "family": "EN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/EN/4014/",
+          "number": "4014",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+ISO+4014+Hex+head+bolt%2C+partial+thread",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+ISO+4014+Hex+head+bolt%2C+partial+thread"
+        }
+      ],
+      "catalogId": "din-931",
+      "category": "bolt",
+      "description": "Hex head bolt, partial thread",
+      "error": "",
+      "licenseNote": "Boltsparts/BOLTS data and FreeCAD generators are mirrored locally; review GPL/LGPL license files before redistribution.",
+      "modelPath": "",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/models/din-931/normalized.step",
+      "renderPaths": {
+        "iso": "research/catalog-assets/renders/din-931/iso.png",
+        "side": "research/catalog-assets/renders/din-931/side.png",
+        "top": "research/catalog-assets/renders/din-931/top.png"
+      },
+      "renderStatus": "rendered",
+      "sourceFormat": "step",
+      "sourceProvider": "boltsparts",
+      "sourceUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/hex.blt",
+      "standardCodes": {
+        "DIN": "DIN 931",
+        "EN": "EN ISO 4014",
+        "ISO": "ISO 4014"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:19Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "DIN 960",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/960/",
+          "number": "960",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+960+Hex+head+bolt%2C+partial+thread%2C+fine+pitch",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+960+Hex+head+bolt%2C+partial+thread%2C+fine+pitch"
+        },
+        {
+          "code": "ISO 8765",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/8765/",
+          "number": "8765",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+8765+Hex+head+bolt%2C+partial+thread%2C+fine+pitch",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+8765+Hex+head+bolt%2C+partial+thread%2C+fine+pitch"
+        },
+        {
+          "code": "EN ISO 8765",
+          "family": "EN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/EN/8765/",
+          "number": "8765",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+ISO+8765+Hex+head+bolt%2C+partial+thread%2C+fine+pitch",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+ISO+8765+Hex+head+bolt%2C+partial+thread%2C+fine+pitch"
+        }
+      ],
+      "catalogId": "din-960",
+      "category": "bolt",
+      "description": "Hex head bolt, partial thread, fine pitch",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "DIN": "DIN 960",
+        "EN": "EN ISO 8765",
+        "ISO": "ISO 8765"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:19Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "DIN 961",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/961/",
+          "number": "961",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+961+Hex+head+screw%2C+full+thread%2C+fine+pitch",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+961+Hex+head+screw%2C+full+thread%2C+fine+pitch"
+        },
+        {
+          "code": "ISO 8676",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/8676/",
+          "number": "8676",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+8676+Hex+head+screw%2C+full+thread%2C+fine+pitch",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+8676+Hex+head+screw%2C+full+thread%2C+fine+pitch"
+        },
+        {
+          "code": "EN ISO 8676",
+          "family": "EN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/EN/8676/",
+          "number": "8676",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+ISO+8676+Hex+head+screw%2C+full+thread%2C+fine+pitch",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+ISO+8676+Hex+head+screw%2C+full+thread%2C+fine+pitch"
+        }
+      ],
+      "catalogId": "din-961",
+      "category": "bolt",
+      "description": "Hex head screw, full thread, fine pitch",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "DIN": "DIN 961",
+        "EN": "EN ISO 8676",
+        "ISO": "ISO 8676"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:19Z"
+    },
+    {
+      "boltsparts": {
+        "classId": "hexsocketcountersunk",
+        "collectionId": "hex_socket",
+        "dataPath": "research/catalog-assets/boltsparts/data/hex_socket.blt",
+        "defaults": {
+          "key": "M3",
+          "l": 20
+        },
+        "freeParameters": [
+          "key",
+          "l"
+        ],
+        "freecadPath": "research/catalog-assets/boltsparts/freecad/hex_socket",
+        "htmlUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/hex_socket.blt",
+        "name": "Metric hex socket countersunk head screw",
+        "standards": [
+          {
+            "kind": "standard",
+            "standard": "ISO 10642"
+          },
+          {
+            "kind": "standard",
+            "standard": "DIN ISO 10642"
+          },
+          {
+            "kind": "standard",
+            "standard": "DIN 7991"
+          }
+        ]
+      },
+      "boltspartsParameters": {
+        "L": 30,
+        "alpha": 90,
+        "b1": 12,
+        "b2": "None",
+        "b3": "None",
+        "d1": 3,
+        "d2": 6,
+        "h_max": 3.2,
+        "k_max": 1.7,
+        "key": "M3",
+        "l": 20,
+        "name": "din-7991",
+        "s": 2,
+        "t": 1.2
+      },
+      "candidateSources": [
+        {
+          "code": "DIN 7991",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/7991/",
+          "number": "7991",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+7991+Hex+socket+countersunk+head+screw",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+7991+Hex+socket+countersunk+head+screw"
+        },
+        {
+          "code": "ISO 10642",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/10642/",
+          "number": "10642",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+10642+Hex+socket+countersunk+head+screw",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+10642+Hex+socket+countersunk+head+screw"
+        },
+        {
+          "code": "EN ISO 10642",
+          "family": "EN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/EN/10642/",
+          "number": "10642",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+ISO+10642+Hex+socket+countersunk+head+screw",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+ISO+10642+Hex+socket+countersunk+head+screw"
+        }
+      ],
+      "catalogId": "din-7991",
+      "category": "screw",
+      "description": "Hex socket countersunk head screw",
+      "error": "",
+      "licenseNote": "Boltsparts/BOLTS data and FreeCAD generators are mirrored locally; review GPL/LGPL license files before redistribution.",
+      "modelPath": "",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/models/din-7991/normalized.step",
+      "renderPaths": {
+        "iso": "research/catalog-assets/renders/din-7991/iso.png",
+        "side": "research/catalog-assets/renders/din-7991/side.png",
+        "top": "research/catalog-assets/renders/din-7991/top.png"
+      },
+      "renderStatus": "rendered",
+      "sourceFormat": "step",
+      "sourceProvider": "boltsparts",
+      "sourceUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/hex_socket.blt",
+      "standardCodes": {
+        "DIN": "DIN 7991",
+        "EN": "EN ISO 10642",
+        "ISO": "ISO 10642"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:23Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "DIN 7984",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/7984/",
+          "number": "7984",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+7984+Low+head+hex+socket+cap+screw",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+7984+Low+head+hex+socket+cap+screw"
+        }
+      ],
+      "catalogId": "din-7984",
+      "category": "screw",
+      "description": "Low head hex socket cap screw",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "DIN": "DIN 7984"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:23Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "ISO 7380",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/7380/",
+          "number": "7380",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+7380+Hex+socket+button+head+screw",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+7380+Hex+socket+button+head+screw"
+        }
+      ],
+      "catalogId": "iso-7380",
+      "category": "screw",
+      "description": "Hex socket button head screw",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "ISO": "ISO 7380"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:23Z"
+    },
+    {
+      "boltsparts": {
+        "classId": "hexsocketsetscrewflat",
+        "collectionId": "hex_socket",
+        "dataPath": "research/catalog-assets/boltsparts/data/hex_socket.blt",
+        "defaults": {
+          "key": "M10",
+          "l": 20
+        },
+        "freeParameters": [
+          "key",
+          "l"
+        ],
+        "freecadPath": "research/catalog-assets/boltsparts/freecad/hex_socket",
+        "htmlUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/hex_socket.blt",
+        "name": "hexsocketsetscrewflat",
+        "standards": [
+          {
+            "kind": "standard",
+            "standard": "DIN 913"
+          },
+          {
+            "kind": "standard",
+            "standard": "ISO 4026"
+          }
+        ]
+      },
+      "boltspartsParameters": {
+        "d": 10,
+        "d1": 7,
+        "e": 5.72,
+        "key": "M10",
+        "l": 20,
+        "name": "din-913",
+        "point": "flat",
+        "s": 5,
+        "t": 4
+      },
+      "candidateSources": [
+        {
+          "code": "DIN 913",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/913/",
+          "number": "913",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+913+Hex+socket+set+screw%2C+flat+point",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+913+Hex+socket+set+screw%2C+flat+point"
+        },
+        {
+          "code": "ISO 4026",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/4026/",
+          "number": "4026",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+4026+Hex+socket+set+screw%2C+flat+point",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+4026+Hex+socket+set+screw%2C+flat+point"
+        }
+      ],
+      "catalogId": "din-913",
+      "category": "screw",
+      "description": "Hex socket set screw, flat point",
+      "error": "",
+      "licenseNote": "Boltsparts/BOLTS data and FreeCAD generators are mirrored locally; review GPL/LGPL license files before redistribution.",
+      "modelPath": "",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/models/din-913/normalized.step",
+      "renderPaths": {
+        "iso": "research/catalog-assets/renders/din-913/iso.png",
+        "side": "research/catalog-assets/renders/din-913/side.png",
+        "top": "research/catalog-assets/renders/din-913/top.png"
+      },
+      "renderStatus": "rendered",
+      "sourceFormat": "step",
+      "sourceProvider": "boltsparts",
+      "sourceUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/hex_socket.blt",
+      "standardCodes": {
+        "DIN": "DIN 913",
+        "ISO": "ISO 4026"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:27Z"
+    },
+    {
+      "boltsparts": {
+        "classId": "hexsocketsetscrewcone",
+        "collectionId": "hex_socket",
+        "dataPath": "research/catalog-assets/boltsparts/data/hex_socket.blt",
+        "defaults": {
+          "key": "M10",
+          "l": 20
+        },
+        "freeParameters": [
+          "key",
+          "l"
+        ],
+        "freecadPath": "research/catalog-assets/boltsparts/freecad/hex_socket",
+        "htmlUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/hex_socket.blt",
+        "name": "hexsocketsetscrewcone",
+        "standards": [
+          {
+            "kind": "standard",
+            "standard": "DIN 914"
+          },
+          {
+            "kind": "standard",
+            "standard": "ISO 4027"
+          }
+        ]
+      },
+      "boltspartsParameters": {
+        "d": 10,
+        "d1": 2.5,
+        "e": 5.72,
+        "key": "M10",
+        "l": 20,
+        "name": "din-914",
+        "point": "cone",
+        "s": 5,
+        "t": 4
+      },
+      "candidateSources": [
+        {
+          "code": "DIN 914",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/914/",
+          "number": "914",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+914+Hex+socket+set+screw%2C+cone+point",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+914+Hex+socket+set+screw%2C+cone+point"
+        },
+        {
+          "code": "ISO 4027",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/4027/",
+          "number": "4027",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+4027+Hex+socket+set+screw%2C+cone+point",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+4027+Hex+socket+set+screw%2C+cone+point"
+        }
+      ],
+      "catalogId": "din-914",
+      "category": "screw",
+      "description": "Hex socket set screw, cone point",
+      "error": "",
+      "licenseNote": "Boltsparts/BOLTS data and FreeCAD generators are mirrored locally; review GPL/LGPL license files before redistribution.",
+      "modelPath": "",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/models/din-914/normalized.step",
+      "renderPaths": {
+        "iso": "research/catalog-assets/renders/din-914/iso.png",
+        "side": "research/catalog-assets/renders/din-914/side.png",
+        "top": "research/catalog-assets/renders/din-914/top.png"
+      },
+      "renderStatus": "rendered",
+      "sourceFormat": "step",
+      "sourceProvider": "boltsparts",
+      "sourceUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/hex_socket.blt",
+      "standardCodes": {
+        "DIN": "DIN 914",
+        "ISO": "ISO 4027"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:30Z"
+    },
+    {
+      "boltsparts": {
+        "classId": "hexsocketsetscrewdog",
+        "collectionId": "hex_socket",
+        "dataPath": "research/catalog-assets/boltsparts/data/hex_socket.blt",
+        "defaults": {
+          "key": "M10",
+          "l": 20
+        },
+        "freeParameters": [
+          "key",
+          "l"
+        ],
+        "freecadPath": "research/catalog-assets/boltsparts/freecad/hex_socket",
+        "htmlUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/hex_socket.blt",
+        "name": "hexsocketsetscrewdog",
+        "standards": [
+          {
+            "kind": "standard",
+            "standard": "DIN 915"
+          },
+          {
+            "kind": "standard",
+            "standard": "ISO 4028"
+          }
+        ]
+      },
+      "boltspartsParameters": {
+        "d": 10,
+        "d1": 7,
+        "e": 5.72,
+        "key": "M10",
+        "l": 20,
+        "name": "din-915",
+        "point": "dog",
+        "s": 5,
+        "t": 4
+      },
+      "candidateSources": [
+        {
+          "code": "DIN 915",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/915/",
+          "number": "915",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+915+Hex+socket+set+screw%2C+dog+point",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+915+Hex+socket+set+screw%2C+dog+point"
+        },
+        {
+          "code": "ISO 4028",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/4028/",
+          "number": "4028",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+4028+Hex+socket+set+screw%2C+dog+point",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+4028+Hex+socket+set+screw%2C+dog+point"
+        }
+      ],
+      "catalogId": "din-915",
+      "category": "screw",
+      "description": "Hex socket set screw, dog point",
+      "error": "",
+      "licenseNote": "Boltsparts/BOLTS data and FreeCAD generators are mirrored locally; review GPL/LGPL license files before redistribution.",
+      "modelPath": "",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/models/din-915/normalized.step",
+      "renderPaths": {
+        "iso": "research/catalog-assets/renders/din-915/iso.png",
+        "side": "research/catalog-assets/renders/din-915/side.png",
+        "top": "research/catalog-assets/renders/din-915/top.png"
+      },
+      "renderStatus": "rendered",
+      "sourceFormat": "step",
+      "sourceProvider": "boltsparts",
+      "sourceUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/hex_socket.blt",
+      "standardCodes": {
+        "DIN": "DIN 915",
+        "ISO": "ISO 4028"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:34Z"
+    },
+    {
+      "boltsparts": {
+        "classId": "hexsocketsetscrewcup",
+        "collectionId": "hex_socket",
+        "dataPath": "research/catalog-assets/boltsparts/data/hex_socket.blt",
+        "defaults": {
+          "key": "M10",
+          "l": 20
+        },
+        "freeParameters": [
+          "key",
+          "l"
+        ],
+        "freecadPath": "research/catalog-assets/boltsparts/freecad/hex_socket",
+        "htmlUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/hex_socket.blt",
+        "name": "hexsocketsetscrewcup",
+        "standards": [
+          {
+            "kind": "standard",
+            "standard": "DIN 916"
+          },
+          {
+            "kind": "standard",
+            "standard": "ISO 4029"
+          }
+        ]
+      },
+      "boltspartsParameters": {
+        "d": 10,
+        "d1": 6,
+        "e": 5.72,
+        "key": "M10",
+        "l": 20,
+        "name": "din-916",
+        "point": "dog",
+        "s": 5,
+        "t": 4
+      },
+      "candidateSources": [
+        {
+          "code": "DIN 916",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/916/",
+          "number": "916",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+916+Hex+socket+set+screw%2C+cup+point",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+916+Hex+socket+set+screw%2C+cup+point"
+        },
+        {
+          "code": "ISO 4029",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/4029/",
+          "number": "4029",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+4029+Hex+socket+set+screw%2C+cup+point",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+4029+Hex+socket+set+screw%2C+cup+point"
+        }
+      ],
+      "catalogId": "din-916",
+      "category": "screw",
+      "description": "Hex socket set screw, cup point",
+      "error": "",
+      "licenseNote": "Boltsparts/BOLTS data and FreeCAD generators are mirrored locally; review GPL/LGPL license files before redistribution.",
+      "modelPath": "",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/models/din-916/normalized.step",
+      "renderPaths": {
+        "iso": "research/catalog-assets/renders/din-916/iso.png",
+        "side": "research/catalog-assets/renders/din-916/side.png",
+        "top": "research/catalog-assets/renders/din-916/top.png"
+      },
+      "renderStatus": "rendered",
+      "sourceFormat": "step",
+      "sourceProvider": "boltsparts",
+      "sourceUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/hex_socket.blt",
+      "standardCodes": {
+        "DIN": "DIN 916",
+        "ISO": "ISO 4029"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:38Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "DIN 963",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/963/",
+          "number": "963",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+963+Slotted+countersunk+head+machine+screw",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+963+Slotted+countersunk+head+machine+screw"
+        },
+        {
+          "code": "ISO 2009",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/2009/",
+          "number": "2009",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+2009+Slotted+countersunk+head+machine+screw",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+2009+Slotted+countersunk+head+machine+screw"
+        }
+      ],
+      "catalogId": "din-963",
+      "category": "screw",
+      "description": "Slotted countersunk head machine screw",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "DIN": "DIN 963",
+        "ISO": "ISO 2009"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:38Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "DIN 965",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/965/",
+          "number": "965",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+965+Cross+recessed+countersunk+head+machine+screw",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+965+Cross+recessed+countersunk+head+machine+screw"
+        },
+        {
+          "code": "ISO 7046",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/7046/",
+          "number": "7046",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+7046+Cross+recessed+countersunk+head+machine+screw",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+7046+Cross+recessed+countersunk+head+machine+screw"
+        }
+      ],
+      "catalogId": "din-965",
+      "category": "screw",
+      "description": "Cross recessed countersunk head machine screw",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "DIN": "DIN 965",
+        "ISO": "ISO 7046"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:38Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "DIN 7985",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/7985/",
+          "number": "7985",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+7985+Cross+recessed+pan+head+machine+screw",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+7985+Cross+recessed+pan+head+machine+screw"
+        },
+        {
+          "code": "ISO 7045",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/7045/",
+          "number": "7045",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+7045+Cross+recessed+pan+head+machine+screw",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+7045+Cross+recessed+pan+head+machine+screw"
+        }
+      ],
+      "catalogId": "din-7985",
+      "category": "screw",
+      "description": "Cross recessed pan head machine screw",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "DIN": "DIN 7985",
+        "ISO": "ISO 7045"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:38Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "DIN 7500",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/7500/",
+          "number": "7500",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+7500+Thread+forming+screw+for+metric+thread",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+7500+Thread+forming+screw+for+metric+thread"
+        }
+      ],
+      "catalogId": "din-7500",
+      "category": "screw",
+      "description": "Thread forming screw for metric thread",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "DIN": "DIN 7500"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:38Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "DIN 7504",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/7504/",
+          "number": "7504",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+7504+Self-drilling+screw",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+7504+Self-drilling+screw"
+        },
+        {
+          "code": "ISO 15480",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/15480/",
+          "number": "15480",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+15480+Self-drilling+screw",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+15480+Self-drilling+screw"
+        }
+      ],
+      "catalogId": "din-7504",
+      "category": "screw",
+      "description": "Self-drilling screw",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "DIN": "DIN 7504",
+        "ISO": "ISO 15480"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:38Z"
+    },
+    {
+      "boltsparts": {
+        "classId": "hexagonthinnut1",
+        "collectionId": "nut",
+        "dataPath": "research/catalog-assets/boltsparts/data/nut.blt",
+        "defaults": {
+          "key": "M3"
+        },
+        "freeParameters": [
+          "key"
+        ],
+        "freecadPath": "research/catalog-assets/boltsparts/freecad/nut",
+        "htmlUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/nut.blt",
+        "name": "Metric hexagon thin nut",
+        "standards": [
+          {
+            "kind": "standard",
+            "standard": "ISO 4035"
+          },
+          {
+            "kind": "standard",
+            "standard": "DINENISO 4035"
+          }
+        ]
+      },
+      "boltspartsParameters": {
+        "d1": 3,
+        "e_min": 6.01,
+        "key": "M3",
+        "m_max": 1.8,
+        "name": "din-439",
+        "s": 5.5
+      },
+      "candidateSources": [
+        {
+          "code": "DIN 439",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/439/",
+          "number": "439",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+439+Hex+thin+nut+%2F+jam+nut",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+439+Hex+thin+nut+%2F+jam+nut"
+        },
+        {
+          "code": "ISO 4035",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/4035/",
+          "number": "4035",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+4035+Hex+thin+nut+%2F+jam+nut",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+4035+Hex+thin+nut+%2F+jam+nut"
+        }
+      ],
+      "catalogId": "din-439",
+      "category": "nut",
+      "description": "Hex thin nut / jam nut",
+      "error": "",
+      "licenseNote": "Boltsparts/BOLTS data and FreeCAD generators are mirrored locally; review GPL/LGPL license files before redistribution.",
+      "modelPath": "",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/models/din-439/normalized.step",
+      "renderPaths": {
+        "iso": "research/catalog-assets/renders/din-439/iso.png",
+        "side": "research/catalog-assets/renders/din-439/side.png",
+        "top": "research/catalog-assets/renders/din-439/top.png"
+      },
+      "renderStatus": "rendered",
+      "sourceFormat": "step",
+      "sourceProvider": "boltsparts",
+      "sourceUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/nut.blt",
+      "standardCodes": {
+        "DIN": "DIN 439",
+        "ISO": "ISO 4035"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:42Z"
+    },
+    {
+      "boltsparts": {
+        "classId": "hexagonlocknut",
+        "collectionId": "nut",
+        "dataPath": "research/catalog-assets/boltsparts/data/nut.blt",
+        "defaults": {
+          "key": "M3"
+        },
+        "freeParameters": [
+          "key"
+        ],
+        "freecadPath": "research/catalog-assets/boltsparts/freecad/nut",
+        "htmlUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/nut.blt",
+        "name": "Metric hexagon locknut",
+        "standards": [
+          {
+            "kind": "standard",
+            "standard": "ISO 7040"
+          },
+          {
+            "kind": "standard",
+            "standard": "DIN 982"
+          }
+        ]
+      },
+      "boltspartsParameters": {
+        "d1": 3,
+        "e_min": 6.01,
+        "key": "M3",
+        "m_max": 4.5,
+        "m_nut": 2.4,
+        "name": "din-982",
+        "s": 5.5
+      },
+      "candidateSources": [
+        {
+          "code": "DIN 982",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/982/",
+          "number": "982",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+982+Prevailing+torque+hex+nut%2C+non-metallic+insert%2C+high+type",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+982+Prevailing+torque+hex+nut%2C+non-metallic+insert%2C+high+type"
+        },
+        {
+          "code": "ISO 7040",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/7040/",
+          "number": "7040",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+7040+Prevailing+torque+hex+nut%2C+non-metallic+insert%2C+high+type",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+7040+Prevailing+torque+hex+nut%2C+non-metallic+insert%2C+high+type"
+        }
+      ],
+      "catalogId": "din-982",
+      "category": "nut",
+      "description": "Prevailing torque hex nut, non-metallic insert, high type",
+      "error": "",
+      "licenseNote": "Boltsparts/BOLTS data and FreeCAD generators are mirrored locally; review GPL/LGPL license files before redistribution.",
+      "modelPath": "",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/models/din-982/normalized.step",
+      "renderPaths": {
+        "iso": "research/catalog-assets/renders/din-982/iso.png",
+        "side": "research/catalog-assets/renders/din-982/side.png",
+        "top": "research/catalog-assets/renders/din-982/top.png"
+      },
+      "renderStatus": "rendered",
+      "sourceFormat": "step",
+      "sourceProvider": "boltsparts",
+      "sourceUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/nut.blt",
+      "standardCodes": {
+        "DIN": "DIN 982",
+        "ISO": "ISO 7040"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:46Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "DIN 985",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/985/",
+          "number": "985",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+985+Prevailing+torque+hex+nut%2C+non-metallic+insert%2C+low+type",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+985+Prevailing+torque+hex+nut%2C+non-metallic+insert%2C+low+type"
+        },
+        {
+          "code": "ISO 10511",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/10511/",
+          "number": "10511",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+10511+Prevailing+torque+hex+nut%2C+non-metallic+insert%2C+low+type",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+10511+Prevailing+torque+hex+nut%2C+non-metallic+insert%2C+low+type"
+        }
+      ],
+      "catalogId": "din-985",
+      "category": "nut",
+      "description": "Prevailing torque hex nut, non-metallic insert, low type",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "DIN": "DIN 985",
+        "ISO": "ISO 10511"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:46Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "DIN 1587",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/1587/",
+          "number": "1587",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+1587+Hex+cap+nut%2C+domed",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+1587+Hex+cap+nut%2C+domed"
+        }
+      ],
+      "catalogId": "din-1587",
+      "category": "nut",
+      "description": "Hex cap nut, domed",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "DIN": "DIN 1587"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:46Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "DIN 6923",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/6923/",
+          "number": "6923",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+6923+Hex+flange+nut",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+6923+Hex+flange+nut"
+        },
+        {
+          "code": "EN 1661",
+          "family": "EN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/EN/1661/",
+          "number": "1661",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=EN+1661+Hex+flange+nut",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/EN+1661+Hex+flange+nut"
+        }
+      ],
+      "catalogId": "din-6923",
+      "category": "nut",
+      "description": "Hex flange nut",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "DIN": "DIN 6923",
+        "EN": "EN 1661"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:46Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "DIN 9021",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/9021/",
+          "number": "9021",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+9021+Large+diameter+flat+washer",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+9021+Large+diameter+flat+washer"
+        },
+        {
+          "code": "ISO 7093",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/7093/",
+          "number": "7093",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+7093+Large+diameter+flat+washer",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+7093+Large+diameter+flat+washer"
+        }
+      ],
+      "catalogId": "din-9021",
+      "category": "washer",
+      "description": "Large diameter flat washer",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "DIN": "DIN 9021",
+        "ISO": "ISO 7093"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:46Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "DIN 127",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/127/",
+          "number": "127",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+127+Split+spring+lock+washer",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+127+Split+spring+lock+washer"
+        }
+      ],
+      "catalogId": "din-127",
+      "category": "washer",
+      "description": "Split spring lock washer",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "DIN": "DIN 127"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:46Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "DIN 6796",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/6796/",
+          "number": "6796",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+6796+Conical+spring+washer+for+bolted+connections",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+6796+Conical+spring+washer+for+bolted+connections"
+        }
+      ],
+      "catalogId": "din-6796",
+      "category": "washer",
+      "description": "Conical spring washer for bolted connections",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "DIN": "DIN 6796"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:46Z"
+    },
+    {
+      "boltsparts": {
+        "classId": "heavydutyplainwasher",
+        "collectionId": "washer",
+        "dataPath": "research/catalog-assets/boltsparts/data/washer.blt",
+        "defaults": {
+          "key": "M10"
+        },
+        "freeParameters": [
+          "key"
+        ],
+        "freecadPath": "research/catalog-assets/boltsparts/freecad/washer",
+        "htmlUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/washer.blt",
+        "name": "Metric heavy duty plain washer",
+        "standards": [
+          {
+            "kind": "standard",
+            "standard": "DIN 7349"
+          }
+        ]
+      },
+      "boltspartsParameters": {
+        "d1": 10.5,
+        "d2": 25,
+        "key": "M10",
+        "name": "din-7349",
+        "s": 4
+      },
+      "candidateSources": [
+        {
+          "code": "DIN 7349",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/7349/",
+          "number": "7349",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+7349+Heavy+washer+for+bolts+with+heavy+clamping+sleeves",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+7349+Heavy+washer+for+bolts+with+heavy+clamping+sleeves"
+        }
+      ],
+      "catalogId": "din-7349",
+      "category": "washer",
+      "description": "Heavy washer for bolts with heavy clamping sleeves",
+      "error": "",
+      "licenseNote": "Boltsparts/BOLTS data and FreeCAD generators are mirrored locally; review GPL/LGPL license files before redistribution.",
+      "modelPath": "",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/models/din-7349/normalized.step",
+      "renderPaths": {
+        "iso": "research/catalog-assets/renders/din-7349/iso.png",
+        "side": "research/catalog-assets/renders/din-7349/side.png",
+        "top": "research/catalog-assets/renders/din-7349/top.png"
+      },
+      "renderStatus": "rendered",
+      "sourceFormat": "step",
+      "sourceProvider": "boltsparts",
+      "sourceUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/washer.blt",
+      "standardCodes": {
+        "DIN": "DIN 7349"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:49Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "DIN 7",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/7/",
+          "number": "7",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+7+Parallel+dowel+pin%2C+unhardened",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+7+Parallel+dowel+pin%2C+unhardened"
+        },
+        {
+          "code": "ISO 2338",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/2338/",
+          "number": "2338",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+2338+Parallel+dowel+pin%2C+unhardened",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+2338+Parallel+dowel+pin%2C+unhardened"
+        }
+      ],
+      "catalogId": "din-7",
+      "category": "pin",
+      "description": "Parallel dowel pin, unhardened",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "DIN": "DIN 7",
+        "ISO": "ISO 2338"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:49Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "DIN 94",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/94/",
+          "number": "94",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+94+Split+cotter+pin",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+94+Split+cotter+pin"
+        },
+        {
+          "code": "ISO 1234",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/1234/",
+          "number": "1234",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+1234+Split+cotter+pin",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+1234+Split+cotter+pin"
+        }
+      ],
+      "catalogId": "din-94",
+      "category": "pin",
+      "description": "Split cotter pin",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "DIN": "DIN 94",
+        "ISO": "ISO 1234"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:49Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "DIN 1481",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/1481/",
+          "number": "1481",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+1481+Slotted+spring+pin%2C+heavy+duty",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+1481+Slotted+spring+pin%2C+heavy+duty"
+        },
+        {
+          "code": "ISO 8752",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/8752/",
+          "number": "8752",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+8752+Slotted+spring+pin%2C+heavy+duty",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+8752+Slotted+spring+pin%2C+heavy+duty"
+        }
+      ],
+      "catalogId": "din-1481",
+      "category": "pin",
+      "description": "Slotted spring pin, heavy duty",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "DIN": "DIN 1481",
+        "ISO": "ISO 8752"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:49Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "DIN 7343",
+          "family": "DIN",
+          "fastenersUrl": "https://www.fasteners.eu/standards/DIN/7343/",
+          "number": "7343",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=DIN+7343+Coiled+spring+pin%2C+standard+duty",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/DIN+7343+Coiled+spring+pin%2C+standard+duty"
+        },
+        {
+          "code": "ISO 8750",
+          "family": "ISO",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ISO/8750/",
+          "number": "8750",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ISO+8750+Coiled+spring+pin%2C+standard+duty",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ISO+8750+Coiled+spring+pin%2C+standard+duty"
+        }
+      ],
+      "catalogId": "din-7343",
+      "category": "pin",
+      "description": "Coiled spring pin, standard duty",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "DIN": "DIN 7343",
+        "ISO": "ISO 8750"
+      },
+      "unitSystem": "metric",
+      "updatedAt": "2026-06-14T23:33:49Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "ASME B18.2.1",
+          "family": "ASME",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ASME/B18.2.1/",
+          "number": "B18.2.1",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ASME+B18.2.1+Inch+hex+cap+screw+%2F+hex+bolt",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ASME+B18.2.1+Inch+hex+cap+screw+%2F+hex+bolt"
+        },
+        {
+          "code": "SAE J429",
+          "family": "SAE",
+          "fastenersUrl": "https://www.fasteners.eu/standards/SAE/J429/",
+          "number": "J429",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=SAE+J429+Inch+hex+cap+screw+%2F+hex+bolt",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/SAE+J429+Inch+hex+cap+screw+%2F+hex+bolt"
+        }
+      ],
+      "catalogId": "asme-b18-2-1-hex-cap",
+      "category": "bolt",
+      "description": "Inch hex cap screw / hex bolt",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "ASME": "ASME B18.2.1",
+        "SAE": "SAE J429"
+      },
+      "unitSystem": "imperial",
+      "updatedAt": "2026-06-14T23:33:49Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "ASME B18.6.3",
+          "family": "ASME",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ASME/B18.6.3/",
+          "number": "B18.6.3",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ASME+B18.6.3+Inch+machine+screw",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ASME+B18.6.3+Inch+machine+screw"
+        },
+        {
+          "code": "SAE J933",
+          "family": "SAE",
+          "fastenersUrl": "https://www.fasteners.eu/standards/SAE/J933/",
+          "number": "J933",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=SAE+J933+Inch+machine+screw",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/SAE+J933+Inch+machine+screw"
+        }
+      ],
+      "catalogId": "asme-b18-6-3-machine-screw",
+      "category": "screw",
+      "description": "Inch machine screw",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "ASME": "ASME B18.6.3",
+        "SAE": "SAE J933"
+      },
+      "unitSystem": "imperial",
+      "updatedAt": "2026-06-14T23:33:49Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "ASME B18.6.4",
+          "family": "ASME",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ASME/B18.6.4/",
+          "number": "B18.6.4",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ASME+B18.6.4+Inch+tapping+screw",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ASME+B18.6.4+Inch+tapping+screw"
+        },
+        {
+          "code": "SAE J933",
+          "family": "SAE",
+          "fastenersUrl": "https://www.fasteners.eu/standards/SAE/J933/",
+          "number": "J933",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=SAE+J933+Inch+tapping+screw",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/SAE+J933+Inch+tapping+screw"
+        }
+      ],
+      "catalogId": "asme-b18-6-4-tapping-screw",
+      "category": "screw",
+      "description": "Inch tapping screw",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "ASME": "ASME B18.6.4",
+        "SAE": "SAE J933"
+      },
+      "unitSystem": "imperial",
+      "updatedAt": "2026-06-14T23:33:49Z"
+    },
+    {
+      "boltsparts": {
+        "classId": "hexagonnut3",
+        "collectionId": "nut",
+        "dataPath": "research/catalog-assets/boltsparts/data/nut.blt",
+        "defaults": {
+          "key": "0.375 in"
+        },
+        "freeParameters": [
+          "key"
+        ],
+        "freecadPath": "research/catalog-assets/boltsparts/freecad/nut",
+        "htmlUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/nut.blt",
+        "name": "Imperial hexagon nut",
+        "standards": [
+          {
+            "kind": "standard",
+            "standard": "ANSI B18.2.2"
+          },
+          {
+            "kind": "standard",
+            "standard": "ASME B18.2.2"
+          }
+        ]
+      },
+      "boltspartsParameters": {
+        "d1": 0.375,
+        "key": "0.375 in",
+        "m_max": 0.328125,
+        "name": "asme-b18-2-2-hex-nut",
+        "s": 0.5625
+      },
+      "candidateSources": [
+        {
+          "code": "ASME B18.2.2",
+          "family": "ASME",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ASME/B18.2.2/",
+          "number": "B18.2.2",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ASME+B18.2.2+Inch+hex+nut",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ASME+B18.2.2+Inch+hex+nut"
+        },
+        {
+          "code": "SAE J995",
+          "family": "SAE",
+          "fastenersUrl": "https://www.fasteners.eu/standards/SAE/J995/",
+          "number": "J995",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=SAE+J995+Inch+hex+nut",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/SAE+J995+Inch+hex+nut"
+        }
+      ],
+      "catalogId": "asme-b18-2-2-hex-nut",
+      "category": "nut",
+      "description": "Inch hex nut",
+      "error": "",
+      "licenseNote": "Boltsparts/BOLTS data and FreeCAD generators are mirrored locally; review GPL/LGPL license files before redistribution.",
+      "modelPath": "",
+      "modelStatus": "normalized",
+      "normalizedModelPath": "research/catalog-assets/models/asme-b18-2-2-hex-nut/normalized.step",
+      "renderPaths": {
+        "iso": "research/catalog-assets/renders/asme-b18-2-2-hex-nut/iso.png",
+        "side": "research/catalog-assets/renders/asme-b18-2-2-hex-nut/side.png",
+        "top": "research/catalog-assets/renders/asme-b18-2-2-hex-nut/top.png"
+      },
+      "renderStatus": "rendered",
+      "sourceFormat": "step",
+      "sourceProvider": "boltsparts",
+      "sourceUrl": "https://github.com/boltsparts/boltsparts/blob/main/data/nut.blt",
+      "standardCodes": {
+        "ASME": "ASME B18.2.2",
+        "SAE": "SAE J995"
+      },
+      "unitSystem": "imperial",
+      "updatedAt": "2026-06-14T23:33:53Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "ASME B18.21.1",
+          "family": "ASME",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ASME/B18.21.1/",
+          "number": "B18.21.1",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ASME+B18.21.1+Inch+flat+washer%2C+SAE+pattern",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ASME+B18.21.1+Inch+flat+washer%2C+SAE+pattern"
+        }
+      ],
+      "catalogId": "asme-b18-21-1-washer",
+      "category": "washer",
+      "description": "Inch flat washer, SAE pattern",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "ASME": "ASME B18.21.1",
+        "SAE": "SAE washer pattern"
+      },
+      "unitSystem": "imperial",
+      "updatedAt": "2026-06-14T23:33:53Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "ASME B18.8.1",
+          "family": "ASME",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ASME/B18.8.1/",
+          "number": "B18.8.1",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ASME+B18.8.1+Inch+cotter+pin",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ASME+B18.8.1+Inch+cotter+pin"
+        }
+      ],
+      "catalogId": "asme-b18-8-1-cotter-pin",
+      "category": "pin",
+      "description": "Inch cotter pin",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "ASME": "ASME B18.8.1",
+        "SAE": "SAE cotter pin"
+      },
+      "unitSystem": "imperial",
+      "updatedAt": "2026-06-14T23:33:53Z"
+    },
+    {
+      "boltsparts": null,
+      "candidateSources": [
+        {
+          "code": "ASME B18.8.2",
+          "family": "ASME",
+          "fastenersUrl": "https://www.fasteners.eu/standards/ASME/B18.8.2/",
+          "number": "B18.8.2",
+          "partcommunitySearchUrl": "https://b2b.partcommunity.com/community/partcloud/?search=ASME+B18.8.2+Inch+dowel+pin",
+          "tracepartsSearchUrl": "https://www.traceparts.com/search/ASME+B18.8.2+Inch+dowel+pin"
+        }
+      ],
+      "catalogId": "asme-b18-8-2-dowel-pin",
+      "category": "pin",
+      "description": "Inch dowel pin",
+      "error": "No local model path to render.",
+      "licenseNote": "",
+      "modelPath": "",
+      "modelStatus": "pending",
+      "normalizedModelPath": "",
+      "renderPaths": {},
+      "renderStatus": "skipped",
+      "sourceFormat": "",
+      "sourceProvider": "",
+      "sourceUrl": "",
+      "standardCodes": {
+        "ASME": "ASME B18.8.2",
+        "SAE": "SAE dowel pin"
+      },
+      "unitSystem": "imperial",
+      "updatedAt": "2026-06-14T23:33:53Z"
+    }
+  ],
+  "updatedAt": "2026-06-14T23:35:12Z",
+  "version": 1
+}

@@ -81,6 +81,42 @@ describe('SVG rendering', () => {
     expect(svg).toContain('preserveAspectRatio="xMidYMid meet"');
   });
 
+  it('renders standard side and top image URLs in SVG output', async () => {
+    const svg = await renderLabelSvg(
+      { ...defaultHardwareItem, standardCodes: { DIN: 'DIN 1587' } },
+      {
+        ...defaultLabelSettings,
+        fields: [
+          {
+            id: 'field-side-image',
+            kind: 'image',
+            imageSource: 'side',
+            x: 2,
+            y: 2,
+            width: 10,
+            height: 10,
+            style: { fontFamily: 'Inter', fontSize: 4, fontWeight: 700, align: 'middle', visible: true }
+          },
+          {
+            id: 'field-top-image',
+            kind: 'image',
+            imageSource: 'top',
+            x: 14,
+            y: 2,
+            width: 10,
+            height: 10,
+            style: { fontFamily: 'Inter', fontSize: 4, fontWeight: 700, align: 'middle', visible: true }
+          }
+        ]
+      },
+      '',
+      'metric'
+    );
+
+    expect(svg).toContain('https://www.fasteners.eu/img/products/3d/din1587.jpg');
+    expect(svg).toContain('https://www.fasteners.eu/img/products/din-1587.jpg');
+  });
+
   it('can render a raster-safe SVG for PNG export', async () => {
     const svg = await renderLabelSvg(defaultHardwareItem, defaultLabelSettings, 'https://example.com/a2', 'metric', { rasterSafe: true });
 

@@ -2,6 +2,7 @@ import type { HardwareItem, LabelSettings, PlacedField, UnitSystem } from '../ty
 import { defaultFrameStyle } from './defaults';
 import { renderTextTemplate } from './format';
 import { buildQrPayload, createQrPngDataUrl, createQrSvg } from './qr';
+import { standardImageUrlForItem } from './standardImages';
 
 const mmToPx = 3.7795275591;
 
@@ -19,8 +20,23 @@ const textAlign = (field: PlacedField) => {
   return 'left';
 };
 
-const imageHref = (field: PlacedField) =>
+const customImageHref = (field: PlacedField) =>
   field.imageBase64 ? `data:${field.imageMimeType || 'application/octet-stream'};base64,${field.imageBase64}` : '';
+
+const blobToDataUrl = (blob: Blob) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result));
+    reader.onerror = () => reject(new Error('Unable to read standard image bytes.'));
+    reader.readAsDataURL(blob);
+  });
+
+const rasterSafeStandardImageHref = async (url: string) => {
+  if (!url) return '';
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`Unable to fetch standard image: ${url}`);
+  return blobToDataUrl(await response.blob());
+};
 
 export interface RenderLabelSvgOptions {
   interactive?: boolean;
@@ -38,6 +54,7 @@ export const renderLabelSvg = async (
 ) => {
   const qrPayload = buildQrPayload(purchaseLink);
   let qrSvgDataUri = '';
+  const standardImageHrefs = new Map<string, string>();
 
   if (qrPayload.target && settings.fields.some((field) => field.kind === 'image' && field.imageSource === 'qr' && field.style.visible)) {
     if (options.rasterSafe) {
@@ -48,9 +65,21 @@ export const renderLabelSvg = async (
     }
   }
 
+  if (settings.fields.some((field) => field.kind === 'image' && field.style.visible && (field.imageSource === 'side' || field.imageSource === 'top'))) {
+    await Promise.all(
+      settings.fields
+        .filter((field) => field.kind === 'image' && field.style.visible && (field.imageSource === 'side' || field.imageSource === 'top'))
+        .map(async (field) => {
+          const url = standardImageUrlForItem(item, field.imageSource);
+          if (!url) return;
+          standardImageHrefs.set(field.id, options.rasterSafe ? await rasterSafeStandardImageHref(url) : url);
+        })
+    );
+  }
+
   const fields = settings.fields
     .filter((field) => field.style.visible)
-    .map((field) => renderField(field, item, settings, unitSystem, qrSvgDataUri, options))
+    .map((field) => renderField(field, item, settings, unitSystem, qrSvgDataUri, standardImageHrefs, options))
     .join('\n');
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${settings.widthMm}mm" height="${settings.heightMm}mm" viewBox="0 0 ${settings.widthMm} ${settings.heightMm}">
@@ -141,6 +170,7 @@ const renderField = (
   settings: LabelSettings,
   unitSystem: UnitSystem,
   qrSvgDataUri: string,
+  standardImageHrefs: Map<string, string>,
   options: RenderLabelSvgOptions
 ) => {
   if (field.kind === 'frame') {
@@ -160,7 +190,7 @@ const renderField = (
   }
 
   if (field.kind === 'image') {
-    const href = field.imageSource === 'custom' ? imageHref(field) : qrSvgDataUri;
+    const href = field.imageSource === 'custom' ? customImageHref(field) : field.imageSource === 'qr' ? qrSvgDataUri : standardImageHrefs.get(field.id) ?? '';
     if (!href) return '';
     return renderInteractiveWrapper(
       field,

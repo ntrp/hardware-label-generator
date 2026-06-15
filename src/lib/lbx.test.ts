@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import JSZip from 'jszip';
-import { defaultHardwareItem, defaultLabelSettings } from './defaults';
+import { defaultFieldStyle, defaultHardwareItem, defaultLabelSettings } from './defaults';
 import { createLbxBlob, generateLbxXml, generateLbxXmlFiles } from './lbx';
 
 const clipartFixturePath = resolve(process.cwd(), 'fixtures/lbx/two_text_clipart.lbx');
@@ -91,6 +91,33 @@ describe('LBX export adapter', () => {
     expect(labelXml).toContain('<image:image>');
     expect(labelXml).toContain('originalName="logo.png"');
     expect(labelXml).toContain('fileName="Object0.png"');
+  });
+
+  it('generates Brother standard side image object references', () => {
+    const labelXml = generateLbxXml(
+      { ...defaultHardwareItem, standardCodes: { DIN: 'DIN 1587' } },
+      {
+        ...defaultLabelSettings,
+        fields: [
+          {
+            id: 'field-side-image',
+            kind: 'image',
+            imageSource: 'side',
+            x: 2,
+            y: 2,
+            width: 12,
+            height: 12,
+            style: { ...defaultFieldStyle }
+          }
+        ]
+      },
+      '',
+      'metric'
+    );
+
+    expect(labelXml).toContain('<image:image>');
+    expect(labelXml).toContain('originalName="Object0.jpg"');
+    expect(labelXml).toContain('fileName="Object0.jpg"');
   });
 
   it('stores custom image bytes with their original supported file type', async () => {
