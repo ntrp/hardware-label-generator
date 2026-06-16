@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Archive, Copy, FileArchive, Plus, Printer, RotateCcw, Trash2, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Archive, ChevronDown, ChevronRight, Copy, FileArchive, Plus, Printer, RotateCcw, Trash2, X } from 'lucide-react';
 import { useAppState } from '../app/AppStateContext';
 import { PrintSheet } from './AppFeedback';
 import { resolveEffectiveHardwareItems, type EffectiveHardwareItemsResult } from '../lib/batch';
@@ -190,6 +190,7 @@ export function HardwareListPanel() {
           result={resolvedPreview}
           formats={zipFormats}
           labelPresetNameForItem={labelPresetNameForItem}
+          purchaseLinks={state.purchaseLinks}
           onClose={() => setExportPreviewOpen(false)}
           onConfirm={() => {
             setExportPreviewOpen(false);
@@ -206,12 +207,66 @@ interface ExportPreviewModalProps {
   result: EffectiveHardwareItemsResult;
   formats: ExportFormat[];
   labelPresetNameForItem: (item: EffectiveHardwareItemsResult['items'][number]) => string;
+  purchaseLinks: Record<string, string>;
   onClose: () => void;
   onConfirm: () => void;
 }
 
-function ExportPreviewModal({ result, formats, labelPresetNameForItem, onClose, onConfirm }: ExportPreviewModalProps) {
+function ExportPreviewModal({ result, formats, labelPresetNameForItem, purchaseLinks, onClose, onConfirm }: ExportPreviewModalProps) {
   const formatList = formats.map((format) => format.toLowerCase()).join(', ');
+  const presetGroups = groupExportPreviewItems(result.items, labelPresetNameForItem);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const selectedItem = result.items[selectedIndex] ?? result.items[0];
+  const [selectedPreviewSvg, setSelectedPreviewSvg] = useState('');
+  const [collapsedPresets, setCollapsedPresets] = useState<Set<string>>(() => new Set());
+  const [collapsedParts, setCollapsedParts] = useState<Set<string>>(() => new Set());
+
+  useEffect(() => {
+    setSelectedIndex(0);
+    setCollapsedPresets(new Set());
+    setCollapsedParts(new Set());
+  }, [result.items]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!selectedItem) {
+      setSelectedPreviewSvg('');
+      return;
+    }
+
+    const catalogEntry = getCatalogEntryForItem(selectedItem);
+    renderLabelSvg(
+      selectedItem,
+      selectedItem.labelSettings,
+      effectivePurchaseLink(purchaseLinks, selectedItem),
+      catalogEntry?.unitSystem ?? selectedItem.unitSystem
+    ).then((svg) => {
+      if (!cancelled) setSelectedPreviewSvg(svg);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [purchaseLinks, selectedItem]);
+
+  const toggleCollapsedPreset = (presetName: string) => {
+    setCollapsedPresets((current) => {
+      const next = new Set(current);
+      if (next.has(presetName)) next.delete(presetName);
+      else next.add(presetName);
+      return next;
+    });
+  };
+
+  const toggleCollapsedPart = (partKey: string) => {
+    setCollapsedParts((current) => {
+      const next = new Set(current);
+      if (next.has(partKey)) next.delete(partKey);
+      else next.add(partKey);
+      return next;
+    });
+  };
 
   return (
     <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
@@ -234,14 +289,67 @@ function ExportPreviewModal({ result, formats, labelPresetNameForItem, onClose, 
             <X size={16} />
           </button>
         </div>
-        <div className="export-preview-list">
-          {result.items.map((item, index) => (
-            <div key={`${item.id}-${index}-${item.size}-${item.length}`} className="export-preview-row">
-              <span title={`${labelPresetNameForItem(item)} - ${item.standard} - ${getHardwareDescription(item)} - ${getHardwareSpecLine(item)}`}>
-                {index + 1}. {labelPresetNameForItem(item)} - {item.standard} - {getHardwareDescription(item)} - {getHardwareSpecLine(item)}
-              </span>
-            </div>
-          ))}
+        <div className="export-preview-body">
+          <div className="export-preview-list">
+            {presetGroups.map((presetGroup) => (
+              <section key={presetGroup.presetName} className="export-preview-group">
+                <button
+                  type="button"
+                  className="export-preview-group-heading"
+                  aria-expanded={!collapsedPresets.has(presetGroup.presetName)}
+                  onClick={() => toggleCollapsedPreset(presetGroup.presetName)}
+                >
+                  {collapsedPresets.has(presetGroup.presetName) ? <ChevronRight size={15} /> : <ChevronDown size={15} />}
+                  <span>{presetGroup.presetName}</span>
+                  <small>{presetGroup.count}</small>
+                </button>
+                {!collapsedPresets.has(presetGroup.presetName) &&
+                  presetGroup.partGroups.map((partGroup) => {
+                    const partKey = `${presetGroup.presetName}::${partGroup.partName}`;
+                    const partCollapsed = collapsedParts.has(partKey);
+
+                    return (
+                      <section key={partKey} className="export-preview-part-group">
+                        <button
+                          type="button"
+                          className="export-preview-part-heading"
+                          aria-expanded={!partCollapsed}
+                          onClick={() => toggleCollapsedPart(partKey)}
+                        >
+                          {partCollapsed ? <ChevronRight size={14} /> : <ChevronDown size={14} />}
+                          <span title={partGroup.partName}>{partGroup.partName}</span>
+                          <small>{partGroup.entries.length}</small>
+                        </button>
+                        {!partCollapsed &&
+                          partGroup.entries.map((entry) => (
+                            <button
+                              key={`${entry.item.id}-${entry.index}-${entry.item.size}-${entry.item.length}`}
+                              type="button"
+                              className={entry.index === selectedIndex ? 'export-preview-row active' : 'export-preview-row'}
+                              onClick={() => setSelectedIndex(entry.index)}
+                            >
+                              <span title={`${presetGroup.presetName} - ${partGroup.partName} - ${getHardwareSpecLine(entry.item)}`}>
+                                {getHardwareSpecLine(entry.item)}
+                              </span>
+                            </button>
+                          ))}
+                      </section>
+                    );
+                  })}
+              </section>
+            ))}
+          </div>
+          <aside className="export-preview-pane" aria-live="polite">
+            {selectedItem && (
+              <>
+                <div className="export-preview-pane-title">
+                  <strong>{labelPresetNameForItem(selectedItem)}</strong>
+                  <span>{getHardwareSpecLine(selectedItem)}</span>
+                </div>
+                <div className="export-preview-svg" dangerouslySetInnerHTML={{ __html: selectedPreviewSvg }} />
+              </>
+            )}
+          </aside>
         </div>
         <div className="modal-actions">
           <button type="button" onClick={onConfirm}>Confirm</button>
@@ -250,3 +358,33 @@ function ExportPreviewModal({ result, formats, labelPresetNameForItem, onClose, 
     </div>
   );
 }
+
+const groupExportPreviewItems = (
+  items: EffectiveHardwareItemsResult['items'],
+  labelPresetNameForItem: (item: EffectiveHardwareItemsResult['items'][number]) => string
+) => {
+  const presetGroups = new Map<string, Map<string, Array<{ item: HardwareItem; index: number }>>>();
+
+  items.forEach((item, index) => {
+    const presetName = labelPresetNameForItem(item);
+    const partName = `${item.standard} - ${getHardwareDescription(item)}`;
+    const partGroups = presetGroups.get(presetName) ?? new Map<string, Array<{ item: HardwareItem; index: number }>>();
+    const entries = partGroups.get(partName) ?? [];
+    entries.push({ item, index });
+    partGroups.set(partName, entries);
+    presetGroups.set(presetName, partGroups);
+  });
+
+  return [...presetGroups.entries()]
+    .sort(([left], [right]) => left.localeCompare(right, undefined, { numeric: true, sensitivity: 'base' }))
+    .map(([presetName, partGroups]) => ({
+      presetName,
+      count: [...partGroups.values()].reduce((total, entries) => total + entries.length, 0),
+      partGroups: [...partGroups.entries()]
+        .sort(([left], [right]) => left.localeCompare(right, undefined, { numeric: true, sensitivity: 'base' }))
+        .map(([partName, entries]) => ({
+          partName,
+          entries
+        }))
+    }));
+};
