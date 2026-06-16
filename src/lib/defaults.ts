@@ -25,41 +25,6 @@ export const clonePlacedFields = (fields: PlacedField[]) =>
     frameStyle: field.frameStyle ? { ...field.frameStyle } : undefined
   }));
 
-export const defaultHardwareItem: HardwareItem = {
-  id: 'item-socket-cap-m3',
-  catalogId: 'din-912',
-  category: 'screw',
-  standard: 'DIN 912 / ISO 4762',
-  standardCodes: { DIN: 'DIN 912', ISO: 'ISO 4762', EN: 'EN ISO 4762' },
-  size: 'M3',
-  length: '12',
-  lengthUnit: 'mm',
-  material: 'stainless steel',
-  materialType: 'A2',
-  finish: 'plain',
-  boltClass: 'A2-70',
-  threadPitch: '0.5',
-  threadPitchName: 'coarse',
-  threadPitchUnit: 'mm',
-  specs: {
-    size: 'M3',
-    length: '12',
-    material: 'stainless steel',
-    materialType: 'A2',
-    finish: 'plain',
-    boltClass: 'A2-70',
-    threadPitch: '0.5',
-    threadPitchName: 'coarse',
-    threadPitchUnit: 'mm'
-  },
-  batch: {
-    enabled: false,
-    specs: {},
-    activeKeys: []
-  },
-  unitSystem: 'metric'
-};
-
 export const templateFields: Record<string, PlacedField[]> = {
   compact: [
     { id: 'field-standard', kind: 'text', text: '{standardDin} {standardIso}', x: 3, y: 4, width: 44, height: 6, style: { ...defaultFieldStyle, fontSize: 5, fontWeight: 600 } },
@@ -84,7 +49,7 @@ export const templateFields: Record<string, PlacedField[]> = {
     { id: 'field-size', kind: 'text', text: '{size}', x: 3, y: 11, width: 28, height: 10, style: { ...defaultFieldStyle, fontSize: 10, fontWeight: 800 } },
     { id: 'field-length', kind: 'text', text: '{length} {lengthUnit}', x: 3, y: 22, width: 28, height: 6, style: { ...defaultFieldStyle, fontSize: 5.5, fontWeight: 700 } },
     { id: 'field-qr', kind: 'image', imageSource: 'qr', x: 35, y: 5, width: 17, height: 17, style: { ...defaultFieldStyle } },
-    { id: 'field-material', kind: 'text', text: '{materialType}', x: 35, y: 25, width: 17, height: 4, style: { ...defaultFieldStyle, fontSize: 4, align: 'middle' } }
+    { id: 'field-material', kind: 'text', text: '{materialType}', x: 35, y: 25, width: 17, height: 3, style: { ...defaultFieldStyle, fontSize: 4, align: 'middle' } }
   ],
   washer: [
     { id: 'field-standard', kind: 'text', text: '{standardDin} {standardIso}', x: 3, y: 4, width: 48, height: 5, style: { ...defaultFieldStyle, fontSize: 4.5, fontWeight: 600 } },
@@ -234,6 +199,47 @@ export const defaultLabelSettings: LabelSettings = {
   marginMm: defaultPreset.marginMm,
   layout: 'qr-sidecar',
   fields: clonePlacedFields(defaultPreset.fields)
+};
+
+export const cloneLabelSettings = (settings: LabelSettings): LabelSettings => ({
+  ...settings,
+  fields: clonePlacedFields(settings.fields)
+});
+
+export const defaultHardwareItem: HardwareItem = {
+  id: 'item-socket-cap-m3',
+  catalogId: 'din-912',
+  category: 'screw',
+  standard: 'DIN 912 / ISO 4762',
+  standardCodes: { DIN: 'DIN 912', ISO: 'ISO 4762', EN: 'EN ISO 4762' },
+  size: 'M3',
+  length: '12',
+  lengthUnit: 'mm',
+  material: 'stainless steel',
+  materialType: 'A2',
+  finish: 'plain',
+  boltClass: 'A2-70',
+  threadPitch: '0.5',
+  threadPitchName: 'coarse',
+  threadPitchUnit: 'mm',
+  specs: {
+    size: 'M3',
+    length: '12',
+    material: 'stainless steel',
+    materialType: 'A2',
+    finish: 'plain',
+    boltClass: 'A2-70',
+    threadPitch: '0.5',
+    threadPitchName: 'coarse',
+    threadPitchUnit: 'mm'
+  },
+  batch: {
+    enabled: false,
+    specs: {},
+    activeKeys: []
+  },
+  unitSystem: 'metric',
+  labelSettings: cloneLabelSettings(defaultLabelSettings)
 };
 
 export const defaultAppState: AppState = {

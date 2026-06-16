@@ -123,9 +123,10 @@ export function LabelDesignPanel() {
   const [presetCategories, setPresetCategories] = useState<HardwareItem['category'][]>([]);
   const [presetModalOpen, setPresetModalOpen] = useState(false);
   const [presetCodeModalOpen, setPresetCodeModalOpen] = useState(false);
-  const [labelWidthInput, setLabelWidthInput] = useState(() => formatLabelDimensionInput(state.labelSettings.widthMm, state.unitSystem));
-  const [labelHeightInput, setLabelHeightInput] = useState(() => formatLabelDimensionInput(state.labelSettings.heightMm, state.unitSystem));
-  const [labelMarginInput, setLabelMarginInput] = useState(() => formatLabelDimensionInput(state.labelSettings.marginMm, state.unitSystem));
+  const labelSettings = selectedItem.labelSettings;
+  const [labelWidthInput, setLabelWidthInput] = useState(() => formatLabelDimensionInput(labelSettings.widthMm, state.unitSystem));
+  const [labelHeightInput, setLabelHeightInput] = useState(() => formatLabelDimensionInput(labelSettings.heightMm, state.unitSystem));
+  const [labelMarginInput, setLabelMarginInput] = useState(() => formatLabelDimensionInput(labelSettings.marginMm, state.unitSystem));
   const {
     addField,
     appendPlaceholder,
@@ -137,33 +138,32 @@ export function LabelDesignPanel() {
     updateFrameStyle
   } = useLabelFields();
 
-  const labelSettings = state.labelSettings;
   const unitSystem = state.unitSystem;
   const activeSpecDefinitions = getCategorySpecDefinitions(selectedItem?.category ?? 'custom');
   const builtInPresetOptions = Object.values(builtInLabelPresets).filter((preset) => presetAppliesToCategory(preset, selectedItem.category));
   const customPresetOptions = state.customPresets.filter((preset) => presetAppliesToCategory(preset, selectedItem.category));
   const presetOptions = [...builtInPresetOptions, ...customPresetOptions];
-  const activePreset = presetOptions.find((preset) => presetMatchesSettings(preset, state.labelSettings));
+  const activePreset = presetOptions.find((preset) => presetMatchesSettings(preset, labelSettings));
   const activeCustomPreset = activePreset ? state.customPresets.find((preset) => preset.id === activePreset.id) : undefined;
   const presetIsModified = !activePreset;
   const activePresetValue = activePreset?.id ?? modifiedPresetValue;
   const availableFontFamilies = useMemo(() => uniqueValues([...fontFamilies, ...systemFontFamilies]), [systemFontFamilies]);
   const presetCode = useMemo(() => {
-    const name = activePreset?.name ?? `Preset ${formatLabelSize(state.labelSettings.widthMm, state.labelSettings.heightMm, state.unitSystem)}`;
+    const name = activePreset?.name ?? `Preset ${formatLabelSize(labelSettings.widthMm, labelSettings.heightMm, state.unitSystem)}`;
     const id = activePreset?.id ?? slugifyPresetId(`${selectedItem.category}-${name}`);
     const preset: LabelPreset = {
       id,
       name,
       categories: activePreset?.categories.length ? activePreset.categories : [selectedItem.category],
-      widthMm: state.labelSettings.widthMm,
-      heightMm: state.labelSettings.heightMm,
-      tapeWidthMm: state.labelSettings.tapeWidthMm,
-      marginMm: state.labelSettings.marginMm,
-      fields: clonePlacedFields(state.labelSettings.fields)
+      widthMm: labelSettings.widthMm,
+      heightMm: labelSettings.heightMm,
+      tapeWidthMm: labelSettings.tapeWidthMm,
+      marginMm: labelSettings.marginMm,
+      fields: clonePlacedFields(labelSettings.fields)
     };
 
     return `${formatTsKey(id)}: ${formatTsValue(preset)},`;
-  }, [activePreset, selectedItem.category, state.labelSettings, state.unitSystem]);
+  }, [activePreset, labelSettings, selectedItem.category, state.unitSystem]);
   const placeholderOptions = useMemo(() => {
     const base = [
       'standard',
@@ -187,10 +187,10 @@ export function LabelDesignPanel() {
   }, [activeSpecDefinitions, selectedItem.standardCodes]);
 
   useEffect(() => {
-    setLabelWidthInput(formatLabelDimensionInput(state.labelSettings.widthMm, state.unitSystem));
-    setLabelHeightInput(formatLabelDimensionInput(state.labelSettings.heightMm, state.unitSystem));
-    setLabelMarginInput(formatLabelDimensionInput(state.labelSettings.marginMm, state.unitSystem));
-  }, [state.labelSettings.widthMm, state.labelSettings.heightMm, state.labelSettings.marginMm, state.unitSystem]);
+    setLabelWidthInput(formatLabelDimensionInput(labelSettings.widthMm, state.unitSystem));
+    setLabelHeightInput(formatLabelDimensionInput(labelSettings.heightMm, state.unitSystem));
+    setLabelMarginInput(formatLabelDimensionInput(labelSettings.marginMm, state.unitSystem));
+  }, [labelSettings.widthMm, labelSettings.heightMm, labelSettings.marginMm, state.unitSystem]);
 
   useEffect(() => {
     if (!selectedFieldId || presetModalOpen || presetCodeModalOpen) return;
@@ -241,6 +241,15 @@ export function LabelDesignPanel() {
     }
   };
 
+  const updateSelectedLabelSettings = (updater: (settings: typeof labelSettings) => typeof labelSettings) => {
+    setState((current) => ({
+      ...current,
+      hardwareItems: current.hardwareItems.map((item) =>
+        item.id === selectedId ? { ...item, labelSettings: constrainLabelSettings(updater(item.labelSettings)) } : item
+      )
+    }));
+  };
+
   const applyPreset = (presetId: string) => {
     if (presetId === modifiedPresetValue) {
       return;
@@ -252,15 +261,12 @@ export function LabelDesignPanel() {
 
     if (!preset) return;
 
-    setState((current) => ({
-      ...current,
-      labelSettings: constrainLabelSettings(presetToLabelSettings(preset, Boolean(builtInPreset)))
-    }));
+    updateSelectedLabelSettings(() => presetToLabelSettings(preset, Boolean(builtInPreset)));
     setSelectedFieldId(null);
   };
 
   const openPresetSaveModal = () => {
-    setPresetName(`Preset ${formatLabelSize(state.labelSettings.widthMm, state.labelSettings.heightMm, state.unitSystem)}`);
+    setPresetName(`Preset ${formatLabelSize(labelSettings.widthMm, labelSettings.heightMm, state.unitSystem)}`);
     setPresetCategories([selectedItem.category]);
     setPresetModalOpen(true);
   };
@@ -273,20 +279,19 @@ export function LabelDesignPanel() {
       id: createId('preset'),
       name,
       categories: presetCategories.length > 0 ? presetCategories : [selectedItem.category],
-      widthMm: state.labelSettings.widthMm,
-      heightMm: state.labelSettings.heightMm,
-      tapeWidthMm: state.labelSettings.tapeWidthMm,
-      marginMm: state.labelSettings.marginMm,
-      fields: clonePlacedFields(state.labelSettings.fields)
+      widthMm: labelSettings.widthMm,
+      heightMm: labelSettings.heightMm,
+      tapeWidthMm: labelSettings.tapeWidthMm,
+      marginMm: labelSettings.marginMm,
+      fields: clonePlacedFields(labelSettings.fields)
     };
 
     setState((current) => ({
       ...current,
       customPresets: [...current.customPresets, preset],
-      labelSettings: {
-        ...current.labelSettings,
-        layout: 'custom'
-      }
+      hardwareItems: current.hardwareItems.map((item) =>
+        item.id === selectedId ? { ...item, labelSettings: { ...item.labelSettings, layout: 'custom' } } : item
+      )
     }));
     setPresetModalOpen(false);
     showSuccessToast('Preset saved.');
@@ -302,41 +307,35 @@ export function LabelDesignPanel() {
   const commitLabelDimensionInput = (dimension: LabelDimensionKey, rawValue: string) => {
     const numericValue = parseLabelDimensionInput(rawValue, state.unitSystem);
     if (!Number.isFinite(numericValue) || (dimension === 'marginMm' ? numericValue < 0 : numericValue <= 0)) {
-      if (dimension === 'widthMm') setLabelWidthInput(formatLabelDimensionInput(state.labelSettings.widthMm, state.unitSystem));
-      else if (dimension === 'heightMm') setLabelHeightInput(formatLabelDimensionInput(state.labelSettings.heightMm, state.unitSystem));
-      else setLabelMarginInput(formatLabelDimensionInput(state.labelSettings.marginMm, state.unitSystem));
+      if (dimension === 'widthMm') setLabelWidthInput(formatLabelDimensionInput(labelSettings.widthMm, state.unitSystem));
+      else if (dimension === 'heightMm') setLabelHeightInput(formatLabelDimensionInput(labelSettings.heightMm, state.unitSystem));
+      else setLabelMarginInput(formatLabelDimensionInput(labelSettings.marginMm, state.unitSystem));
       return;
     }
 
     const min = dimension === 'widthMm' ? minLabelWidthMm : dimension === 'heightMm' ? minLabelHeightMm : 0;
-    const max = dimension === 'widthMm' ? maxLabelWidthMm : dimension === 'heightMm' ? maxLabelHeightMm : maxMarginForSettings(state.labelSettings);
+    const max = dimension === 'widthMm' ? maxLabelWidthMm : dimension === 'heightMm' ? maxLabelHeightMm : maxMarginForSettings(labelSettings);
     const nextValue = Number(clamp(numericValue, min, max).toFixed(2));
 
-    setState((current) => ({
-      ...current,
-      labelSettings: constrainLabelSettings({
-        ...current.labelSettings,
+    updateSelectedLabelSettings((settings) => ({
+        ...settings,
         layout: 'custom',
         [dimension]: nextValue
-      })
-    }));
+      }));
   };
 
   const stepLabelDimensionInput = (dimension: LabelDimensionKey, direction: 1 | -1) => {
     const currentValue =
-      dimension === 'widthMm' ? state.labelSettings.widthMm : dimension === 'heightMm' ? state.labelSettings.heightMm : state.labelSettings.marginMm;
+      dimension === 'widthMm' ? labelSettings.widthMm : dimension === 'heightMm' ? labelSettings.heightMm : labelSettings.marginMm;
     const min = dimension === 'widthMm' ? minLabelWidthMm : dimension === 'heightMm' ? minLabelHeightMm : 0;
-    const max = dimension === 'widthMm' ? maxLabelWidthMm : dimension === 'heightMm' ? maxLabelHeightMm : maxMarginForSettings(state.labelSettings);
+    const max = dimension === 'widthMm' ? maxLabelWidthMm : dimension === 'heightMm' ? maxLabelHeightMm : maxMarginForSettings(labelSettings);
     const nextValue = Number(clamp(currentValue + direction * labelDimensionStepMm(state.unitSystem), min, max).toFixed(2));
 
-    setState((current) => ({
-      ...current,
-      labelSettings: constrainLabelSettings({
-        ...current.labelSettings,
+    updateSelectedLabelSettings((settings) => ({
+        ...settings,
         layout: 'custom',
         [dimension]: nextValue
-      })
-    }));
+      }));
   };
 
   if (!selectedItem) {

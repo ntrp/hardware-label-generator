@@ -8,44 +8,44 @@ import { useAppState } from '../../app/AppStateContext';
 import type { LabelElementKind, PlacedField } from '../../types';
 
 export function useLabelFields() {
-  const { setSelectedFieldId, setState, state } = useAppState();
+  const { selectedId, setSelectedFieldId, setState, state } = useAppState();
+  const selectedItem = state.hardwareItems.find((item) => item.id === selectedId) ?? state.hardwareItems[0];
+  const labelSettings = selectedItem.labelSettings;
 
-  const updateField = (fieldId: string, patch: Partial<PlacedField>) => {
+  const updateSelectedLabelSettings = (updater: (settings: typeof labelSettings) => typeof labelSettings) => {
     setState((current) => ({
       ...current,
-      labelSettings: {
-        ...current.labelSettings,
-        layout: 'custom',
-        fields: current.labelSettings.fields.map((field) =>
-          field.id === fieldId ? constrainFieldToSettings({ ...field, ...patch }, current.labelSettings) : field
-        )
-      }
+      hardwareItems: current.hardwareItems.map((item) =>
+        item.id === selectedId ? { ...item, labelSettings: updater(item.labelSettings) } : item
+      )
     }));
   };
 
+  const updateField = (fieldId: string, patch: Partial<PlacedField>) => {
+    updateSelectedLabelSettings((settings) => ({
+        ...settings,
+        layout: 'custom',
+        fields: settings.fields.map((field) =>
+          field.id === fieldId ? constrainFieldToSettings({ ...field, ...patch }, settings) : field
+        )
+      }));
+  };
+
   const removeField = (fieldId: string) => {
-    setState((current) => {
-      const fields = current.labelSettings.fields.filter((candidate) => candidate.id !== fieldId);
-      return {
-        ...current,
-        labelSettings: {
-          ...current.labelSettings,
-          layout: 'custom',
-          fields
-        }
-      };
-    });
+    updateSelectedLabelSettings((settings) => ({
+      ...settings,
+      layout: 'custom',
+      fields: settings.fields.filter((candidate) => candidate.id !== fieldId)
+    }));
 
     setSelectedFieldId((current) => (current === fieldId ? null : current));
   };
 
   const updateFieldStyle = (fieldId: string, patch: Partial<PlacedField['style']>) => {
-    setState((current) => ({
-      ...current,
-      labelSettings: {
-        ...current.labelSettings,
+    updateSelectedLabelSettings((settings) => ({
+        ...settings,
         layout: 'custom',
-        fields: current.labelSettings.fields.map((field) =>
+        fields: settings.fields.map((field) =>
           field.id === fieldId
             ? constrainFieldToSettings(
                 {
@@ -53,25 +53,21 @@ export function useLabelFields() {
                   height: field.kind === 'text' && patch.fontSize !== undefined ? autoTextElementHeight({ style: { ...field.style, ...patch } }) : field.height,
                   style: { ...field.style, ...patch }
                 },
-                current.labelSettings
+                settings
               )
             : field
         )
-      }
-    }));
+      }));
   };
 
   const updateFrameStyle = (fieldId: string, patch: Partial<PlacedField['frameStyle']>) => {
-    setState((current) => ({
-      ...current,
-      labelSettings: {
-        ...current.labelSettings,
+    updateSelectedLabelSettings((settings) => ({
+        ...settings,
         layout: 'custom',
-        fields: current.labelSettings.fields.map((field) =>
+        fields: settings.fields.map((field) =>
           field.id === fieldId ? { ...field, frameStyle: { ...defaultFrameStyle, ...field.frameStyle, ...patch } } : field
         )
-      }
-    }));
+      }));
   };
 
   const updateElementKind = (field: PlacedField, kind: LabelElementKind) => {
@@ -85,8 +81,8 @@ export function useLabelFields() {
         imageName: undefined,
         x: 0,
         y: 0,
-        width: state.labelSettings.widthMm,
-        height: state.labelSettings.heightMm,
+        width: labelSettings.widthMm,
+        height: labelSettings.heightMm,
         frameStyle: { ...defaultFrameStyle, ...field.frameStyle }
       });
       return;
@@ -143,7 +139,7 @@ export function useLabelFields() {
   };
 
   const addField = () => {
-    const marginMm = normalizedMarginMm(state.labelSettings);
+    const marginMm = normalizedMarginMm(labelSettings);
     const next: PlacedField = {
       id: createId('field'),
       kind: 'text',
@@ -154,14 +150,11 @@ export function useLabelFields() {
       height: 6,
       style: { ...defaultFieldStyle }
     };
-    setState((current) => ({
-      ...current,
-      labelSettings: {
-        ...current.labelSettings,
+    updateSelectedLabelSettings((settings) => ({
+        ...settings,
         layout: 'custom',
-        fields: [...current.labelSettings.fields, constrainFieldToSettings(next, current.labelSettings)]
-      }
-    }));
+        fields: [...settings.fields, constrainFieldToSettings(next, settings)]
+      }));
     setSelectedFieldId(next.id);
   };
 

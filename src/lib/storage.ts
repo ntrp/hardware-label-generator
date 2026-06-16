@@ -1,9 +1,9 @@
 import type { AppBackup, AppState } from '../types';
 import { defaultAppState } from './defaults';
 
-const storageKey = 'makers-label-generator:v16';
+const storageKey = 'makers-label-generator:v17';
 const backupAppName = 'makers-label-generator';
-const backupVersion = 13;
+const backupVersion = 14;
 
 export const loadState = (): AppState => {
   if (typeof localStorage === 'undefined') {
@@ -15,6 +15,16 @@ export const loadState = (): AppState => {
     return raw ? (JSON.parse(raw) as AppState) : defaultAppState;
   } catch {
     return defaultAppState;
+  }
+};
+
+export const hasSavedState = () => {
+  if (typeof localStorage === 'undefined') return false;
+
+  try {
+    return localStorage.getItem(storageKey) !== null;
+  } catch {
+    return false;
   }
 };
 
@@ -32,6 +42,19 @@ export const createBackup = (state: AppState, exportedAt = new Date().toISOStrin
 });
 
 export const serializeBackup = (state: AppState) => JSON.stringify(createBackup(state), null, 2);
+
+export const backupFilename = (date = new Date()) => {
+  const parts = [
+    date.getFullYear(),
+    date.getMonth() + 1,
+    date.getDate(),
+    date.getHours(),
+    date.getMinutes(),
+    date.getSeconds()
+  ].map((part) => String(part).padStart(2, '0'));
+
+  return `makers-label-generator-backup-${parts.slice(0, 3).join('-')}-${parts.slice(3).join('-')}.json`;
+};
 
 const isRecord = (value: unknown): value is Record<string, unknown> => Boolean(value && typeof value === 'object' && !Array.isArray(value));
 

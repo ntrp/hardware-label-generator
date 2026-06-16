@@ -62,7 +62,7 @@ describe('batch generation', () => {
     ]);
   });
 
-  it('applies single-select material-owned batch keys', () => {
+  it('applies material-owned batch keys', () => {
     const items = generateBatchItems({
       ...defaultHardwareItem,
       batch: {
@@ -82,7 +82,7 @@ describe('batch generation', () => {
     expect(items.map((item) => `${item.size}:${item.material}:${item.materialType}:${item.finish}:${item.boltClass}`)).toEqual(['M2:steel:low carbon:zinc plated:3.6']);
   });
 
-  it('uses current material-owned values when single-select fields are ignored', () => {
+  it('uses current material-owned values when material-owned fields are ignored', () => {
     const items = generateBatchItems({
       ...defaultHardwareItem,
       batch: {
@@ -198,5 +198,44 @@ describe('batch generation', () => {
     expect(result.items.map((item) => `${item.size}x${item.length}`)).toEqual(['M2x6', 'M2x12']);
     expect(result.duplicateCount).toBe(1);
     expect(result.duplicateGroups).toHaveLength(1);
+  });
+
+  it('sorts generated parts by size, length, pitch, material, type, finish, and bolt class', () => {
+    const items = generateBatchItems({
+      ...defaultHardwareItem,
+      batch: {
+        enabled: true,
+        activeKeys: ['size', 'length', 'threadPitchName', 'material', 'materialType', 'finish', 'boltClass'] as HardwareSpecKey[],
+        specs: {
+          size: 'M2, M1',
+          length: '12, 6',
+          threadPitchName: [
+            encodeBatchOptionValue('fine (0.20 mm)', { size: 'M1' }),
+            encodeBatchOptionValue('coarse (0.25 mm)', { size: 'M1' }),
+            encodeBatchOptionValue('coarse (0.40 mm)', { size: 'M2' })
+          ].join(', '),
+          material: 'steel, stainless steel',
+          materialType: [
+            encodeBatchOptionValue('low carbon', { material: 'steel' }),
+            encodeBatchOptionValue('A2', { material: 'stainless steel' })
+          ].join(', '),
+          finish: [
+            encodeBatchOptionValue('zinc plated', { material: 'steel' }),
+            encodeBatchOptionValue('plain', { material: 'steel' }),
+            encodeBatchOptionValue('plain', { material: 'stainless steel' })
+          ].join(', '),
+          boltClass: encodeBatchOptionValue('3.6', { size: 'M2', material: 'steel', materialType: 'low carbon' })
+        }
+      }
+    });
+
+    expect(items.slice(0, 6).map((item) => `${item.size}:${item.length}:${item.threadPitch}:${item.material}:${item.materialType}:${item.finish}:${item.boltClass}`)).toEqual([
+      'M1:6:0.20:stainless steel:A2:plain:',
+      'M1:6:0.20:steel:low carbon:plain:',
+      'M1:6:0.20:steel:low carbon:zinc plated:',
+      'M1:6:0.25:stainless steel:A2:plain:',
+      'M1:6:0.25:steel:low carbon:plain:',
+      'M1:6:0.25:steel:low carbon:zinc plated:'
+    ]);
   });
 });

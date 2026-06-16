@@ -11,6 +11,7 @@ import { defaultBoltClass, isValidBoltClass } from '../lib/boltClasses';
 import { batchOptionLabel, batchPreviewLabel, batchSpecKeys, decodeBatchOptionValue, encodeBatchOptionValue, generateBatchItems } from '../lib/batch';
 import { parseList, splitLengthAndUnit } from '../lib/format';
 import { effectivePurchaseLink } from '../lib/export';
+import { categoryLabelSettings } from '../lib/appState';
 import {
   defaultImperialThreadPitch,
   findImperialThreadPitch,
@@ -40,7 +41,6 @@ import {
 } from '../lib/standardImages';
 import { CatalogPartPicker } from './CatalogPartPicker';
 import {
-  applyCategoryPresetToState,
   buildCatalogItemPatch,
   getCatalogEntryForItem,
   getHardwareSpecLine
@@ -76,8 +76,6 @@ const catalogAssetPreviewUrl = (reference: StandardImageReference, source: (type
 const selectedBatchValues = (item: HardwareItem, key: HardwareSpecKey) => parseList(item.batch.specs[key] ?? '');
 const selectedBatchRawValues = (item: HardwareItem, key: HardwareSpecKey) =>
   selectedBatchValues(item, key).map((value) => decodeBatchOptionValue(value).value);
-const multiSelectBatchSpecKeys: HardwareSpecKey[] = ['size', 'length', 'threadPitchName'];
-const optionalSingleSelectBatchSpecKeys: HardwareSpecKey[] = ['material', 'materialType', 'finish', 'boltClass'];
 
 const batchOptionMatchesCurrentItem = (item: HardwareItem, encodedValue: string) => {
   const { dependencies } = decodeBatchOptionValue(encodedValue);
@@ -108,7 +106,7 @@ export function HardwareSpecsPanel() {
   const batchPreviewItems = selectedItem && batchEnabled ? generateBatchItems(selectedItem) : [];
   const previewHardwareSpecLine = previewHardwareItem ? getHardwareSpecLine(previewHardwareItem) : '';
   const selectedPurchaseLink = selectedItem ? effectivePurchaseLink(state.purchaseLinks, selectedItem) : '';
-  const hasQrElement = state.labelSettings.fields.some((field) => field.kind === 'image' && field.imageSource === 'qr' && field.style.visible);
+  const hasQrElement = selectedItem.labelSettings.fields.some((field) => field.kind === 'image' && field.imageSource === 'qr' && field.style.visible);
 
   useEffect(() => {
     if (!selectedItem || !selectedCatalogEntry) return;
@@ -145,8 +143,57 @@ export function HardwareSpecsPanel() {
 
   const selectedOrDefaultBatchValues = (item: HardwareItem, key: HardwareSpecKey, options: string[]) => {
     const selectedValues = selectedBatchValues(item, key).filter((value) => options.includes(value));
+    const firstMatchingOption = (matches: (value: ReturnType<typeof decodeBatchOptionValue>) => boolean, preferredValue = getItemSpecValue(item, key)) =>
+      options.find((option) => {
+        const decoded = decodeBatchOptionValue(option);
+        return matches(decoded) && decoded.value === preferredValue && batchOptionMatchesCurrentItem(item, option);
+      }) ?? options.find((option) => matches(decodeBatchOptionValue(option)));
+
+    if (key === 'threadPitchName') {
+      return uniqueValues([
+        ...selectedValues,
+        ...batchContextValues('size').flatMap((size) =>
+          selectedValues.some((value) => decodeBatchOptionValue(value).dependencies.size === size)
+            ? []
+            : [firstMatchingOption((decoded) => decoded.dependencies.size === size, '')].filter(Boolean) as string[]
+        )
+      ]);
+    }
+
+    if (key === 'materialType' || key === 'finish') {
+      return uniqueValues([
+        ...selectedValues,
+        ...batchContextValues('material').flatMap((material) =>
+          selectedValues.some((value) => decodeBatchOptionValue(value).dependencies.material === material)
+            ? []
+            : [firstMatchingOption((decoded) => decoded.dependencies.material === material)].filter(Boolean) as string[]
+        )
+      ]);
+    }
+
+    if (key === 'boltClass') {
+      const contextKeys = uniqueValues(
+        options.map((option) => {
+          const { dependencies } = decodeBatchOptionValue(option);
+          return [dependencies.size, dependencies.material, dependencies.materialType].filter(Boolean).join('\u0000');
+        })
+      );
+      return uniqueValues([
+        ...selectedValues,
+        ...contextKeys.flatMap((contextKey) => {
+          const selectedForContext = selectedValues.some((value) => {
+            const { dependencies } = decodeBatchOptionValue(value);
+            return [dependencies.size, dependencies.material, dependencies.materialType].filter(Boolean).join('\u0000') === contextKey;
+          });
+          if (selectedForContext) return [];
+          return [firstMatchingOption((decoded) =>
+            [decoded.dependencies.size, decoded.dependencies.material, decoded.dependencies.materialType].filter(Boolean).join('\u0000') === contextKey
+          )].filter(Boolean) as string[];
+        })
+      ]);
+    }
+
     if (selectedValues.length > 0) return selectedValues;
-    if (optionalSingleSelectBatchSpecKeys.includes(key)) return [];
 
     const currentValue = getItemSpecValue(item, key);
     const currentOption = options.find((option) => {
@@ -407,13 +454,13 @@ export function HardwareSpecsPanel() {
 
     setState((current) => ({
       ...current,
-      ...applyCategoryPresetToState(current, category),
       hardwareItems: current.hardwareItems.map((item) =>
         item.id === selectedItem.id
           ? syncHardwareSpecs({
               ...item,
               catalogId: undefined,
               category,
+              labelSettings: categoryLabelSettings(current, category, item.labelSettings),
               batch: { enabled: false, specs: {}, activeKeys: [] },
               specs: { ...item.specs }
             })
@@ -445,12 +492,12 @@ export function HardwareSpecsPanel() {
 
     setState((current) => ({
       ...current,
-      ...applyCategoryPresetToState(current, entry.category),
       hardwareItems: current.hardwareItems.map((item) =>
         item.id === selectedItem.id
           ? syncHardwareSpecs({
               ...item,
               ...buildCatalogItemPatch(entry, item),
+              labelSettings: categoryLabelSettings(current, entry.category, item.labelSettings),
               batch: { enabled: false, specs: {}, activeKeys: [] }
             })
           : item
@@ -470,39 +517,55 @@ export function HardwareSpecsPanel() {
         <h2>Hardware specs</h2>
       </div>
 
+      <div className="spec-form-header">
+        <div className="spec-form-controls">
+          <label>
+            Catalog
+            <CatalogPartPicker
+              entries={filteredCatalog}
+              selectedId={selectedItem.catalogId ?? ''}
+              selectedStandards={state.selectedStandards}
+              onSelect={applyCatalogEntry}
+              includeCustom
+            />
+          </label>
+          <label>
+            Standard
+            <input
+              value={selectedItem.standard}
+              readOnly={selectedCatalogLocked}
+              onChange={(event) => updateSelectedItem({ standard: event.target.value })}
+            />
+          </label>
+          <label>
+            Category
+            <select
+              value={selectedItem.category}
+              disabled={selectedCatalogLocked}
+              onChange={(event) => updateSelectedCategory(event.target.value as HardwareCategory)}
+            >
+              {hardwareCategories.map((category) => (
+                <option key={category} value={category}>
+                  {categoryLabel(category)}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+        {selectedStandardImageReference && (
+          <div className="standard-render-card">
+            <img
+              src={catalogAssetPreviewUrl(selectedStandardImageReference, 'isoRender')}
+              alt={`ISO render for ${selectedItem.standard}`}
+              loading="lazy"
+              onError={(event) => { event.currentTarget.src = missingCatalogAssetDataUrl('ISO render'); }}
+            />
+            <span>ISO render</span>
+          </div>
+        )}
+      </div>
+
       <div className="form-grid">
-        <label>
-          Catalog
-          <CatalogPartPicker
-            entries={filteredCatalog}
-            selectedId={selectedItem.catalogId ?? ''}
-            selectedStandards={state.selectedStandards}
-            onSelect={applyCatalogEntry}
-            includeCustom
-          />
-        </label>
-        <label>
-          Category
-          <select
-            value={selectedItem.category}
-            disabled={selectedCatalogLocked}
-            onChange={(event) => updateSelectedCategory(event.target.value as HardwareCategory)}
-          >
-            {hardwareCategories.map((category) => (
-              <option key={category} value={category}>
-                {categoryLabel(category)}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Standard
-          <input
-            value={selectedItem.standard}
-            readOnly={selectedCatalogLocked}
-            onChange={(event) => updateSelectedItem({ standard: event.target.value })}
-          />
-        </label>
         {!batchEnabled && activeSpecDefinitions.map((definition) => {
           const catalogOptions = selectedCatalogLocked
             ? getCatalogSpecOptions(selectedCatalogEntry, selectedItem.category, definition.key, selectedSpecUnitSystem)
@@ -792,46 +855,32 @@ export function HardwareSpecsPanel() {
               {batchDefinitions.flatMap((definition) => {
                 const options = batchOptionsForKey(definition.key);
                 const values = selectedOrDefaultBatchValues(selectedItem, definition.key, options);
-                const multiple = multiSelectBatchSpecKeys.includes(definition.key);
 
                 if (options.length === 0) return [];
 
                 return [
-                  <label key={definition.key} className={multiple ? 'batch-property active batch-property-multi' : 'batch-property active'}>
+                  <label
+                    key={definition.key}
+                    className={['size', 'length', 'threadPitchName'].includes(definition.key) ? 'batch-property active batch-property-multi' : 'batch-property active'}
+                  >
                     <span className="batch-property-heading">{definition.label}</span>
-                    {multiple ? (
-                      <select
-                        multiple
-                        value={values}
-                        onChange={(event) =>
-                          updateBatchSpec(
-                            definition.key,
-                            Array.from(event.currentTarget.selectedOptions).map((option) => option.value),
-                            options
-                          )
-                        }
-                      >
-                        {options.map((value) => (
-                          <option key={value} value={value}>
-                            {batchOptionLabel(value) || 'n/a'}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <select
-                        value={values[0] ?? ''}
-                        onChange={(event) =>
-                          updateBatchSpec(definition.key, event.currentTarget.value ? [event.currentTarget.value] : [], options)
-                        }
-                      >
-                        <option value="">Use default</option>
-                        {options.map((value) => (
-                          <option key={value} value={value}>
-                            {batchOptionLabel(value) || 'n/a'}
-                          </option>
-                        ))}
-                      </select>
-                    )}
+                    <select
+                      multiple
+                      value={values}
+                      onChange={(event) =>
+                        updateBatchSpec(
+                          definition.key,
+                          Array.from(event.currentTarget.selectedOptions).map((option) => option.value),
+                          options
+                        )
+                      }
+                    >
+                      {options.map((value) => (
+                        <option key={value} value={value}>
+                          {batchOptionLabel(value) || 'n/a'}
+                        </option>
+                      ))}
+                    </select>
                   </label>
                 ];
               })}
@@ -842,7 +891,7 @@ export function HardwareSpecsPanel() {
                 <strong>{batchPreviewItems.length}</strong>
               </div>
               <p className="batch-preview-note">
-                Size, length, and pitch allow multiple values; other batch fields use one value or default.
+                Batch fields allow multiple values; dependent fields auto-select defaults for each selected parent.
               </p>
               <div className="batch-preview-list">
                 {batchPreviewItems.length === 0 ? (
@@ -874,7 +923,7 @@ export function HardwareSpecsPanel() {
             <span>{selectedItem.catalogId}</span>
           </div>
           <div className="standard-image-grid">
-            {catalogAssetSources.map((source) => (
+            {catalogAssetSources.filter((source) => source !== 'isoRender').map((source) => (
               <div
                 key={source}
                 className="standard-image-card"

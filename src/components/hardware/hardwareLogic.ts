@@ -15,12 +15,9 @@ import {
   syncHardwareSpecs
 } from '../../lib/specs';
 import {
-  constrainLabelSettings,
-  isBuiltInPresetId,
-  presetAppliesToCategory,
-  presetToLabelSettings
+  presetAppliesToCategory
 } from '../../lib/labelLayout';
-import type { AppState, HardwareCategory, HardwareItem, LabelPreset, StandardCatalogEntry } from '../../types';
+import type { HardwareCategory, HardwareItem, LabelPreset, StandardCatalogEntry } from '../../types';
 
 export const getCatalogEntryForItem = (item: HardwareItem | undefined) =>
   item?.catalogId ? standardsCatalog.find((entry) => entry.id === item.catalogId) : undefined;
@@ -28,17 +25,6 @@ export const getCatalogEntryForItem = (item: HardwareItem | undefined) =>
 export const getCategoryPreset = (category: HardwareCategory, customPresets: LabelPreset[] = []) =>
   [...customPresets, ...Object.values(builtInLabelPresets)].find((preset) => preset.id === categoryDefaultPreset[category] && presetAppliesToCategory(preset, category)) ??
   [...customPresets, ...Object.values(builtInLabelPresets)].find((preset) => presetAppliesToCategory(preset, category));
-
-export const applyCategoryPresetToState = (current: AppState, category: HardwareCategory): Pick<AppState, 'labelSettings'> => {
-  const preset = getCategoryPreset(category, current.customPresets);
-  if (!preset) {
-    return { labelSettings: current.labelSettings };
-  }
-
-  return {
-    labelSettings: constrainLabelSettings(presetToLabelSettings(preset, isBuiltInPresetId(preset.id)))
-  };
-};
 
 export const buildCatalogItemPatch = (entry: StandardCatalogEntry, item: HardwareItem): Partial<HardwareItem> => {
   const specs = categorySpecKeys[entry.category].reduce<HardwareItem['specs']>((nextSpecs, key) => {

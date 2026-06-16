@@ -62,6 +62,7 @@ export interface HardwareItem {
   specs: Partial<Record<HardwareSpecKey, string>>;
   batch: HardwareBatchConfig;
   unitSystem: UnitSystem;
+  labelSettings: LabelSettings;
 }
 
 export interface FieldStyle {
@@ -145,7 +146,7 @@ export interface AppState {
 
 export interface AppBackup {
   app: 'makers-label-generator';
-  version: 13;
+  version: 14;
   exportedAt: string;
   state: AppState;
 }

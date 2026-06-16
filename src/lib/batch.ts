@@ -16,6 +16,53 @@ const batchOptionSeparator = '|';
 const cartesian = <T,>(entries: T[][]): T[][] =>
   entries.reduce<T[][]>((sets, values) => sets.flatMap((set) => values.map((value) => [...set, value])), [[]]);
 
+const parseFraction = (value: string) => {
+  const [numerator, denominator] = value.split('/').map(Number);
+  return denominator ? numerator / denominator : Number(value);
+};
+
+const sortableSize = (size: string) => {
+  const trimmed = size.trim().replace(/"$/, '').replace(/-\d+$/, '');
+  const metric = trimmed.match(/^M(\d+(?:\.\d+)?)/i);
+  if (metric) return Number(metric[1]);
+  const numbered = trimmed.match(/^#(\d+)/);
+  if (numbered) return Number(numbered[1]) / 1000;
+  if (trimmed.includes('-')) {
+    const [whole, fraction] = trimmed.split('-');
+    return Number(whole) + parseFraction(fraction);
+  }
+  if (trimmed.includes('/')) return parseFraction(trimmed);
+  const numeric = Number(trimmed);
+  return Number.isFinite(numeric) ? numeric : Number.POSITIVE_INFINITY;
+};
+
+const sortableNumber = (value: string) => {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : Number.POSITIVE_INFINITY;
+};
+
+const compareText = (left: string, right: string) => left.localeCompare(right, undefined, { numeric: true, sensitivity: 'base' });
+
+export const compareHardwareItems = (left: HardwareItem, right: HardwareItem) => {
+  const numericComparisons = [
+    sortableSize(left.size) - sortableSize(right.size),
+    sortableNumber(left.length) - sortableNumber(right.length),
+    sortableNumber(left.threadPitch) - sortableNumber(right.threadPitch)
+  ].find((value) => value !== 0);
+  if (numericComparisons) return numericComparisons;
+
+  return (
+    compareText(left.size, right.size) ||
+    compareText(left.length, right.length) ||
+    compareText(left.threadPitchName, right.threadPitchName) ||
+    compareText(left.threadPitch, right.threadPitch) ||
+    compareText(left.material, right.material) ||
+    compareText(left.materialType, right.materialType) ||
+    compareText(left.finish, right.finish) ||
+    compareText(left.boltClass, right.boltClass)
+  );
+};
+
 export const encodeBatchOptionValue = (value: string, dependencies: BatchOptionDependencies = {}) => {
   const dependencyText = Object.entries(dependencies)
     .filter(([, dependencyValue]) => dependencyValue)
@@ -132,6 +179,7 @@ export const generateBatchItems = (base: HardwareItem): HardwareItem[] => {
     activeKeys.includes(key) ? normalizeSpecList(base, key, specsText[key]) : [getItemSpecValue(base, key)].filter(Boolean)
   );
 
+  const seen = new Set<string>();
   return cartesian(valueLists).flatMap((values) => {
     let item: HardwareItem = {
       ...base,
@@ -180,14 +228,20 @@ export const generateBatchItems = (base: HardwareItem): HardwareItem[] => {
     if (!validCombination) return [];
 
     const syncedItem = applyCatalogWasherDimensions(syncHardwareSpecs(normalizeGeneratedSize(item)));
-    return isValidMaterialTreatment(syncedItem.material, syncedItem.materialType) && isValidFinish(syncedItem.material, syncedItem.finish) && isValidBoltClass(syncedItem)
-      ? [syncedItem]
-      : [];
-  });
+    if (!isValidMaterialTreatment(syncedItem.material, syncedItem.materialType) || !isValidFinish(syncedItem.material, syncedItem.finish) || !isValidBoltClass(syncedItem)) {
+      return [];
+    }
+
+    const key = effectivePartKey(syncedItem);
+    if (seen.has(key)) return [];
+    seen.add(key);
+    return [syncedItem];
+  }).sort(compareHardwareItems);
 };
 
-const effectivePartKey = (item: HardwareItem) =>
+const effectivePartKey = (item: HardwareItem, labelIdentity = '') =>
   JSON.stringify({
+    labelIdentity,
     catalogId: item.catalogId ?? '',
     category: item.category,
     standard: item.standard,
@@ -212,7 +266,12 @@ export interface EffectiveHardwareItemsResult {
   duplicateGroups: HardwareItem[][];
 }
 
-export const resolveEffectiveHardwareItems = (items: HardwareItem[]): EffectiveHardwareItemsResult => {
+export interface EffectiveHardwareItemsOptions {
+  labelIdentity?: string;
+  labelIdentityForItem?: (item: HardwareItem) => string;
+}
+
+export const resolveEffectiveHardwareItems = (items: HardwareItem[], options: EffectiveHardwareItemsOptions = {}): EffectiveHardwareItemsResult => {
   const seen = new Map<string, HardwareItem[]>();
   const resolved: HardwareItem[] = [];
   let duplicateCount = 0;
@@ -221,7 +280,7 @@ export const resolveEffectiveHardwareItems = (items: HardwareItem[]): EffectiveH
     const candidates = sourceItem.batch.enabled ? generateBatchItems(sourceItem) : [sourceItem];
 
     for (const item of candidates) {
-      const key = effectivePartKey(item);
+      const key = effectivePartKey(item, options.labelIdentityForItem?.(item) ?? options.labelIdentity);
       const group = seen.get(key);
       if (group) {
         group.push(item);
@@ -235,7 +294,7 @@ export const resolveEffectiveHardwareItems = (items: HardwareItem[]): EffectiveH
   }
 
   return {
-    items: resolved,
+    items: resolved.sort(compareHardwareItems),
     duplicateCount,
     duplicateGroups: [...seen.values()].filter((group) => group.length > 1)
   };

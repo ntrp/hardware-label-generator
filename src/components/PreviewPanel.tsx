@@ -108,16 +108,17 @@ export function PreviewPanel() {
   } | null>(null);
   const selectedSourceItem = state.hardwareItems.find((item) => item.id === selectedId) ?? state.hardwareItems[0];
   const selectedItem = previewHardwareItem ?? selectedSourceItem;
-  const selectedField = state.labelSettings.fields.find((field) => field.id === selectedFieldId);
-  const hoveredField = state.labelSettings.fields.find((field) => field.id === hoveredFieldId);
+  const labelSettings = selectedSourceItem.labelSettings;
+  const selectedField = labelSettings.fields.find((field) => field.id === selectedFieldId);
+  const hoveredField = labelSettings.fields.find((field) => field.id === hoveredFieldId);
   const selectedCatalogEntry = getCatalogEntryForItem(selectedItem);
   const selectedSpecUnitSystem = selectedCatalogEntry?.unitSystem ?? state.unitSystem;
   const selectedPurchaseLink = selectedItem ? effectivePurchaseLink(state.purchaseLinks, selectedItem) : '';
-  const hasQrElement = state.labelSettings.fields.some((field) => field.kind === 'image' && field.imageSource === 'qr' && field.style.visible);
+  const hasQrElement = labelSettings.fields.some((field) => field.kind === 'image' && field.imageSource === 'qr' && field.style.visible);
   const qrInfo = hasQrElement ? buildQrPayload(selectedPurchaseLink) : undefined;
   const previewImageFields = useMemo(
-    () => state.labelSettings.fields.filter((field) => field.kind === 'image' && field.style.visible),
-    [state.labelSettings.fields]
+    () => labelSettings.fields.filter((field) => field.kind === 'image' && field.style.visible),
+    [labelSettings.fields]
   );
   const previewImageSignature = useMemo(
     () =>
@@ -132,9 +133,8 @@ export function PreviewPanel() {
       ),
     [previewImageFields]
   );
-  const previewBaseWidth = state.labelSettings.widthMm * mmToPx;
-  const previewBaseHeight = state.labelSettings.heightMm * mmToPx;
-  const labelSettings = state.labelSettings;
+  const previewBaseWidth = labelSettings.widthMm * mmToPx;
+  const previewBaseHeight = labelSettings.heightMm * mmToPx;
 
   useLayoutEffect(() => {
     const stage = previewStageRef.current;
@@ -170,7 +170,7 @@ export function PreviewPanel() {
       return;
     }
 
-    renderLabelSvg(selectedItem, state.labelSettings, selectedPurchaseLink, selectedSpecUnitSystem, {
+    renderLabelSvg(selectedItem, labelSettings, selectedPurchaseLink, selectedSpecUnitSystem, {
       interactive: true,
       omitImageContent: true
     }).then((svg) => {
@@ -182,7 +182,7 @@ export function PreviewPanel() {
     return () => {
       cancelled = true;
     };
-  }, [selectedItem, selectedPurchaseLink, selectedSpecUnitSystem, state.labelSettings]);
+  }, [labelSettings, selectedItem, selectedPurchaseLink, selectedSpecUnitSystem]);
 
   useEffect(() => {
     let cancelled = false;
@@ -304,8 +304,8 @@ export function PreviewPanel() {
     }
 
     return {
-      x: clamp(((event.clientX - rect.left) / rect.width) * state.labelSettings.widthMm, 0, state.labelSettings.widthMm),
-      y: clamp(((event.clientY - rect.top) / rect.height) * state.labelSettings.heightMm, 0, state.labelSettings.heightMm)
+      x: clamp(((event.clientX - rect.left) / rect.width) * labelSettings.widthMm, 0, labelSettings.widthMm),
+      y: clamp(((event.clientY - rect.top) / rect.height) * labelSettings.heightMm, 0, labelSettings.heightMm)
     };
   };
 
@@ -317,7 +317,7 @@ export function PreviewPanel() {
   const handlePreviewPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     const fieldId = getPreviewFieldId(event);
     const position = getPreviewPointerPosition(event);
-    const field = state.labelSettings.fields.find((candidate) => candidate.id === fieldId);
+    const field = labelSettings.fields.find((candidate) => candidate.id === fieldId);
 
     if (!fieldId || !position || !field) {
       return;
@@ -356,7 +356,7 @@ export function PreviewPanel() {
     }
 
     const position = getPreviewPointerPosition(event);
-    const field = state.labelSettings.fields.find((candidate) => candidate.id === drag.fieldId);
+    const field = labelSettings.fields.find((candidate) => candidate.id === drag.fieldId);
 
     if (!position || !field) {
       return;
@@ -370,9 +370,9 @@ export function PreviewPanel() {
     }
 
     drag.moved = true;
-    const marginMm = normalizedMarginMm(state.labelSettings);
-    const nextX = clamp(drag.fieldX + deltaX, marginMm, Math.max(marginMm, state.labelSettings.widthMm - marginMm - field.width));
-    const nextY = clamp(drag.fieldY + deltaY, marginMm, Math.max(marginMm, state.labelSettings.heightMm - marginMm - field.height));
+    const marginMm = normalizedMarginMm(labelSettings);
+    const nextX = clamp(drag.fieldX + deltaX, marginMm, Math.max(marginMm, labelSettings.widthMm - marginMm - field.width));
+    const nextY = clamp(drag.fieldY + deltaY, marginMm, Math.max(marginMm, labelSettings.heightMm - marginMm - field.height));
 
     updateField(drag.fieldId, {
       x: Number(nextX.toFixed(2)),
@@ -412,18 +412,26 @@ export function PreviewPanel() {
         : resize.heightMm;
 
     setState((current) => {
-      if (current.labelSettings.widthMm === widthMm && current.labelSettings.heightMm === heightMm) {
+      const currentItem = current.hardwareItems.find((item) => item.id === selectedId);
+      if (!currentItem || (currentItem.labelSettings.widthMm === widthMm && currentItem.labelSettings.heightMm === heightMm)) {
         return current;
       }
 
       return {
         ...current,
-        labelSettings: constrainLabelSettings({
-          ...current.labelSettings,
-          layout: 'custom',
-          widthMm,
-          heightMm
-        })
+        hardwareItems: current.hardwareItems.map((item) =>
+          item.id === selectedId
+            ? {
+                ...item,
+                labelSettings: constrainLabelSettings({
+                  ...item.labelSettings,
+                  layout: 'custom',
+                  widthMm,
+                  heightMm
+                })
+              }
+            : item
+        )
       };
     });
   };
@@ -439,8 +447,8 @@ export function PreviewPanel() {
       pointerId: event.pointerId,
       startClientX: event.clientX,
       startClientY: event.clientY,
-      widthMm: state.labelSettings.widthMm,
-      heightMm: state.labelSettings.heightMm,
+      widthMm: labelSettings.widthMm,
+      heightMm: labelSettings.heightMm,
       scale: previewScale
     };
   };
@@ -450,15 +458,15 @@ export function PreviewPanel() {
 
     if (!resize) return;
 
-    const field = state.labelSettings.fields.find((candidate) => candidate.id === resize.fieldId);
+    const field = labelSettings.fields.find((candidate) => candidate.id === resize.fieldId);
     if (!field || field.kind === 'frame') return;
 
     const scale = Math.max(0.01, resize.scale);
     const deltaWidthMm = (clientX - resize.startClientX) / (mmToPx * scale);
     const deltaHeightMm = (clientY - resize.startClientY) / (mmToPx * scale);
-    const marginMm = normalizedMarginMm(state.labelSettings);
-    const maxWidth = Math.max(minElementWidthMm, state.labelSettings.widthMm - marginMm - field.x);
-    const maxHeight = Math.max(minElementHeightMm, state.labelSettings.heightMm - marginMm - field.y);
+    const marginMm = normalizedMarginMm(labelSettings);
+    const maxWidth = Math.max(minElementWidthMm, labelSettings.widthMm - marginMm - field.x);
+    const maxHeight = Math.max(minElementHeightMm, labelSettings.heightMm - marginMm - field.y);
     const width =
       resize.mode === 'width' || resize.mode === 'both'
         ? Number(clamp(resize.width + deltaWidthMm, minElementWidthMm, maxWidth).toFixed(2))
@@ -517,8 +525,8 @@ export function PreviewPanel() {
       return;
     }
 
-    const centerClientX = rect.left + ((field.x + field.width / 2) / state.labelSettings.widthMm) * rect.width;
-    const centerClientY = rect.top + ((field.y + field.height / 2) / state.labelSettings.heightMm) * rect.height;
+    const centerClientX = rect.left + ((field.x + field.width / 2) / labelSettings.widthMm) * rect.width;
+    const centerClientY = rect.top + ((field.y + field.height / 2) / labelSettings.heightMm) * rect.height;
 
     setSelectedFieldId(field.id);
     setHoveredFieldId(field.id);
@@ -664,13 +672,13 @@ export function PreviewPanel() {
       <p className="storage-note">Saved locally under {storageMeta.storageKey}.</p>
 
       <div className="button-grid">
-        <button type="button" onClick={() => exportSingle(selectedItem, state.labelSettings, selectedPurchaseLink, selectedSpecUnitSystem, 'svg')}>
+        <button type="button" onClick={() => exportSingle(selectedItem, labelSettings, selectedPurchaseLink, selectedSpecUnitSystem, 'svg')}>
           <FileText size={16} /> SVG
         </button>
-        <button type="button" onClick={() => exportSingle(selectedItem, state.labelSettings, selectedPurchaseLink, selectedSpecUnitSystem, 'png')}>
+        <button type="button" onClick={() => exportSingle(selectedItem, labelSettings, selectedPurchaseLink, selectedSpecUnitSystem, 'png')}>
           <FileImage size={16} /> PNG
         </button>
-        <button type="button" onClick={() => exportSingle(selectedItem, state.labelSettings, selectedPurchaseLink, selectedSpecUnitSystem, 'lbx')}>
+        <button type="button" onClick={() => exportSingle(selectedItem, labelSettings, selectedPurchaseLink, selectedSpecUnitSystem, 'lbx')}>
           <Download size={16} /> LBX
         </button>
       </div>

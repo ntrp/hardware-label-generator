@@ -62,18 +62,19 @@ export const createExportZipBlob = async (
   for (const [index, item] of items.entries()) {
     const folder = zip.folder(labelArchiveFolderName(item, index)) ?? zip;
     const purchaseLink = effectivePurchaseLink(linkState, item);
+    const itemSettings = item.labelSettings ?? settings;
 
     if (formats.includes('svg')) {
-      folder.file(labelFilename(item, 'svg'), await renderLabelSvg(item, settings, purchaseLink, item.unitSystem));
+      folder.file(labelFilename(item, 'svg'), await renderLabelSvg(item, itemSettings, purchaseLink, item.unitSystem));
     }
 
     if (formats.includes('png')) {
-      const svg = await renderLabelSvg(item, settings, purchaseLink, item.unitSystem, { rasterSafe: true });
-      folder.file(labelFilename(item, 'png'), await svgToPngBlob(svg, settings.widthMm, settings.heightMm));
+      const svg = await renderLabelSvg(item, itemSettings, purchaseLink, item.unitSystem, { rasterSafe: true });
+      folder.file(labelFilename(item, 'png'), await svgToPngBlob(svg, itemSettings.widthMm, itemSettings.heightMm));
     }
 
     if (formats.includes('lbx')) {
-      folder.file(labelFilename(item, 'lbx'), await (await createLbxBlob(item, settings, purchaseLink, item.unitSystem)).arrayBuffer());
+      folder.file(labelFilename(item, 'lbx'), await (await createLbxBlob(item, itemSettings, purchaseLink, item.unitSystem)).arrayBuffer());
     }
   }
 

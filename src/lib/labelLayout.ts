@@ -1,4 +1,5 @@
 import { builtInLabelPresets, clonePlacedFields } from './defaults';
+import { formatLabelSize } from './format';
 import type { AppState, HardwareCategory, LabelPreset, PlacedField } from '../types';
 
 export const mmToPx = 3.7795275591;
@@ -108,4 +109,17 @@ export const presetMatchesSettings = (preset: LabelPreset, settings: AppState['l
     presetSettings.marginMm === settings.marginMm &&
     JSON.stringify(presetSettings.fields) === JSON.stringify(settings.fields)
   );
+};
+
+export const matchingLabelPresetForSettings = (settings: AppState['labelSettings'], customPresets: LabelPreset[] = []) =>
+  [...customPresets, ...Object.values(builtInLabelPresets)].find((preset) => presetMatchesSettings(preset, settings));
+
+export const labelPresetNameForSettings = (settings: AppState['labelSettings'], customPresets: LabelPreset[] = [], unitSystem: AppState['unitSystem'] = 'metric') =>
+  matchingLabelPresetForSettings(settings, customPresets)?.name ?? `Modified preset ${formatLabelSize(settings.widthMm, settings.heightMm, unitSystem)}`;
+
+export const labelPresetIdentityForSettings = (settings: AppState['labelSettings'], customPresets: LabelPreset[] = [], unitSystem: AppState['unitSystem'] = 'metric') => {
+  const preset = matchingLabelPresetForSettings(settings, customPresets);
+  if (preset) return `preset:${preset.id}:${preset.name}`;
+
+  return `modified:${labelPresetNameForSettings(settings, customPresets, unitSystem)}:${JSON.stringify(settings)}`;
 };

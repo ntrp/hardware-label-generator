@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { defaultAppState } from './defaults';
-import { createBackup, normalizeState, parseBackup, serializeBackup } from './storage';
+import { backupFilename, createBackup, normalizeState, parseBackup, serializeBackup } from './storage';
 
 describe('storage', () => {
   it('keeps current schema state unchanged', () => {
@@ -35,7 +35,7 @@ describe('storage', () => {
     const imported = parseBackup(JSON.stringify(backup));
 
     expect(backup.app).toBe('makers-label-generator');
-    expect(backup.version).toBe(13);
+    expect(backup.version).toBe(14);
     expect(backup.exportedAt).toBe('2026-06-12T00:00:00.000Z');
     expect(imported.hardwareItems).toEqual(defaultAppState.hardwareItems);
     expect(imported.purchaseLinks).toEqual(defaultAppState.purchaseLinks);
@@ -45,5 +45,9 @@ describe('storage', () => {
 
   it('rejects invalid backup files', () => {
     expect(() => parseBackup('{"not":"a backup"}')).toThrow('Invalid backup file');
+  });
+
+  it('includes date and time in backup filenames', () => {
+    expect(backupFilename(new Date(2026, 5, 16, 9, 7, 4))).toBe('makers-label-generator-backup-2026-06-16-09-07-04.json');
   });
 });
