@@ -9,6 +9,7 @@ describe('standard images', () => {
 
     expect(standardImageReferenceForItem(item)).toEqual({
       catalogId: 'din-912',
+      modelUrl: './catalog-assets/din-912/model.glb',
       isoRenderUrl: './catalog-assets/din-912/iso_render.png',
       isoUrl: './catalog-assets/din-912/iso.svg',
       sideUrl: './catalog-assets/din-912/side.svg',

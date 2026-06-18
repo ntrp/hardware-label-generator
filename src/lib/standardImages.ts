@@ -3,11 +3,12 @@ import type { HardwareItem, ImageSource, StandardCatalogEntry } from '../types';
 
 export const standardImageSources = ['iso', 'side', 'top'] as const;
 export type StandardImageSource = (typeof standardImageSources)[number];
-export const catalogAssetSources = ['isoRender', 'iso', 'side', 'top'] as const;
+export const catalogAssetSources = ['model', 'isoRender', 'iso', 'side', 'top'] as const;
 export type CatalogAssetSource = (typeof catalogAssetSources)[number];
 
 export interface StandardImageReference {
   catalogId: string;
+  modelUrl: string;
   isoRenderUrl: string;
   isoUrl: string;
   sideUrl: string;
@@ -52,6 +53,7 @@ export const standardImageReferenceForCatalogId = (catalogId: string | undefined
   if (!catalogId || !catalogAssetManifest[catalogId]) return undefined;
   return {
     catalogId,
+    modelUrl: catalogAssetUrlForId(catalogId, 'model'),
     isoRenderUrl: catalogAssetUrlForId(catalogId, 'isoRender'),
     isoUrl: catalogAssetUrlForId(catalogId, 'iso'),
     sideUrl: catalogAssetUrlForId(catalogId, 'side'),
@@ -67,6 +69,7 @@ export const standardImageUrlForItem = (item: HardwareItem, source: ImageSource 
 };
 
 export const catalogAssetLabel = (source: CatalogAssetSource) => {
+  if (source === 'model') return '3D model';
   if (source === 'isoRender') return 'ISO render';
   if (source === 'iso') return 'ISO drawing';
   if (source === 'side') return 'Side drawing';

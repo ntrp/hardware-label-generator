@@ -17,12 +17,15 @@ describe('catalog asset pipeline', () => {
     }
   });
 
-  it('uses side and top drawings for every bundled catalog image set', () => {
-    for (const assets of Object.values(catalogAssetManifest)) {
-      expect(assets.isoRender).toBe('iso_render.png');
-      expect(assets.iso).toBe('iso.svg');
-      expect(assets.side).toBe('side.svg');
-      expect(assets.top).toBe('top.svg');
+  it('uses model assets for every bundled catalog asset set and consistent names when drawings are present', () => {
+    for (const [catalogId, assets] of Object.entries(catalogAssetManifest)) {
+      expect(assets.model, catalogId).toBe('model.glb');
+      if (assets.isoRender || assets.iso || assets.side || assets.top) {
+        expect(assets.isoRender, catalogId).toBe('iso_render.png');
+        expect(assets.iso, catalogId).toBe('iso.svg');
+        expect(assets.side, catalogId).toBe('side.svg');
+        expect(assets.top, catalogId).toBe('top.svg');
+      }
     }
   });
 

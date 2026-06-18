@@ -438,22 +438,85 @@ def flatten_render_background(output_dir: Path, names: tuple[str, ...]) -> None:
         flattened.save(path)
 
 
-def render_stl_with_blender(stl_path: Path, output_dir: Path, width: int, height: int) -> str:
+def run_blender_script(script_source: str) -> None:
     blender = find_blender()
     if blender is None:
         raise RuntimeError("Blender was not found.")
     with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False, encoding="utf-8") as script:
-        script.write(blender_render_script(stl_path, output_dir, width, height))
+        script.write(script_source)
         script_path = Path(script.name)
     try:
         subprocess.run([str(blender), "--background", "--python", str(script_path)], check=True, cwd=ROOT)
-        iso_path = output_dir / "iso_render.png"
-        if not iso_path.exists():
-            raise RuntimeError("Blender render did not create iso_render.png.")
-        flatten_render_background(output_dir, ("iso_render.png",))
-        return display_path(iso_path)
     finally:
         script_path.unlink(missing_ok=True)
+
+
+def render_stl_with_blender(stl_path: Path, output_dir: Path, width: int, height: int) -> str:
+    run_blender_script(blender_render_script(stl_path, output_dir, width, height))
+    iso_path = output_dir / "iso_render.png"
+    if not iso_path.exists():
+        raise RuntimeError("Blender render did not create iso_render.png.")
+    flatten_render_background(output_dir, ("iso_render.png",))
+    return display_path(iso_path)
+
+
+def blender_glb_script(stl_path: Path, glb_path: Path) -> str:
+    return textwrap.dedent(
+        f"""
+        import bpy
+
+        stl_path = {str(stl_path)!r}
+        glb_path = {str(glb_path)!r}
+
+        bpy.ops.object.select_all(action='SELECT')
+        bpy.ops.object.delete()
+
+        if hasattr(bpy.ops.wm, 'stl_import'):
+            bpy.ops.wm.stl_import(filepath=stl_path)
+        else:
+            bpy.ops.import_mesh.stl(filepath=stl_path)
+
+        for obj in bpy.context.scene.objects:
+            if obj.type == 'MESH':
+                obj.select_set(True)
+                bpy.context.view_layer.objects.active = obj
+            else:
+                obj.select_set(False)
+
+        bpy.ops.object.shade_smooth_by_angle(angle=0.523599)
+        bpy.ops.export_scene.gltf(
+            filepath=glb_path,
+            export_format='GLB',
+            use_selection=True,
+            export_apply=True,
+            export_materials='EXPORT',
+            export_yup=True
+        )
+        """
+    )
+
+
+def convert_stl_to_glb(stl_path: Path, output_dir: Path) -> str:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    glb_path = output_dir / "model.glb"
+    run_blender_script(blender_glb_script(stl_path, glb_path))
+    if not glb_path.exists():
+        raise RuntimeError("Blender did not create model.glb.")
+    return display_path(glb_path)
+
+
+def convert_step_to_glb(step_path: Path, output_root: Path) -> dict[str, str]:
+    catalog_id = catalog_id_from_step_path(step_path)
+    output_dir = output_root / catalog_id
+    FreeCAD, Mesh, doc = import_step_document(step_path, f"catalog_model_{catalog_id}")
+    output_dir.mkdir(parents=True, exist_ok=True)
+    stl_path = output_dir / "model-source.stl"
+    try:
+        Mesh.export(doc.Objects, str(stl_path))
+        return {"model": convert_stl_to_glb(stl_path, output_dir)}
+    finally:
+        stl_path.unlink(missing_ok=True)
+        FreeCAD.closeDocument(doc.Name)
 
 
 def render_step(step_path: Path, output_root: Path, include_iso: bool, include_technical: bool, technical_views: list[str], width: int, height: int) -> dict[str, str]:
@@ -493,7 +556,7 @@ def manifest_entries() -> dict[str, dict[str, str]]:
     for entry_match in re.finditer(r"'([^']+)':\s*\{([^}]*)\}", source):
         catalog_id = entry_match.group(1)
         body = entry_match.group(2)
-        entries[catalog_id] = {key: value for key, value in re.findall(r"(isoRender|iso|side|top):\s*'([^']+)'", body)}
+        entries[catalog_id] = {key: value for key, value in re.findall(r"(model|isoRender|iso|side|top):\s*'([^']+)'", body)}
     return entries
 
 
@@ -529,6 +592,19 @@ def command_render(args: argparse.Namespace) -> int:
     return 0 if not errors else 1
 
 
+def command_convert(args: argparse.Namespace) -> int:
+    output_dir = Path(args.output_dir).resolve()
+    converted = []
+    errors = []
+    for step_path in step_paths_for_args(args):
+        try:
+            converted.append({"stepPath": display_path(step_path), "assetPaths": convert_step_to_glb(step_path, output_dir)})
+        except Exception as error:  # noqa: BLE001 - batch command should report all failures.
+            errors.append({"stepPath": display_path(step_path), "error": str(error)})
+    print(json.dumps({"converted": converted, "errors": errors}, indent=2, sort_keys=True))
+    return 0 if not errors else 1
+
+
 def command_audit(args: argparse.Namespace) -> int:
     counts, errors = audit_public_assets(Path(args.output_dir).resolve(), args.check_steps, Path(args.steps_dir).resolve())
     print(json.dumps({"counts": counts, "errors": errors}, indent=2, sort_keys=True))
@@ -558,6 +634,15 @@ def build_parser() -> argparse.ArgumentParser:
     render_parser.add_argument("--width", type=int, default=1280, help="ISO render width in pixels")
     render_parser.add_argument("--height", type=int, default=768, help="ISO render height in pixels")
     render_parser.set_defaults(func=command_render)
+
+    convert_parser = subcommands.add_parser("convert", help="Convert one or more STEP files to GLB model assets")
+    convert_target = convert_parser.add_mutually_exclusive_group(required=True)
+    convert_target.add_argument("--all", action="store_true", help="Convert every STEP/STP file in --steps-dir")
+    convert_target.add_argument("--catalog-id", help="Convert one catalog id, for example din-912")
+    convert_target.add_argument("--step-path", help="Convert one explicit STEP/STP file")
+    convert_parser.add_argument("--steps-dir", default=str(DEFAULT_STEPS_DIR), help="Directory containing flat STEP files like din_912.step")
+    convert_parser.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR), help="Output root for catalog assets")
+    convert_parser.set_defaults(func=command_convert)
 
     audit_parser = subcommands.add_parser("audit", help="Validate public catalog assets referenced by the TypeScript manifest")
     audit_parser.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR), help="Output root for catalog assets")

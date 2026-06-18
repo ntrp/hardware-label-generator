@@ -106,21 +106,20 @@ def catalog_blocks(source: str, array_name: str) -> list[str]:
 def load_catalog() -> list[CatalogEntry]:
     entries: list[CatalogEntry] = []
     source = CATALOG_TS.read_text(encoding="utf-8")
-    for array_name in ("coreStandardsCatalog", "freecadWorkbenchCatalogEntries"):
-        for block in catalog_blocks(source, array_name):
-            entry_id = string_field(block, "id")
-            if not entry_id:
-                continue
-            entries.append(
-                CatalogEntry(
-                    id=entry_id,
-                    category=string_field(block, "category"),
-                    unit_system=string_field(block, "unitSystem"),
-                    code=string_field(block, "code"),
-                    description=string_field(block, "description"),
-                    standards=standards_field(block),
-                )
+    for block in catalog_blocks(source, "standardsCatalog"):
+        entry_id = string_field(block, "id")
+        if not entry_id:
+            continue
+        entries.append(
+            CatalogEntry(
+                id=entry_id,
+                category=string_field(block, "category"),
+                unit_system=string_field(block, "unitSystem"),
+                code=string_field(block, "code"),
+                description=string_field(block, "description"),
+                standards=standards_field(block),
             )
+        )
     return entries
 
 
@@ -210,6 +209,8 @@ def build_fasteners_attributes(type_id: str, modules: dict[str, Any], real_threa
             values = []
         width = values[0] if values else None
     length = choose_fasteners_length(screw_maker, type_id, diameter, width)
+    if length is None and "lengthArbitrary" in params:
+        length = "20"
 
     pitch = None
     calc_pitch = None

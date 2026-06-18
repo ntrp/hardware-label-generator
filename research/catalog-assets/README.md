@@ -5,9 +5,10 @@ Offline tooling for generating local fastener model assets. The browser app rema
 ## Pipeline
 
 1. Generate flat STEP files from the installed FreeCAD Fasteners workbench.
-2. Render side/top SVG technical drawings from those STEP files.
-3. Optionally render an ISO PNG through Blender.
-4. Copy or keep generated assets under `public/catalog-assets/<catalog-id>/`.
+2. Convert STEP files to GLB models for the app's interactive 3D preview.
+3. Render side/top SVG technical drawings from those STEP files.
+4. Optionally render an ISO PNG through Blender.
+5. Copy or keep generated assets under `public/catalog-assets/<catalog-id>/`.
 
 STEP is the handoff format between generation and rendering. It preserves CAD geometry better than mesh-only formats and keeps the renderer independent from the Fasteners workbench.
 
@@ -26,7 +27,8 @@ Rendered app assets live in:
 
 ```text
 public/catalog-assets/<catalog-id>/
-  iso.png
+  model.glb
+  iso_render.png
   side.svg
   top.svg
 ```
@@ -39,6 +41,13 @@ Generate STEP files from FreeCAD Fasteners Workbench:
 pnpm research:assets:steps
 python3 research/catalog-assets/scripts/run_freecad.py generate-fasteners-steps generate --catalog-id din-912 --threads
 python3 research/catalog-assets/scripts/run_freecad.py generate-fasteners-steps list-types
+```
+
+Convert STEP files to GLB model assets:
+
+```bash
+pnpm research:assets:models
+python3 research/catalog-assets/scripts/run_freecad.py catalog-assets convert --catalog-id din-912
 ```
 
 Render side/top SVGs from flat STEP files:

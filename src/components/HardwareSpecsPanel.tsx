@@ -39,6 +39,7 @@ import {
   missingCatalogAssetDataUrl,
   standardImageReferenceForItem
 } from '../lib/standardImages';
+import { CatalogModelViewer } from './CatalogModelViewer';
 import { CatalogPartPicker } from './CatalogPartPicker';
 import {
   buildCatalogItemPatch,
@@ -48,6 +49,7 @@ import {
 import type { AppState, HardwareCategory, HardwareItem, HardwareSpecKey, StandardCatalogEntry } from '../types';
 
 type StandardImageReference = NonNullable<ReturnType<typeof standardImageReferenceForItem>>;
+type CatalogDrawingSource = Extract<(typeof catalogAssetSources)[number], 'iso' | 'side' | 'top'>;
 
 const categoryLabel = (category: HardwareCategory) => category[0].toUpperCase() + category.slice(1);
 
@@ -66,8 +68,7 @@ const formattedPitchName = (item: HardwareItem, unitSystem: AppState['unitSystem
   return formatImperialThreadPitchOption({ size: item.size, series: item.threadPitchName === 'UNF' ? 'UNF' : 'UNC', tpi: item.threadPitch });
 };
 
-const catalogAssetPreviewUrl = (reference: StandardImageReference, source: (typeof catalogAssetSources)[number]) => {
-  if (source === 'isoRender') return reference.isoRenderUrl;
+const catalogDrawingPreviewUrl = (reference: StandardImageReference, source: CatalogDrawingSource) => {
   if (source === 'iso') return reference.isoUrl;
   if (source === 'side') return reference.sideUrl;
   return reference.topUrl;
@@ -554,13 +555,8 @@ export function HardwareSpecsPanel() {
         </div>
         {selectedStandardImageReference && (
           <div className="standard-render-card">
-            <img
-              src={catalogAssetPreviewUrl(selectedStandardImageReference, 'isoRender')}
-              alt={`ISO render for ${selectedItem.standard}`}
-              loading="lazy"
-              onError={(event) => { event.currentTarget.src = missingCatalogAssetDataUrl('ISO render'); }}
-            />
-            <span>ISO render</span>
+            <CatalogModelViewer modelUrl={selectedStandardImageReference.modelUrl} label={`3D model for ${selectedItem.standard}`} />
+            <span>3D model</span>
           </div>
         )}
       </div>
@@ -923,13 +919,13 @@ export function HardwareSpecsPanel() {
             <span>{selectedItem.catalogId}</span>
           </div>
           <div className="standard-image-grid">
-            {catalogAssetSources.filter((source) => source !== 'isoRender').map((source) => (
+            {catalogAssetSources.filter((source): source is CatalogDrawingSource => source === 'iso' || source === 'side' || source === 'top').map((source) => (
               <div
                 key={source}
                 className="standard-image-card"
               >
                 <img
-                  src={catalogAssetPreviewUrl(selectedStandardImageReference, source)}
+                  src={catalogDrawingPreviewUrl(selectedStandardImageReference, source)}
                   alt={`${catalogAssetLabel(source)} for ${selectedItem.standard}`}
                   loading="lazy"
                   onError={(event) => { event.currentTarget.src = missingCatalogAssetDataUrl(catalogAssetLabel(source)); }}

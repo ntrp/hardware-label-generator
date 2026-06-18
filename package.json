@@ -11,6 +11,7 @@
     "preview": "vite preview",
     "research:assets:audit": "python3 research/catalog-assets/scripts/catalog_assets.py audit",
     "research:assets:steps": "python3 research/catalog-assets/scripts/run_freecad.py generate-fasteners-steps generate --all --threads",
+    "research:assets:models": "python3 research/catalog-assets/scripts/run_freecad.py catalog-assets convert --all",
     "research:assets:render": "python3 research/catalog-assets/scripts/run_freecad.py catalog-assets render --all --iso",
     "research:assets:technical": "python3 research/catalog-assets/scripts/run_freecad.py catalog-assets render --all"
   },
@@ -19,13 +20,14 @@
     "lucide-react": "^0.468.0",
     "qrcode": "^1.5.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "three": "^0.184.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^5.1.0",
     "@types/qrcode": "^1.5.5",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
+    "@vitejs/plugin-react": "^5.1.0",
     "typescript": "^5.7.2",
     "vite": "^6.0.3",
     "vitest": "^2.1.8"
