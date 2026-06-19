@@ -1,6 +1,6 @@
 import type { ChangeEvent } from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { Download, Info, Link, RotateCcw, Settings, Upload } from 'lucide-react';
+import { Download, Github, Info, Link, RotateCcw, Settings, Upload } from 'lucide-react';
 import { useAppState } from '../app/AppStateContext';
 import { constrainAppState } from '../lib/appState';
 import { downloadBlob } from '../lib/export';
@@ -144,11 +144,21 @@ export function AppTopbar() {
               <option value="imperial">Imperial</option>
             </select>
           </fieldset>
+          <a
+            className="icon-link"
+            href="https://github.com/ntrp/hardware-label-generator"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Open GitHub repository"
+            title="Open GitHub repository"
+          >
+            <Github size={18} />
+          </a>
           <div className="state-menu" ref={stateMenuRef}>
             <button
-            className="icon-button"
-            type="button"
-            aria-label="State actions"
+              className="icon-button"
+              type="button"
+              aria-label="State actions"
               aria-expanded={stateMenuOpen}
               aria-haspopup="menu"
               onClick={() => setStateMenuOpen((current) => !current)}
