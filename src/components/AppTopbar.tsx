@@ -1,6 +1,6 @@
 import type { ChangeEvent } from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { Download, Github, Info, LifeBuoy, Link, RotateCcw, Settings, Tags, Upload } from 'lucide-react';
+import { Download, Github, Info, LifeBuoy, Link, RotateCcw, Ruler, Settings, Tags, Upload } from 'lucide-react';
 import { useAppState } from '../app/AppStateContext';
 import { constrainAppState } from '../lib/appState';
 import { downloadBlob } from '../lib/export';
@@ -8,11 +8,13 @@ import { defaultAppState } from '../lib/defaults';
 import { createShareConfigUrl } from '../lib/shareConfig';
 import { syncHardwareSpecs } from '../lib/specs';
 import { backupFilename, parseBackup, serializeBackup } from '../lib/storage';
+import { localeOptions, useI18n } from '../lib/i18n';
 import { getCatalogEntryForItem } from './hardware/hardwareLogic';
-import type { AppState } from '../types';
+import type { AppLocale, AppState } from '../types';
 
 export function AppTopbar() {
   const { selectedId, setHoveredFieldId, setPreviewHardwareItem, setSelectedFieldId, setSelectedId, setState, showSuccessToast, state } = useAppState();
+  const { t } = useI18n();
   const importInputRef = useRef<HTMLInputElement | null>(null);
   const stateMenuRef = useRef<HTMLDivElement | null>(null);
   const [stateMenuOpen, setStateMenuOpen] = useState(false);
@@ -61,11 +63,11 @@ export function AppTopbar() {
     setStateMenuOpen(false);
     const shareUrl = preparedShareUrl || await createShareConfigUrl(state);
     const copied = await copyTextToClipboard(shareUrl);
-    showSuccessToast(copied ? 'Share link copied.' : 'Copy failed.');
+    showSuccessToast(copied ? t('shareCopied') : t('copyFailed'));
   };
 
   const resetAppState = () => {
-    const confirmed = window.confirm('Reset all hardware, purchase links, presets, and settings to app defaults?');
+    const confirmed = window.confirm(t('resetConfirm'));
     if (!confirmed) return;
 
     const defaultState = structuredClone(defaultAppState);
@@ -75,7 +77,7 @@ export function AppTopbar() {
     setHoveredFieldId(null);
     setPreviewHardwareItem(null);
     setStateMenuOpen(false);
-    showSuccessToast('Reset to defaults.');
+    showSuccessToast(t('resetDone'));
   };
 
   const importPersistedData = async (file: File | undefined) => {
@@ -83,7 +85,7 @@ export function AppTopbar() {
 
     try {
       const importedState = parseBackup(await file.text());
-      const confirmed = window.confirm('Importing this file will replace all hardware, purchase links, presets, and settings. Continue?');
+      const confirmed = window.confirm(t('importConfirm'));
       if (!confirmed) return;
 
       setState(constrainAppState(importedState));
@@ -91,7 +93,7 @@ export function AppTopbar() {
       setSelectedFieldId(null);
       setHoveredFieldId(null);
     } catch (error) {
-      window.alert(error instanceof Error ? error.message : 'Unable to import backup file.');
+      window.alert(error instanceof Error ? error.message : t('importError'));
     } finally {
       if (importInputRef.current) {
         importInputRef.current.value = '';
@@ -129,6 +131,13 @@ export function AppTopbar() {
     void importPersistedData(event.target.files?.[0]);
   };
 
+  const updateLocale = (locale: AppLocale) => {
+    setState((current) => ({
+      ...current,
+      locale
+    }));
+  };
+
   return (
     <>
       <header className="topbar">
@@ -138,35 +147,50 @@ export function AppTopbar() {
           </span>
           <div className="brand-copy">
             <div className="brand-title-row">
-              <h1>Makers Label Generator</h1>
-              <span className="version-badge">Beta</span>
+              <h1>{t('appName')}</h1>
+              <span className="version-badge">{t('beta')}</span>
             </div>
-            <p className="eyebrow">Browser-only organizer labels</p>
+            <p className="eyebrow">{t('tagline')}</p>
           </div>
         </div>
         <div className="topbar-actions">
           <a className="topbar-action-link" href="https://github.com/ntrp/hardware-label-generator" target="_blank" rel="noreferrer">
             <Github size={16} />
-            GitHub
+            {t('github')}
           </a>
           <a className="topbar-action-link" href="https://github.com/ntrp/hardware-label-generator/issues/new" target="_blank" rel="noreferrer">
             <LifeBuoy size={16} />
-            Report issue
+            {t('reportIssue')}
           </a>
+          <span className="select-with-icon unit-select-control">
+            <Ruler size={16} aria-hidden="true" />
+            <select
+              className="unit-filter"
+              aria-label={t('units')}
+              value={state.unitSystem}
+              onChange={(event) => updateUnitSystem(event.target.value as AppState['unitSystem'])}
+            >
+              <option value="metric">mm {t('metric')}</option>
+              <option value="imperial">in {t('imperial')}</option>
+            </select>
+          </span>
           <select
-            className="unit-filter"
-            aria-label="Units"
-            value={state.unitSystem}
-            onChange={(event) => updateUnitSystem(event.target.value as AppState['unitSystem'])}
+            className="locale-filter"
+            aria-label={t('language')}
+            value={state.locale}
+            onChange={(event) => updateLocale(event.target.value as AppLocale)}
           >
-            <option value="metric">Metric</option>
-            <option value="imperial">Imperial</option>
+            {localeOptions.map((option) => (
+              <option key={option.locale} value={option.locale}>
+                {option.label}
+              </option>
+            ))}
           </select>
           <div className="state-menu" ref={stateMenuRef}>
             <button
               className="icon-button"
               type="button"
-              aria-label="State actions"
+              aria-label={t('settings')}
               aria-expanded={stateMenuOpen}
               aria-haspopup="menu"
               onClick={() => setStateMenuOpen((current) => !current)}
@@ -174,11 +198,11 @@ export function AppTopbar() {
               <Settings size={18} />
             </button>
             {stateMenuOpen && (
-              <div className="state-menu-panel" role="menu" aria-label="State actions">
+              <div className="state-menu-panel" role="menu" aria-label={t('settings')}>
                 <button type="button" role="menuitem" onClick={resetAppState}>
                   <RotateCcw size={16} />
-                  <span>Reset</span>
-                  <span className="state-menu-info" aria-hidden="true" data-tooltip="Resets hardware, purchase links, presets, and settings to app defaults.">
+                  <span>{t('reset')}</span>
+                  <span className="state-menu-info" aria-hidden="true" data-tooltip={t('resetTooltip')}>
                     <Info size={15} />
                   </span>
                 </button>
@@ -191,22 +215,22 @@ export function AppTopbar() {
                   }}
                 >
                   <Upload size={16} />
-                  <span>Import</span>
-                  <span className="state-menu-info" aria-hidden="true" data-tooltip="Loads a JSON backup and replaces the current app state.">
+                  <span>{t('import')}</span>
+                  <span className="state-menu-info" aria-hidden="true" data-tooltip={t('importTooltip')}>
                     <Info size={15} />
                   </span>
                 </button>
                 <button type="button" role="menuitem" onClick={exportPersistedData}>
                   <Download size={16} />
-                  <span>Export</span>
-                  <span className="state-menu-info" aria-hidden="true" data-tooltip="Downloads the current app state as a JSON backup.">
+                  <span>{t('export')}</span>
+                  <span className="state-menu-info" aria-hidden="true" data-tooltip={t('exportTooltip')}>
                     <Info size={15} />
                   </span>
                 </button>
                 <button type="button" role="menuitem" onClick={() => void shareConfig()}>
                   <Link size={16} />
-                  <span>Share config</span>
-                  <span className="state-menu-info" aria-hidden="true" data-tooltip="Copies a share link containing this configuration. Large configs are gzipped when that makes the link shorter.">
+                  <span>{t('shareConfig')}</span>
+                  <span className="state-menu-info" aria-hidden="true" data-tooltip={t('shareTooltip')}>
                     <Info size={15} />
                   </span>
                 </button>

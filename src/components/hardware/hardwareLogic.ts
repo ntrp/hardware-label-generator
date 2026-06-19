@@ -17,7 +17,7 @@ import {
 import {
   presetAppliesToCategory
 } from '../../lib/labelLayout';
-import type { HardwareCategory, HardwareItem, LabelPreset, StandardCatalogEntry } from '../../types';
+import type { HardwareCategory, HardwareItem, HardwareSpecKey, LabelPreset, StandardCatalogEntry } from '../../types';
 
 export const getCatalogEntryForItem = (item: HardwareItem | undefined) =>
   item?.catalogId ? standardsCatalog.find((entry) => entry.id === item.catalogId) : undefined;
@@ -97,6 +97,22 @@ export const getHardwareSpecLine = (item: HardwareItem) => {
   const details = keys
     .filter((key) => !['size', 'length'].includes(key))
     .map((key) => getItemSpecValue(item, key))
+    .filter(Boolean)
+    .join(', ');
+  return `${main || item.category}${details ? ` (${details})` : ''}`;
+};
+
+export const getHardwareDisplaySpecLine = (
+  item: HardwareItem,
+  displaySpecValue: (key: HardwareSpecKey, value: string) => string
+) => {
+  const keys = categorySpecKeys[item.category];
+  const main = [getItemSpecValue(item, 'size'), keys.includes('length') ? formatLength(item.length, item.lengthUnit) : '']
+    .filter(Boolean)
+    .join(' x ');
+  const details = keys
+    .filter((key) => !['size', 'length'].includes(key))
+    .map((key) => displaySpecValue(key, getItemSpecValue(item, key)))
     .filter(Boolean)
     .join(', ');
   return `${main || item.category}${details ? ` (${details})` : ''}`;

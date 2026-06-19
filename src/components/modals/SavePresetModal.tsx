@@ -1,6 +1,7 @@
 import type { Dispatch, SetStateAction } from 'react';
 import { Save, X } from 'lucide-react';
 import { uniqueValues } from '../../lib/labelLayout';
+import { useI18n } from '../../lib/i18n';
 import { hardwareCategories } from '../hardware/hardwareConstants';
 import type { HardwareCategory } from '../../types';
 
@@ -21,6 +22,8 @@ export function SavePresetModal({
   onSetPresetCategories,
   onSetPresetName
 }: SavePresetModalProps) {
+  const { categoryLabel, t } = useI18n();
+
   return (
     <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
       <section
@@ -33,9 +36,9 @@ export function SavePresetModal({
         <div className="modal-header">
           <div className="panel-title-main">
             <Save size={18} />
-            <h2 id="preset-modal-title">Save preset</h2>
+            <h2 id="preset-modal-title">{t('savePreset')}</h2>
           </div>
-          <button type="button" className="icon-button small" title="Close save preset" onClick={onClose}>
+          <button type="button" className="icon-button small" title={t('closeSavePreset')} onClick={onClose}>
             <X size={16} />
           </button>
         </div>
@@ -46,11 +49,11 @@ export function SavePresetModal({
           }}
         >
           <label>
-            Preset name
+            {t('presetName')}
             <input value={presetName} onChange={(event) => onSetPresetName(event.target.value)} autoFocus />
           </label>
           <fieldset className="category-checks">
-            <legend>Categories</legend>
+            <legend>{t('categories')}</legend>
             {hardwareCategories.map((category) => (
               <label key={category}>
                 <input
@@ -62,16 +65,16 @@ export function SavePresetModal({
                     )
                   }
                 />
-                {category}
+                {categoryLabel(category)}
               </label>
             ))}
           </fieldset>
           <div className="modal-actions">
             <button type="button" className="secondary" onClick={onClose}>
-              Cancel
+              {t('cancel')}
             </button>
             <button type="submit" disabled={!presetName.trim()}>
-              <Save size={16} /> Save preset
+              <Save size={16} /> {t('savePreset')}
             </button>
           </div>
         </form>

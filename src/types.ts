@@ -1,4 +1,5 @@
 export type UnitSystem = 'metric' | 'imperial';
+export type AppLocale = 'en' | 'it' | 'de' | 'fr' | 'es';
 
 export type HardwareCategory =
   | 'screw'
@@ -140,13 +141,14 @@ export interface AppState {
   labelSettings: LabelSettings;
   customPresets: LabelPreset[];
   unitSystem: UnitSystem;
+  locale: AppLocale;
   selectedStandards: StandardFamily[];
   selectedCategories: HardwareCategory[];
 }
 
 export interface AppBackup {
   app: 'makers-label-generator';
-  version: 14;
+  version: 15;
   exportedAt: string;
   state: AppState;
 }

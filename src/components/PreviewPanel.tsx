@@ -22,6 +22,7 @@ import type { ExportFormat } from '../lib/export';
 import { buildQrPayload } from '../lib/qr';
 import { storageMeta } from '../lib/storage';
 import { renderLabelSvg, resolveLabelImageHref } from '../lib/svg';
+import { useI18n } from '../lib/i18n';
 import { getCatalogEntryForItem } from './hardware/hardwareLogic';
 import type { AppState, PlacedField } from '../types';
 
@@ -61,6 +62,7 @@ PreviewImageLayer.displayName = 'PreviewImageLayer';
 
 export function PreviewPanel() {
   const { hoveredFieldId, previewHardwareItem, selectedFieldId, selectedId, setHoveredFieldId, setSelectedFieldId, setState, state } = useAppState();
+  const { displaySpecValue, t } = useI18n();
   const { updateField } = useLabelFields();
   const [previewSvg, setPreviewSvg] = useState('');
   const [previewScale, setPreviewScale] = useState(1);
@@ -174,7 +176,8 @@ export function PreviewPanel() {
 
     renderLabelSvg(selectedItem, labelSettings, selectedPurchaseLink, selectedSpecUnitSystem, {
       interactive: true,
-      omitImageContent: true
+      omitImageContent: true,
+      displaySpecValue
     }).then((svg) => {
       if (!cancelled) {
         setPreviewSvg(svg);
@@ -184,7 +187,7 @@ export function PreviewPanel() {
     return () => {
       cancelled = true;
     };
-  }, [labelSettings, selectedItem, selectedPurchaseLink, selectedSpecUnitSystem]);
+  }, [displaySpecValue, labelSettings, selectedItem, selectedPurchaseLink, selectedSpecUnitSystem]);
 
   useEffect(() => {
     let cancelled = false;
@@ -559,7 +562,7 @@ export function PreviewPanel() {
       <div className="panel-title preview-title">
         <div className="panel-title-main">
           <QrCode size={18} />
-          <h2>Preview and export</h2>
+          <h2>{t('previewExport')}</h2>
         </div>
       </div>
       <div
@@ -635,9 +638,9 @@ export function PreviewPanel() {
               }}
             >
               {[
-                { mode: 'width' as const, className: 'element-resize-handle width', label: 'Resize selected element width' },
-                { mode: 'height' as const, className: 'element-resize-handle height', label: 'Resize selected element height' },
-                { mode: 'both' as const, className: 'element-resize-handle both', label: 'Resize selected element width and height' }
+                { mode: 'width' as const, className: 'element-resize-handle width', label: t('resizeElementWidth') },
+                { mode: 'height' as const, className: 'element-resize-handle height', label: t('resizeElementHeight') },
+                { mode: 'both' as const, className: 'element-resize-handle both', label: t('resizeElementBoth') }
               ].map((handle) => (
                 <button
                   key={handle.mode}
@@ -652,8 +655,8 @@ export function PreviewPanel() {
                 <button
                   type="button"
                   className="element-rotate-handle"
-                  aria-label="Rotate selected image"
-                  title="Rotate selected image"
+                  aria-label={t('rotateImage')}
+                  title={t('rotateImage')}
                   onPointerDown={(event) => handleElementRotatePointerDown(event, selectedPreviewField)}
                 >
                   <RotateCw size={13} strokeWidth={2.4} />
@@ -662,9 +665,9 @@ export function PreviewPanel() {
             </div>
           )}
           {[
-            { mode: 'width' as const, className: 'label-resize-handle width', label: 'Resize label width' },
-            { mode: 'height' as const, className: 'label-resize-handle height', label: 'Resize label height' },
-            { mode: 'both' as const, className: 'label-resize-handle both', label: 'Resize label width and height' }
+            { mode: 'width' as const, className: 'label-resize-handle width', label: t('resizeLabelWidth') },
+            { mode: 'height' as const, className: 'label-resize-handle height', label: t('resizeLabelHeight') },
+            { mode: 'both' as const, className: 'label-resize-handle both', label: t('resizeLabelBoth') }
           ].map((handle) => (
             <button
               key={handle.mode}
@@ -678,16 +681,16 @@ export function PreviewPanel() {
         </div>
       </div>
       {qrInfo?.warning && <p className="warning">{qrInfo.warning}</p>}
-      <p className="storage-note">Saved locally under {storageMeta.storageKey}.</p>
+      <p className="storage-note">{t('savedLocally', { key: storageMeta.storageKey })}</p>
 
       <div className="button-grid">
-        <button type="button" onClick={() => exportSingle(selectedItem, labelSettings, selectedPurchaseLink, selectedSpecUnitSystem, 'svg')}>
+        <button type="button" onClick={() => exportSingle(selectedItem, labelSettings, selectedPurchaseLink, selectedSpecUnitSystem, 'svg', displaySpecValue)}>
           <FileText size={16} /> SVG
         </button>
-        <button type="button" onClick={() => exportSingle(selectedItem, labelSettings, selectedPurchaseLink, selectedSpecUnitSystem, 'png')}>
+        <button type="button" onClick={() => exportSingle(selectedItem, labelSettings, selectedPurchaseLink, selectedSpecUnitSystem, 'png', displaySpecValue)}>
           <FileImage size={16} /> PNG
         </button>
-        <button type="button" onClick={() => exportSingle(selectedItem, labelSettings, selectedPurchaseLink, selectedSpecUnitSystem, 'lbx')}>
+        <button type="button" onClick={() => exportSingle(selectedItem, labelSettings, selectedPurchaseLink, selectedSpecUnitSystem, 'lbx', displaySpecValue)}>
           <Download size={16} /> LBX
         </button>
       </div>

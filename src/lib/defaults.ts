@@ -248,6 +248,7 @@ export const defaultAppState: AppState = {
   labelSettings: defaultLabelSettings,
   customPresets: [],
   unitSystem: 'metric',
+  locale: 'en',
   selectedStandards: [],
   selectedCategories: []
 };

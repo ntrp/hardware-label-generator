@@ -4,6 +4,7 @@ import { standardsCatalog } from '../data/catalog';
 import { useAppState } from '../app/AppStateContext';
 import { uniqueValues } from '../lib/labelLayout';
 import { catalogMatchesSelectedFilters, standardFamilies } from '../lib/standards';
+import { useI18n } from '../lib/i18n';
 import { hardwareCategories } from './hardware/hardwareConstants';
 import type { AppState, HardwareCategory, StandardFamily } from '../types';
 
@@ -11,10 +12,9 @@ const catalogCategoryOptions = hardwareCategories.filter((category) =>
   standardsCatalog.some((entry) => entry.category === category)
 );
 
-const categoryLabel = (category: HardwareCategory) => category[0].toUpperCase() + category.slice(1);
-
 export function HardwareFiltersPanel() {
   const { setState, state } = useAppState();
+  const { categoryLabel, t } = useI18n();
   const [collapsed, setCollapsed] = useState(() => state.selectedStandards.length === 0 && state.selectedCategories.length === 0);
   const filteredCount = standardsCatalog.filter((entry) =>
     catalogMatchesSelectedFilters(entry, state.selectedStandards, state.selectedCategories)
@@ -58,15 +58,15 @@ export function HardwareFiltersPanel() {
       <div className="panel-title filter-panel-title">
         <span className="panel-title-main">
           <SlidersHorizontal size={18} />
-          <h2>Filters</h2>
+          <h2>{t('filters')}</h2>
         </span>
         <span className="filter-title-actions">
-          <span className="filter-count">{activeFilterCount > 0 ? `${filteredCount} parts` : 'All parts'}</span>
+          <span className="filter-count">{activeFilterCount > 0 ? t('parts', { count: filteredCount }) : t('allParts')}</span>
           <button
             type="button"
             className="icon-button small"
-            title={collapsed ? 'Expand filters' : 'Collapse filters'}
-            aria-label={collapsed ? 'Expand filters' : 'Collapse filters'}
+            title={collapsed ? t('expandFilters') : t('collapseFilters')}
+            aria-label={collapsed ? t('expandFilters') : t('collapseFilters')}
             aria-expanded={!collapsed}
             aria-controls="hardware-filter-controls"
             onClick={() => setCollapsed((current) => !current)}
@@ -80,7 +80,7 @@ export function HardwareFiltersPanel() {
         <div id="hardware-filter-controls" className="filter-panel-body">
           <div className="filter-grid">
             <fieldset className="filter-group">
-              <legend>Standards</legend>
+              <legend>{t('standards')}</legend>
               <div className="filter-options">
                 {standardFamilies.map((family) => (
                   <label key={family} className="filter-option">
@@ -96,7 +96,7 @@ export function HardwareFiltersPanel() {
             </fieldset>
 
             <fieldset className="filter-group">
-              <legend>Categories</legend>
+              <legend>{t('categories')}</legend>
               <div className="filter-options">
                 {catalogCategoryOptions.map((category) => (
                   <label key={category} className="filter-option">
@@ -115,7 +115,7 @@ export function HardwareFiltersPanel() {
           {activeFilterCount > 0 && (
             <div className="filter-actions">
               <button type="button" className="secondary compact-button" onClick={clearFilters}>
-                <RotateCcw size={15} /> Clear filters
+                <RotateCcw size={15} /> {t('clearFilters')}
               </button>
             </div>
           )}

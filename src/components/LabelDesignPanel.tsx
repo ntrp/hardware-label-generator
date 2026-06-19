@@ -27,6 +27,7 @@ import {
 import { builtInLabelPresets, clonePlacedFields, createId, defaultFrameStyle } from '../lib/defaults';
 import { formatLabelSize, placeholderLabels } from '../lib/format';
 import { getCategorySpecDefinitions } from '../lib/specs';
+import { useI18n } from '../lib/i18n';
 import { standardFamilies, standardPlaceholderKeys } from '../lib/standards';
 import { isStandardImageSource, standardImageLabel, standardImageUrlForItem } from '../lib/standardImages';
 import { defaultTechnicalDrawingStrokeWidth } from '../lib/svgAssets';
@@ -102,13 +103,13 @@ const formatTsValue = (value: unknown, indent = 0): string => {
 const slugifyPresetId = (value: string) =>
   value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'custom-preset';
 
-const getElementSummary = (field: PlacedField) => {
+const getElementSummary = (field: PlacedField, fallbackText: string, fallbackImage: string) => {
   if (field.kind === 'text') {
-    return field.text?.trim() || 'Text';
+    return field.text?.trim() || fallbackText;
   }
 
   if (field.kind === 'image') {
-    return field.imageSource === 'custom' ? field.imageName || 'Custom image' : standardImageLabel(field.imageSource);
+    return field.imageSource === 'custom' ? field.imageName || fallbackImage : standardImageLabel(field.imageSource);
   }
 
   const frameShape = field.frameStyle?.shape === 'rounded' ? 'Rounded' : 'Box';
@@ -117,6 +118,7 @@ const getElementSummary = (field: PlacedField) => {
 
 export function LabelDesignPanel() {
   const { selectedFieldId, selectedId, setHoveredFieldId, setSelectedFieldId, setState, showSuccessToast, state } = useAppState();
+  const { elementKindLabel, t } = useI18n();
   const selectedItem = state.hardwareItems.find((item) => item.id === selectedId) ?? state.hardwareItems[0];
   const [systemFontFamilies, setSystemFontFamilies] = useState<string[]>([]);
   const [presetName, setPresetName] = useState('');
@@ -218,16 +220,16 @@ export function LabelDesignPanel() {
   const copyPresetCode = async () => {
     try {
       await navigator.clipboard.writeText(presetCode);
-      showSuccessToast('Preset code copied.');
+      showSuccessToast(t('presetCopied'));
     } catch {
-      showSuccessToast('Preset code ready to copy.');
+      showSuccessToast(t('presetReady'));
     }
   };
 
   const loadSystemFonts = async () => {
     const queryLocalFonts = (window as LocalFontAccessWindow).queryLocalFonts;
     if (!queryLocalFonts) {
-      window.alert('This browser does not support reading local system fonts.');
+      window.alert(t('systemFontUnsupported'));
       return;
     }
 
@@ -235,9 +237,9 @@ export function LabelDesignPanel() {
       const fonts = await queryLocalFonts();
       const families = uniqueValues(fonts.map((font) => font.family).sort((a, b) => a.localeCompare(b)));
       setSystemFontFamilies(families);
-      showSuccessToast(`Loaded ${families.length} system fonts.`);
+      showSuccessToast(t('systemFontsLoaded', { count: families.length }));
     } catch {
-      window.alert('System font access was not allowed.');
+      window.alert(t('systemFontDenied'));
     }
   };
 
@@ -294,7 +296,7 @@ export function LabelDesignPanel() {
       )
     }));
     setPresetModalOpen(false);
-    showSuccessToast('Preset saved.');
+    showSuccessToast(t('presetSaved'));
   };
 
   const deleteCustomPreset = (presetId: string) => {
@@ -347,16 +349,16 @@ export function LabelDesignPanel() {
     <section className="panel label-design-panel">
       <div className="panel-title">
         <FileText size={18} />
-        <h2>Label design</h2>
+        <h2>{t('labelDesign')}</h2>
       </div>
 
       <div className="preset-actions design-actions" id="label-dimensions">
         <label className="preset-select">
-          <span>Preset</span>
+          <span>{t('preset')}</span>
           <select value={activePresetValue} onChange={(event) => applyPreset(event.target.value)}>
             {presetIsModified && (
               <option value={modifiedPresetValue} disabled>
-                Modified preset
+                {t('modifiedPreset')}
               </option>
             )}
             {builtInPresetOptions.map((preset) => (
@@ -364,7 +366,7 @@ export function LabelDesignPanel() {
                 {preset.name}
               </option>
             ))}
-            {customPresetOptions.length > 0 && <option disabled>Custom presets</option>}
+            {customPresetOptions.length > 0 && <option disabled>{t('customPresets')}</option>}
             {customPresetOptions.map((preset) => (
               <option key={preset.id} value={preset.id}>
                 {preset.name}
@@ -374,25 +376,25 @@ export function LabelDesignPanel() {
         </label>
         {presetIsModified && (
           <button type="button" className="secondary preset-save" onClick={openPresetSaveModal}>
-            <Save size={15} /> Save
+            <Save size={15} /> {t('save')}
           </button>
         )}
         <button type="button" className="secondary preset-save" onClick={() => setPresetCodeModalOpen(true)}>
-          <Code2 size={15} /> Dev export
+          <Code2 size={15} /> {t('devExport')}
         </button>
         {activeCustomPreset && (
-          <button type="button" className="icon-button small secondary" title="Delete selected preset" onClick={() => deleteCustomPreset(activeCustomPreset.id)}>
+          <button type="button" className="icon-button small secondary" title={t('remove')} onClick={() => deleteCustomPreset(activeCustomPreset.id)}>
             <Trash2 size={15} />
           </button>
         )}
-        <div className="label-size-inputs" aria-label="Label size">
+        <div className="label-size-inputs" aria-label={t('size')}>
           <label>
-            <span>Width</span>
+            <span>{t('width')}</span>
             <div className="unit-input">
               <input
                 value={labelWidthInput}
                 inputMode="decimal"
-                aria-label={`Label width in ${unitSystem === 'imperial' ? 'inches' : 'millimeters'}`}
+                aria-label={t('width')}
                 onChange={(event) => setLabelWidthInput(event.target.value)}
                 onBlur={() => commitLabelDimensionInput('widthMm', labelWidthInput)}
                 onKeyDown={(event) => {
@@ -412,12 +414,12 @@ export function LabelDesignPanel() {
           </label>
           <span className="size-separator">x</span>
           <label>
-            <span>Height</span>
+            <span>{t('height')}</span>
             <div className="unit-input">
               <input
                 value={labelHeightInput}
                 inputMode="decimal"
-                aria-label={`Label height in ${unitSystem === 'imperial' ? 'inches' : 'millimeters'}`}
+                aria-label={t('height')}
                 onChange={(event) => setLabelHeightInput(event.target.value)}
                 onBlur={() => commitLabelDimensionInput('heightMm', labelHeightInput)}
                 onKeyDown={(event) => {
@@ -436,12 +438,12 @@ export function LabelDesignPanel() {
             </div>
           </label>
           <label>
-            <span>Margin</span>
+            <span>{t('margin')}</span>
             <div className="unit-input">
               <input
                 value={labelMarginInput}
                 inputMode="decimal"
-                aria-label={`Label margin in ${unitSystem === 'imperial' ? 'inches' : 'millimeters'}`}
+                aria-label={t('margin')}
                 onChange={(event) => setLabelMarginInput(event.target.value)}
                 onBlur={() => commitLabelDimensionInput('marginMm', labelMarginInput)}
                 onKeyDown={(event) => {
@@ -463,9 +465,9 @@ export function LabelDesignPanel() {
       </div>
 
       <div className="fields-header">
-        <h3>Label elements</h3>
+        <h3>{t('labelElements')}</h3>
         <button type="button" onClick={addField}>
-          <Plus size={16} /> Element
+          <Plus size={16} /> {t('element')}
         </button>
       </div>
       <datalist id="placeholder-autocomplete">
@@ -491,15 +493,15 @@ export function LabelDesignPanel() {
               >
                 <span className="element-index">{index + 1}</span>
                 <span>
-                  <strong>{field.kind === 'text' ? 'Text' : field.kind === 'image' ? 'Image' : 'Frame'}</strong>
-                  <small>{getElementSummary(field)}</small>
+                  <strong>{elementKindLabel(field.kind)}</strong>
+                  <small>{getElementSummary(field, t('text'), t('customImage'))}</small>
                 </span>
               </button>
               {isOpen && (
                 <section id={`element-panel-${field.id}`} className="field-settings">
                   <div className="field-settings-header">
-                    <h3>Element settings</h3>
-                    <button type="button" className="icon-button small" title="Delete selected element" onClick={() => removeField(field.id)}>
+                    <h3>{t('elementSettings')}</h3>
+                    <button type="button" className="icon-button small" title={t('deleteSelectedElement')} onClick={() => removeField(field.id)}>
                       <Trash2 size={15} />
                     </button>
                   </div>
@@ -507,14 +509,14 @@ export function LabelDesignPanel() {
                     <select value={field.kind} onChange={(event) => updateElementKind(field, event.target.value as LabelElementKind)}>
                       {elementKinds.map((kind) => (
                         <option key={kind} value={kind}>
-                          {kind === 'text' ? 'Text' : kind === 'image' ? 'Image' : 'Frame'}
+                          {elementKindLabel(kind)}
                         </option>
                       ))}
                     </select>
                   </div>
                   {field.kind === 'text' && (
                     <label className="template-control">
-                      Text
+                      {t('text')}
                       <input
                         list="placeholder-autocomplete"
                         value={field.text ?? ''}
@@ -533,20 +535,20 @@ export function LabelDesignPanel() {
                   {field.kind === 'image' && (
                     <div className="image-controls">
                       <label className="template-control">
-                        Image
+                        {t('image')}
                         <select value={field.imageSource ?? 'qr'} onChange={(event) => updateField(field.id, { imageSource: event.target.value as PlacedField['imageSource'] })}>
-                          <option value="qr">Purchase link QR</option>
+                          <option value="qr">{t('purchaseLinkQr')}</option>
                           <option value="iso">ISO</option>
-                          <option value="side">Side</option>
-                          <option value="top">Top</option>
-                          <option value="custom">Custom image</option>
+                          <option value="side">{t('side')}</option>
+                          <option value="top">{t('top')}</option>
+                          <option value="custom">{t('customImage')}</option>
                         </select>
                       </label>
                       {field.imageSource === 'custom' && (
                         <div className="image-upload-row">
                           <label className="file-upload-button">
                             <FileImage size={16} />
-                            <span>{field.imageName || 'Choose image'}</span>
+                            <span>{field.imageName || t('chooseImage')}</span>
                             <input
                               type="file"
                               accept=".bmp,.png,.svg,image/bmp,image/x-ms-bmp,image/png,image/svg+xml"
@@ -560,7 +562,7 @@ export function LabelDesignPanel() {
                             <button
                               type="button"
                               className="icon-button small secondary"
-                              title="Remove custom image"
+                              title={t('removeCustomImage')}
                               onClick={() => updateField(field.id, { imageBase64: undefined, imageMimeType: undefined, imageName: undefined })}
                             >
                               <Trash2 size={15} />
@@ -569,24 +571,24 @@ export function LabelDesignPanel() {
                         </div>
                       )}
                       {isStandardImageSource(field.imageSource) && !standardImageUrlForItem(selectedItem, field.imageSource) && (
-                        <p className="storage-note">No standard image URL is available for this hardware item.</p>
+                        <p className="storage-note">{t('noStandardImage')}</p>
                       )}
                     </div>
                   )}
                   {field.kind === 'frame' && (
                     <div className="frame-controls">
                       <label>
-                        Frame style
+                        {t('frameStyle')}
                         <select
                           value={fieldFrameStyle.shape}
                           onChange={(event) => updateFrameStyle(field.id, { shape: event.target.value as FrameShape })}
                         >
-                          <option value="box">Box</option>
-                          <option value="rounded">Rounded</option>
+                          <option value="box">{t('box')}</option>
+                          <option value="rounded">{t('rounded')}</option>
                         </select>
                       </label>
                       <label>
-                        Thickness
+                        {t('thickness')}
                         <input
                           type="number"
                           step="0.1"
@@ -597,7 +599,7 @@ export function LabelDesignPanel() {
                       </label>
                       {fieldFrameStyle.shape === 'rounded' && (
                         <label>
-                          Border radius
+                          {t('borderRadius')}
                           <input
                             type="number"
                             step="0.5"
@@ -608,14 +610,14 @@ export function LabelDesignPanel() {
                         </label>
                       )}
                       <label>
-                        Line style
+                        {t('lineStyle')}
                         <select
                           value={fieldFrameStyle.lineStyle}
                           onChange={(event) => updateFrameStyle(field.id, { lineStyle: event.target.value as FrameLineStyle })}
                         >
-                          <option value="solid">Solid</option>
-                          <option value="dashed">Dashed</option>
-                          <option value="dotted">Dotted</option>
+                          <option value="solid">{t('solid')}</option>
+                          <option value="dashed">{t('dashed')}</option>
+                          <option value="dotted">{t('dotted')}</option>
                         </select>
                       </label>
                     </div>
@@ -624,7 +626,7 @@ export function LabelDesignPanel() {
                     {field.kind !== 'frame' &&
                       (['width', 'height'] as const).map((key) => (
                         <label key={key}>
-                          {key === 'width' ? 'Width' : 'Height'}
+                          {key === 'width' ? t('width') : t('height')}
                           <input
                             type="number"
                             step="0.5"
@@ -636,7 +638,7 @@ export function LabelDesignPanel() {
                     {field.kind === 'image' && (
                       <>
                         <label>
-                          Rotation
+                          {t('rotation')}
                           <input
                             type="number"
                             step="1"
@@ -649,7 +651,7 @@ export function LabelDesignPanel() {
                         </label>
                         {isStandardImageSource(field.imageSource) && (
                           <label>
-                            Line thickness
+                            {t('lineThickness')}
                             <input
                               type="number"
                               step="0.05"
@@ -664,7 +666,7 @@ export function LabelDesignPanel() {
                     {field.kind === 'text' && (
                       <>
                         <label>
-                          Font
+                          {t('font')}
                           <span className="font-select-row">
                             <select value={field.style.fontFamily} onChange={(event) => updateFieldStyle(field.id, { fontFamily: event.target.value })}>
                               {availableFontFamilies.map((font) => (
@@ -674,12 +676,12 @@ export function LabelDesignPanel() {
                               ))}
                             </select>
                             <button type="button" className="secondary compact-button" onClick={() => void loadSystemFonts()}>
-                              System
+                              {t('system')}
                             </button>
                           </span>
                         </label>
                         <label>
-                          Size
+                          {t('size')}
                           <input
                             type="number"
                             step="0.5"
@@ -689,7 +691,7 @@ export function LabelDesignPanel() {
                           />
                         </label>
                         <label>
-                          Weight
+                          {t('weight')}
                           <select
                             value={field.style.fontWeight}
                             onChange={(event) => updateFieldStyle(field.id, { fontWeight: Number(event.target.value) as PlacedField['style']['fontWeight'] })}
@@ -710,7 +712,7 @@ export function LabelDesignPanel() {
           );
         })}
       </div>
-      {labelSettings.fields.length === 0 && <p className="empty-elements">No label elements. Add an element to start designing this label.</p>}
+      {labelSettings.fields.length === 0 && <p className="empty-elements">{t('emptyElements')}</p>}
     </section>
     {presetCodeModalOpen && (
       <PresetCodeModal

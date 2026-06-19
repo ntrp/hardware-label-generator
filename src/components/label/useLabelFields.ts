@@ -5,10 +5,12 @@ import {
   normalizedMarginMm
 } from '../../lib/labelLayout';
 import { useAppState } from '../../app/AppStateContext';
+import { useI18n } from '../../lib/i18n';
 import type { LabelElementKind, PlacedField } from '../../types';
 
 export function useLabelFields() {
   const { selectedId, setSelectedFieldId, setState, state } = useAppState();
+  const { t } = useI18n();
   const selectedItem = state.hardwareItems.find((item) => item.id === selectedId) ?? state.hardwareItems[0];
   const labelSettings = selectedItem.labelSettings;
 
@@ -116,7 +118,7 @@ export function useLabelFields() {
     const supportedMimeTypes = ['image/bmp', 'image/x-ms-bmp', 'image/png', 'image/svg+xml'];
     const supportedExtensions = ['bmp', 'png', 'svg'];
     if (!supportedMimeTypes.includes(file.type) && !supportedExtensions.includes(extension ?? '')) {
-      window.alert('Custom label images must be BMP, PNG, or SVG.');
+      window.alert(t('invalidImage'));
       return;
     }
 

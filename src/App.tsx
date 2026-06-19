@@ -10,6 +10,7 @@ import { LabelDesignPanel } from './components/LabelDesignPanel';
 import { PreviewPanel } from './components/PreviewPanel';
 import { downloadBlob } from './lib/export';
 import { constrainAppState } from './lib/appState';
+import { translate, useI18n } from './lib/i18n';
 import { clearShareConfigFromUrl, parseShareConfigPayload, sharedConfigPayloadFromLocation } from './lib/shareConfig';
 import { backupFilename, hasSavedState, loadState, saveState, serializeBackup } from './lib/storage';
 import type { AppState, HardwareItem } from './types';
@@ -30,6 +31,7 @@ export function App() {
   const successToastTimeoutRef = useRef<number | null>(null);
   const sharePayloadHandledRef = useRef(false);
   const selectedItem = state.hardwareItems.find((item) => item.id === selectedId) ?? state.hardwareItems[0];
+  const locale = state.locale;
 
   useEffect(() => {
     const saveTimeout = window.setTimeout(() => saveState(state), 200);
@@ -51,10 +53,10 @@ export function App() {
           return;
         }
 
-        applySharedState(constrainAppState(importedState), 'Shared config loaded.');
+        applySharedState(constrainAppState(importedState), translate(locale, 'sharedLoaded'));
       } catch (error) {
         clearShareConfigFromUrl();
-        showSuccessToast(error instanceof Error ? error.message : 'Unable to load shared config.');
+        showSuccessToast(error instanceof Error ? error.message : translate(locale, 'sharedLoadError'));
       }
     };
 
@@ -106,12 +108,12 @@ export function App() {
   const backupAndLoadSharedConfig = () => {
     downloadBlob(new Blob([serializeBackup(state)], { type: 'application/json' }), backupFilename());
     if (pendingSharedState) {
-      applySharedState(pendingSharedState, 'Backup downloaded. Shared config loaded.');
+      applySharedState(pendingSharedState, translate(locale, 'backupLoaded'));
     }
   };
 
   if (!selectedItem) {
-    return <main className="app-shell">No hardware item available.</main>;
+    return <main className="app-shell">{translate(locale, 'noHardware')}</main>;
   }
 
   return (
@@ -151,7 +153,7 @@ export function App() {
         {pendingSharedState && (
           <SharedConfigModal
             onClose={closeSharedConfigModal}
-            onLoad={() => applySharedState(pendingSharedState, 'Shared config loaded.')}
+            onLoad={() => applySharedState(pendingSharedState, translate(locale, 'sharedLoaded'))}
             onBackupAndLoad={backupAndLoadSharedConfig}
           />
         )}
@@ -167,6 +169,8 @@ interface SharedConfigModalProps {
 }
 
 function SharedConfigModal({ onClose, onLoad, onBackupAndLoad }: SharedConfigModalProps) {
+  const { t } = useI18n();
+
   return (
     <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
       <div
@@ -178,19 +182,19 @@ function SharedConfigModal({ onClose, onLoad, onBackupAndLoad }: SharedConfigMod
       >
         <div className="modal-header">
           <div>
-            <h2 id="share-load-title">Load shared config</h2>
-            <p className="modal-subtitle">This link contains a shared configuration. Loading it replaces the current app state.</p>
+            <h2 id="share-load-title">{t('loadSharedConfig')}</h2>
+            <p className="modal-subtitle">{t('loadSharedConfigBody')}</p>
           </div>
-          <button type="button" className="icon-button small" aria-label="Close shared config" onClick={onClose}>
+          <button type="button" className="icon-button small" aria-label={t('closeSharedConfig')} onClick={onClose}>
             <X size={16} />
           </button>
         </div>
         <div className="modal-actions">
           <button type="button" className="secondary" onClick={onBackupAndLoad}>
-            Backup and load
+            {t('backupAndLoad')}
           </button>
           <button type="button" onClick={onLoad}>
-            Load
+            {t('load')}
           </button>
         </div>
       </div>

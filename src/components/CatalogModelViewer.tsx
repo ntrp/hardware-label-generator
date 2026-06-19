@@ -3,6 +3,7 @@ import { RotateCcw } from 'lucide-react';
 import * as THREE from 'three';
 import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { useI18n } from '../lib/i18n';
 
 interface CatalogModelViewerProps {
   modelUrl: string;
@@ -22,6 +23,7 @@ const isoCameraPosition = new THREE.Vector3(-2.8, 3.2, 2.4);
 const viewTarget = new THREE.Vector3(0, 0, 0);
 
 export function CatalogModelViewer({ modelUrl, label }: CatalogModelViewerProps) {
+  const { t } = useI18n();
   const hostRef = useRef<HTMLDivElement | null>(null);
   const resetViewRef = useRef<(() => void) | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
@@ -158,8 +160,8 @@ export function CatalogModelViewer({ modelUrl, label }: CatalogModelViewerProps)
         <button
           type="button"
           className="catalog-model-reset"
-          aria-label="Reset 3D view"
-          title="Reset 3D view"
+          aria-label={t('reset3d')}
+          title={t('reset3d')}
           onClick={() => resetViewRef.current?.()}
         >
           <RotateCcw size={14} />

@@ -1,6 +1,6 @@
 import JSZip from 'jszip';
 import type { HardwareItem, LabelSettings, PurchaseLinkState, UnitSystem } from '../types';
-import { formatLength, safeFilePart } from './format';
+import { formatLength, safeFilePart, type PlaceholderDisplayValue } from './format';
 import { createLbxBlob } from './lbx';
 import { renderLabelSvg, svgToPngBlob } from './svg';
 
@@ -33,29 +33,31 @@ export const exportSingle = async (
   settings: LabelSettings,
   purchaseLink: string,
   unitSystem: UnitSystem,
-  format: ExportFormat
+  format: ExportFormat,
+  displaySpecValue?: PlaceholderDisplayValue
 ) => {
   if (format === 'svg') {
-    const svg = await renderLabelSvg(item, settings, purchaseLink, unitSystem);
+    const svg = await renderLabelSvg(item, settings, purchaseLink, unitSystem, { displaySpecValue });
     downloadBlob(new Blob([svg], { type: 'image/svg+xml' }), labelFilename(item, 'svg'));
     return;
   }
 
   if (format === 'png') {
-    const svg = await renderLabelSvg(item, settings, purchaseLink, unitSystem, { rasterSafe: true });
+    const svg = await renderLabelSvg(item, settings, purchaseLink, unitSystem, { rasterSafe: true, displaySpecValue });
     const png = await svgToPngBlob(svg, settings.widthMm, settings.heightMm);
     downloadBlob(png, labelFilename(item, 'png'));
     return;
   }
 
-  downloadBlob(await createLbxBlob(item, settings, purchaseLink, unitSystem), labelFilename(item, 'lbx'));
+  downloadBlob(await createLbxBlob(item, settings, purchaseLink, unitSystem, displaySpecValue), labelFilename(item, 'lbx'));
 };
 
 export const createExportZipBlob = async (
   items: HardwareItem[],
   settings: LabelSettings,
   linkState: PurchaseLinkState,
-  formats: ExportFormat[]
+  formats: ExportFormat[],
+  displaySpecValue?: PlaceholderDisplayValue
 ) => {
   const zip = new JSZip();
 
@@ -65,16 +67,16 @@ export const createExportZipBlob = async (
     const itemSettings = item.labelSettings ?? settings;
 
     if (formats.includes('svg')) {
-      folder.file(labelFilename(item, 'svg'), await renderLabelSvg(item, itemSettings, purchaseLink, item.unitSystem));
+      folder.file(labelFilename(item, 'svg'), await renderLabelSvg(item, itemSettings, purchaseLink, item.unitSystem, { displaySpecValue }));
     }
 
     if (formats.includes('png')) {
-      const svg = await renderLabelSvg(item, itemSettings, purchaseLink, item.unitSystem, { rasterSafe: true });
+      const svg = await renderLabelSvg(item, itemSettings, purchaseLink, item.unitSystem, { rasterSafe: true, displaySpecValue });
       folder.file(labelFilename(item, 'png'), await svgToPngBlob(svg, itemSettings.widthMm, itemSettings.heightMm));
     }
 
     if (formats.includes('lbx')) {
-      folder.file(labelFilename(item, 'lbx'), await (await createLbxBlob(item, itemSettings, purchaseLink, item.unitSystem)).arrayBuffer());
+      folder.file(labelFilename(item, 'lbx'), await (await createLbxBlob(item, itemSettings, purchaseLink, item.unitSystem, displaySpecValue)).arrayBuffer());
     }
   }
 
@@ -85,7 +87,8 @@ export const exportZip = async (
   items: HardwareItem[],
   settings: LabelSettings,
   linkState: PurchaseLinkState,
-  formats: ExportFormat[]
+  formats: ExportFormat[],
+  displaySpecValue?: PlaceholderDisplayValue
 ) => {
-  downloadBlob(await createExportZipBlob(items, settings, linkState, formats), 'fastener-labels.zip');
+  downloadBlob(await createExportZipBlob(items, settings, linkState, formats, displaySpecValue), 'fastener-labels.zip');
 };

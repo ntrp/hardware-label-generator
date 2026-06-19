@@ -1,9 +1,9 @@
 import type { AppBackup, AppState } from '../types';
 import { defaultAppState } from './defaults';
 
-const storageKey = 'makers-label-generator:v17';
+const storageKey = 'makers-label-generator:v18';
 const backupAppName = 'makers-label-generator';
-const backupVersion = 14;
+const backupVersion = 15;
 
 export const loadState = (): AppState => {
   if (typeof localStorage === 'undefined') {

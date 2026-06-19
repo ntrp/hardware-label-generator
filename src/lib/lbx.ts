@@ -1,7 +1,7 @@
 import JSZip from 'jszip';
 import type { HardwareItem, LabelSettings, PlacedField, UnitSystem } from '../types';
 import { defaultFrameStyle } from './defaults';
-import { renderTextTemplate } from './format';
+import { renderTextTemplate, type PlaceholderDisplayValue } from './format';
 import { buildQrPayload, createQrPngDataUrl } from './qr';
 import { isStandardImageSource, missingCatalogAssetSvg, standardImageLabel, standardImageUrlForItem } from './standardImages';
 import { applySvgStrokeWidth, normalizedSvgStrokeWidth } from './svgAssets';
@@ -79,8 +79,8 @@ const objectStyleXml = (field: PlacedField, objectName: string, extra = '') => `
   <pt:expanded objectName="${escapeXml(objectName)}" ID="0" lock="0" templateMergeTarget="LABELLIST" templateMergeType="NONE" templateMergeID="0" allowOutOfBoundsTransfer="false" linkStatus="NONE" linkID="0"${extra}></pt:expanded>
 </pt:objectStyle>`;
 
-const renderTextObject = (field: PlacedField, item: HardwareItem, unitSystem: UnitSystem, index: number) => {
-  const text = renderTextTemplate(field.text ?? '', item, unitSystem);
+const renderTextObject = (field: PlacedField, item: HardwareItem, unitSystem: UnitSystem, index: number, displaySpecValue?: PlaceholderDisplayValue) => {
+  const text = renderTextTemplate(field.text ?? '', item, unitSystem, displaySpecValue);
   const fontSize = pt(field.style.fontSize);
   const weight = field.style.fontWeight >= 700 ? 700 : field.style.fontWeight;
   const fontName = field.style.fontFamily.split(',')[0]?.replace(/["']/g, '').trim() || 'Helsinki';
@@ -132,7 +132,7 @@ const renderImageObject = (field: PlacedField, index: number, imageIndex: number
 </image:image>`;
 };
 
-const renderObjects = (item: HardwareItem, settings: LabelSettings, purchaseLink: string, unitSystem: UnitSystem) =>
+const renderObjects = (item: HardwareItem, settings: LabelSettings, purchaseLink: string, unitSystem: UnitSystem, displaySpecValue?: PlaceholderDisplayValue) =>
   settings.fields
     .filter((field) => field.style.visible)
     .map((field, index) => {
@@ -141,13 +141,13 @@ const renderObjects = (item: HardwareItem, settings: LabelSettings, purchaseLink
         const imageIndex = lbxExportedImageFields(item, settings, purchaseLink).findIndex((candidate) => candidate.id === field.id);
         return imageIndex >= 0 ? renderImageObject(field, index, imageIndex) : '';
       }
-      if (field.kind === 'text') return renderTextObject(field, item, unitSystem, index);
+      if (field.kind === 'text') return renderTextObject(field, item, unitSystem, index, displaySpecValue);
       return '';
     })
     .filter(Boolean)
     .join('');
 
-const generateLabelXml = (item: HardwareItem, settings: LabelSettings, purchaseLink: string, unitSystem: UnitSystem) => {
+const generateLabelXml = (item: HardwareItem, settings: LabelSettings, purchaseLink: string, unitSystem: UnitSystem, displaySpecValue?: PlaceholderDisplayValue) => {
   const tapeWidthMm = settings.tapeWidthMm || settings.heightMm;
   const paperWidth = pt(tapeWidthMm);
   const paperHeight = pt(settings.widthMm);
@@ -163,7 +163,7 @@ const generateLabelXml = (item: HardwareItem, settings: LabelSettings, purchaseL
       <style:paper media="0" width="${paperWidth}" height="${paperHeight}" marginLeft="${pt(marginY)}" marginTop="${pt(marginX)}" marginRight="${pt(marginY)}" marginBottom="${pt(marginX)}" orientation="landscape" autoLength="false" monochromeDisplay="true" printColorDisplay="false" printColorsID="0" paperColor="#FFFFFF" paperInk="#000000" split="1" format="259" backgroundTheme="0" printerID="${printerId}" printerName="${printerName}"></style:paper>
       <style:cutLine regularCut="0pt" freeCut=""></style:cutLine>
       <style:backGround x="${pt(marginX)}" y="${pt(marginY)}" width="${pt(backgroundWidth)}" height="${pt(backgroundHeight)}" brushStyle="NULL" brushId="0" userPattern="NONE" userPatternId="0" color="#000000" printColorNumber="1" backColor="#FFFFFF" backPrintColorNumber="0"></style:backGround>
-      <pt:objects>${renderObjects(item, settings, purchaseLink, unitSystem)}</pt:objects>
+      <pt:objects>${renderObjects(item, settings, purchaseLink, unitSystem, displaySpecValue)}</pt:objects>
     </style:sheet>
   </pt:body>
 </pt:document>`;
@@ -195,19 +195,19 @@ const generatePropXml = () => {
 </meta:properties>`;
 };
 
-export const generateLbxXmlFiles = (item: HardwareItem, settings: LabelSettings, purchaseLink: string, unitSystem: UnitSystem) =>
+export const generateLbxXmlFiles = (item: HardwareItem, settings: LabelSettings, purchaseLink: string, unitSystem: UnitSystem, displaySpecValue?: PlaceholderDisplayValue) =>
   ({
-    'label.xml': generateLabelXml(item, settings, purchaseLink, unitSystem),
+    'label.xml': generateLabelXml(item, settings, purchaseLink, unitSystem, displaySpecValue),
     'prop.xml': generatePropXml()
   }) satisfies LbxXmlFiles;
 
-export const generateLbxXml = (item: HardwareItem, settings: LabelSettings, purchaseLink: string, unitSystem: UnitSystem) =>
-  generateLbxXmlFiles(item, settings, purchaseLink, unitSystem)['label.xml'];
+export const generateLbxXml = (item: HardwareItem, settings: LabelSettings, purchaseLink: string, unitSystem: UnitSystem, displaySpecValue?: PlaceholderDisplayValue) =>
+  generateLbxXmlFiles(item, settings, purchaseLink, unitSystem, displaySpecValue)['label.xml'];
 
-export const createLbxBlob = async (item: HardwareItem, settings: LabelSettings, purchaseLink: string, unitSystem: UnitSystem) => {
+export const createLbxBlob = async (item: HardwareItem, settings: LabelSettings, purchaseLink: string, unitSystem: UnitSystem, displaySpecValue?: PlaceholderDisplayValue) => {
   const zip = new JSZip();
   const files: LbxXmlFiles = {
-    ...generateLbxXmlFiles(item, settings, purchaseLink, unitSystem),
+    ...generateLbxXmlFiles(item, settings, purchaseLink, unitSystem, displaySpecValue),
     ...(await generateImageFiles(item, settings, purchaseLink))
   };
 

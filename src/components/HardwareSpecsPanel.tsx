@@ -8,9 +8,10 @@ import { baseMaterials, getFinishOptions, getMaterialTreatmentOptions } from '..
 import { defaultFinish, defaultMaterialTreatment, isValidFinish, isValidMaterialTreatment } from '../lib/materials';
 import { getBoltClassOptions } from '../lib/boltClasses';
 import { defaultBoltClass, isValidBoltClass } from '../lib/boltClasses';
-import { batchOptionLabel, batchPreviewLabel, batchSpecKeys, decodeBatchOptionValue, encodeBatchOptionValue, generateBatchItems } from '../lib/batch';
+import { batchPreviewLabel, batchSpecKeys, decodeBatchOptionValue, encodeBatchOptionValue, generateBatchItems } from '../lib/batch';
 import { parseList, splitLengthAndUnit } from '../lib/format';
 import { effectivePurchaseLink } from '../lib/export';
+import { useI18n } from '../lib/i18n';
 import { categoryLabelSettings } from '../lib/appState';
 import {
   defaultImperialThreadPitch,
@@ -44,14 +45,13 @@ import { CatalogPartPicker } from './CatalogPartPicker';
 import {
   buildCatalogItemPatch,
   getCatalogEntryForItem,
+  getHardwareDisplaySpecLine,
   getHardwareSpecLine
 } from './hardware/hardwareLogic';
 import type { AppState, HardwareCategory, HardwareItem, HardwareSpecKey, StandardCatalogEntry } from '../types';
 
 type StandardImageReference = NonNullable<ReturnType<typeof standardImageReferenceForItem>>;
 type CatalogDrawingSource = Extract<(typeof catalogAssetSources)[number], 'iso' | 'side' | 'top'>;
-
-const categoryLabel = (category: HardwareCategory) => category[0].toUpperCase() + category.slice(1);
 
 const formattedPitchName = (item: HardwareItem, unitSystem: AppState['unitSystem']) => {
   if (unitSystem === 'metric') {
@@ -88,6 +88,7 @@ const batchOptionMatchesCurrentItem = (item: HardwareItem, encodedValue: string)
 
 export function HardwareSpecsPanel() {
   const { previewHardwareItem, selectedId, setPreviewHardwareItem, setSelectedFieldId, setState, state } = useAppState();
+  const { categoryLabel, displaySpecValue, specLabel, t } = useI18n();
   const [batchCollapsed, setBatchCollapsed] = useState(false);
   const selectedItem = state.hardwareItems.find((item) => item.id === selectedId) ?? state.hardwareItems[0];
   const selectedCatalogEntry = getCatalogEntryForItem(selectedItem);
@@ -108,6 +109,17 @@ export function HardwareSpecsPanel() {
   const previewHardwareSpecLine = previewHardwareItem ? getHardwareSpecLine(previewHardwareItem) : '';
   const selectedPurchaseLink = selectedItem ? effectivePurchaseLink(state.purchaseLinks, selectedItem) : '';
   const hasQrElement = selectedItem.labelSettings.fields.some((field) => field.kind === 'image' && field.imageSource === 'qr' && field.style.visible);
+  const optionLabel = (key: HardwareSpecKey, value: string) => displaySpecValue(key, value) || 'n/a';
+  const batchOptionDisplayLabel = (key: HardwareSpecKey, encodedValue: string) => {
+    const { value, dependencies } = decodeBatchOptionValue(encodedValue);
+    const prefix = [
+      dependencies.size,
+      dependencies.material ? displaySpecValue('material', dependencies.material) : '',
+      dependencies.materialType ? displaySpecValue('materialType', dependencies.materialType) : ''
+    ].filter(Boolean).join(' / ');
+    const label = optionLabel(key, value);
+    return prefix ? `${prefix}: ${label}` : label;
+  };
 
   useEffect(() => {
     if (!selectedItem || !selectedCatalogEntry) return;
@@ -515,13 +527,13 @@ export function HardwareSpecsPanel() {
     <section className="panel editor-panel">
       <div className="panel-title">
         <FileText size={18} />
-        <h2>Hardware specs</h2>
+        <h2>{t('hardwareSpecs')}</h2>
       </div>
 
       <div className="spec-form-header">
         <div className="spec-form-controls">
           <label>
-            Catalog
+            {t('catalog')}
             <CatalogPartPicker
               entries={filteredCatalog}
               selectedId={selectedItem.catalogId ?? ''}
@@ -531,7 +543,7 @@ export function HardwareSpecsPanel() {
             />
           </label>
           <label>
-            Standard
+            {t('standard')}
             <input
               value={selectedItem.standard}
               readOnly={selectedCatalogLocked}
@@ -539,7 +551,7 @@ export function HardwareSpecsPanel() {
             />
           </label>
           <label>
-            Category
+            {t('category')}
             <select
               value={selectedItem.category}
               disabled={selectedCatalogLocked}
@@ -556,7 +568,7 @@ export function HardwareSpecsPanel() {
         {selectedStandardImageReference && (
           <div className="standard-render-card">
             <CatalogModelViewer modelUrl={selectedStandardImageReference.modelUrl} label={`3D model for ${selectedItem.standard}`} />
-            <span>3D model</span>
+            <span>{t('model3d')}</span>
           </div>
         )}
       </div>
@@ -620,7 +632,7 @@ export function HardwareSpecsPanel() {
 
           return (
             <label key={definition.key}>
-              {definition.label}
+              {specLabel(definition.key)}
               {definition.isLength ? (
                 <>
                   <div className="length-row">
@@ -642,7 +654,7 @@ export function HardwareSpecsPanel() {
                     {selectedCatalogLocked ? (
                       <select
                         value={selectedItem.lengthUnit}
-                        aria-label="Length unit"
+                        aria-label={t('lengthUnit')}
                         onChange={(event) => updateSelectedItem({ lengthUnit: event.target.value })}
                       >
                         {lengthUnitOptions.map((value) => (
@@ -655,7 +667,7 @@ export function HardwareSpecsPanel() {
                       <input
                         list="length-unit-options"
                         value={selectedItem.lengthUnit}
-                        aria-label="Length unit"
+                        aria-label={t('lengthUnit')}
                         onChange={(event) => updateSelectedItem({ lengthUnit: event.target.value })}
                       />
                     )}
@@ -679,11 +691,11 @@ export function HardwareSpecsPanel() {
                     }
                     onChange={(event) => updateSelectedSpec('threadPitchName', event.target.value)}
                   >
-                    {threadPitchNameOptions.map((value) => (
-                      <option key={value} value={value}>
-                        {value}
-                      </option>
-                    ))}
+                        {threadPitchNameOptions.map((value) => (
+                          <option key={value} value={value}>
+                            {optionLabel('threadPitchName', value)}
+                          </option>
+                        ))}
                   </select>
                 ) : (
                   <>
@@ -694,7 +706,7 @@ export function HardwareSpecsPanel() {
                     />
                     <datalist id={datalistId}>
                       {threadPitchNameOptions.map((value) => (
-                        <option key={value} value={value} />
+                        <option key={value} value={value} label={optionLabel('threadPitchName', value)} />
                       ))}
                     </datalist>
                   </>
@@ -708,7 +720,7 @@ export function HardwareSpecsPanel() {
                     >
                       {materialTypeOptions.map((value) => (
                         <option key={value} value={value}>
-                          {value}
+                          {optionLabel('materialType', value)}
                         </option>
                       ))}
                     </select>
@@ -721,7 +733,7 @@ export function HardwareSpecsPanel() {
                       />
                       <datalist id={datalistId}>
                         {materialTypeOptions.map((value) => (
-                          <option key={value} value={value} />
+                          <option key={value} value={value} label={optionLabel('materialType', value)} />
                         ))}
                       </datalist>
                     </>
@@ -764,7 +776,7 @@ export function HardwareSpecsPanel() {
                     >
                       {selectedFinishOptions.map((value) => (
                         <option key={value} value={value}>
-                          {value || 'n/a'}
+                          {optionLabel('finish', value)}
                         </option>
                       ))}
                     </select>
@@ -777,7 +789,7 @@ export function HardwareSpecsPanel() {
                       />
                       <datalist id={datalistId}>
                         {selectedFinishOptions.map((value) => (
-                          <option key={value} value={value} />
+                          <option key={value} value={value} label={optionLabel('finish', value)} />
                         ))}
                       </datalist>
                     </>
@@ -787,7 +799,7 @@ export function HardwareSpecsPanel() {
                 <select value={selectedItem.material} onChange={(event) => updateSelectedSpec('material', event.target.value)}>
                   {materialOptions.map((value) => (
                     <option key={value} value={value}>
-                      {value}
+                      {optionLabel('material', value)}
                     </option>
                   ))}
                 </select>
@@ -797,7 +809,7 @@ export function HardwareSpecsPanel() {
                 <select value={getItemSpecValue(selectedItem, definition.key)} onChange={(event) => updateSelectedSpec(definition.key, event.target.value)}>
                   {genericOptions.map((value) => (
                     <option key={value} value={value}>
-                      {value}
+                      {optionLabel(definition.key, value)}
                     </option>
                   ))}
                 </select>
@@ -810,7 +822,7 @@ export function HardwareSpecsPanel() {
                   />
                   <datalist id={datalistId}>
                     {options.map((value) => (
-                      <option key={value} value={value} />
+                      <option key={value} value={value} label={optionLabel(definition.key, value)} />
                     ))}
                   </datalist>
                 </>
@@ -831,13 +843,13 @@ export function HardwareSpecsPanel() {
                 if (!event.target.checked) setPreviewHardwareItem(null);
               }}
             />
-            <span>Batch</span>
+            <span>{t('batch')}</span>
           </label>
           <button
             type="button"
             className="icon-button small"
-            title={batchCollapsed ? 'Expand batch' : 'Collapse batch'}
-            aria-label={batchCollapsed ? 'Expand batch' : 'Collapse batch'}
+            title={batchCollapsed ? t('expandBatch') : t('collapseBatch')}
+            aria-label={batchCollapsed ? t('expandBatch') : t('collapseBatch')}
             aria-expanded={!batchCollapsed}
             disabled={!batchEnabled}
             onClick={() => setBatchCollapsed((current) => !current)}
@@ -859,7 +871,7 @@ export function HardwareSpecsPanel() {
                     key={definition.key}
                     className={['size', 'length', 'threadPitchName'].includes(definition.key) ? 'batch-property active batch-property-multi' : 'batch-property active'}
                   >
-                    <span className="batch-property-heading">{definition.label}</span>
+                    <span className="batch-property-heading">{specLabel(definition.key)}</span>
                     <select
                       multiple
                       value={values}
@@ -873,7 +885,7 @@ export function HardwareSpecsPanel() {
                     >
                       {options.map((value) => (
                         <option key={value} value={value}>
-                          {batchOptionLabel(value) || 'n/a'}
+                          {batchOptionDisplayLabel(definition.key, value)}
                         </option>
                       ))}
                     </select>
@@ -883,16 +895,16 @@ export function HardwareSpecsPanel() {
             </div>
             <div className="batch-preview">
               <div className="batch-preview-title">
-                <span>Produced parts</span>
+                <span>{t('producedParts')}</span>
                 <strong>{batchPreviewItems.length}</strong>
               </div>
               <p className="batch-preview-note">
-                Batch fields allow multiple values; dependent fields auto-select defaults for each selected parent.
+                {t('batchNote')}
               </p>
               <div className="batch-preview-list">
                 {batchPreviewItems.length === 0 ? (
                   <div className="batch-preview-row empty">
-                    Select at least one complete valid combination to produce parts.
+                    {t('emptyBatch')}
                   </div>
                 ) : (
                   batchPreviewItems.map((item, index) => (
@@ -902,7 +914,7 @@ export function HardwareSpecsPanel() {
                       className={previewHardwareSpecLine === getHardwareSpecLine(item) ? 'batch-preview-row active' : 'batch-preview-row'}
                       onClick={() => setPreviewHardwareItem(item)}
                     >
-                      {getHardwareSpecLine(item)}
+                      {getHardwareDisplaySpecLine(item, displaySpecValue)}
                     </button>
                   ))
                 )}
@@ -915,7 +927,7 @@ export function HardwareSpecsPanel() {
       {selectedStandardImageReference && (
         <section className="standard-images-section">
           <div className="standard-images-title">
-            <span>Catalog assets</span>
+            <span>{t('catalogAssets')}</span>
             <span>{selectedItem.catalogId}</span>
           </div>
           <div className="standard-image-grid">
@@ -942,7 +954,7 @@ export function HardwareSpecsPanel() {
           <label className="template-control">
             <span className="panel-title-main">
               <QrCode size={18} />
-              <span>Purchase link</span>
+              <span>{t('purchaseLink')}</span>
             </span>
             <input
               value={selectedPurchaseLink}

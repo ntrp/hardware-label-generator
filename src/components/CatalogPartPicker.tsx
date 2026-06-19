@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { standardsCatalog } from '../data/catalog';
+import { useI18n } from '../lib/i18n';
 import {
   catalogAssetUrlForEntry,
   missingCatalogAssetDataUrl
@@ -7,7 +8,7 @@ import {
 import { combinedStandardCode } from '../lib/standards';
 import type { AppState, StandardCatalogEntry } from '../types';
 
-const catalogSearchText = (entry: StandardCatalogEntry, selectedStandards: AppState['selectedStandards']) =>
+const catalogSearchText = (entry: StandardCatalogEntry, selectedStandards: AppState['selectedStandards'], localizedDescription: string) =>
   [
     entry.id,
     entry.family,
@@ -15,7 +16,8 @@ const catalogSearchText = (entry: StandardCatalogEntry, selectedStandards: AppSt
     combinedStandardCode(entry.standards, selectedStandards),
     ...Object.values(entry.standards),
     entry.category,
-    entry.description
+    entry.description,
+    localizedDescription
   ]
     .filter(Boolean)
     .join(' ')
@@ -68,16 +70,16 @@ const drawingKindForEntry = (entry: StandardCatalogEntry) => {
   return 'socket-screw';
 };
 
-const CatalogDrawing = ({ entry }: { entry: StandardCatalogEntry }) => {
+const CatalogDrawing = ({ entry, description }: { entry: StandardCatalogEntry; description: string }) => {
   const sideUrl = catalogAssetUrlForEntry(entry, 'side');
   if (sideUrl) {
-    return <img className="catalog-drawing" src={sideUrl} alt={`${entry.description} side drawing`} loading="lazy" onError={(event) => { event.currentTarget.src = missingCatalogAssetDataUrl('Side drawing'); }} />;
+    return <img className="catalog-drawing" src={sideUrl} alt={`${description} side drawing`} loading="lazy" onError={(event) => { event.currentTarget.src = missingCatalogAssetDataUrl('Side drawing'); }} />;
   }
 
   const kind = drawingKindForEntry(entry);
 
   return (
-    <svg className="catalog-drawing" viewBox="0 0 80 44" role="img" aria-label={`${entry.description} drawing`}>
+    <svg className="catalog-drawing" viewBox="0 0 80 44" role="img" aria-label={`${description} drawing`}>
       <rect x="0" y="0" width="80" height="44" rx="4" fill="#f8fafb" />
       {kind === 'washer' && (
         <>
@@ -150,11 +152,16 @@ interface CatalogPartPickerProps {
 }
 
 export function CatalogPartPicker({ entries, selectedId, selectedStandards, onSelect, includeCustom = false }: CatalogPartPickerProps) {
+  const { catalogDescription, categoryLabel, t } = useI18n();
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
   const selectedEntry = standardsCatalog.find((entry) => entry.id === selectedId);
+  const selectedDescription = selectedEntry ? catalogDescription(selectedEntry.description) : '';
   const matches = entries
-    .map((entry) => ({ entry, score: fuzzyScore(catalogSearchText(entry, selectedStandards), query) }))
+    .map((entry) => {
+      const description = catalogDescription(entry.description);
+      return { entry, description, score: fuzzyScore(catalogSearchText(entry, selectedStandards, description), query) };
+    })
     .filter(({ score }) => score > 0)
     .sort((left, right) => right.score - left.score || left.entry.code.localeCompare(right.entry.code))
     .slice(0, 80);
@@ -166,10 +173,10 @@ export function CatalogPartPicker({ entries, selectedId, selectedStandards, onSe
       }
     }}>
       <button type="button" className="catalog-picker-button" onClick={() => setOpen((current) => !current)}>
-        {selectedEntry ? <CatalogDrawing entry={selectedEntry} /> : <span className="catalog-custom-drawing">Custom</span>}
+        {selectedEntry ? <CatalogDrawing entry={selectedEntry} description={selectedDescription} /> : <span className="catalog-custom-drawing">{t('custom')}</span>}
         <span>
-          <strong>{selectedEntry ? catalogStandardsTitle(selectedEntry) : 'Custom item'}</strong>
-          <small>{selectedEntry ? selectedEntry.description : 'Free text hardware item'}</small>
+          <strong>{selectedEntry ? catalogStandardsTitle(selectedEntry) : t('customItem')}</strong>
+          <small>{selectedEntry ? selectedDescription : t('freeTextCompletions')}</small>
         </span>
       </button>
       {open && (
@@ -177,7 +184,7 @@ export function CatalogPartPicker({ entries, selectedId, selectedStandards, onSe
           <input
             autoFocus
             value={query}
-            placeholder="Search standard or description..."
+            placeholder={t('searchStandard')}
             onChange={(event) => setQuery(event.target.value)}
           />
           <div className="catalog-picker-list">
@@ -192,14 +199,14 @@ export function CatalogPartPicker({ entries, selectedId, selectedStandards, onSe
                   setQuery('');
                 }}
               >
-                <span className="catalog-custom-drawing">Custom</span>
+                <span className="catalog-custom-drawing">{t('custom')}</span>
                 <span>
-                  <strong>Custom item</strong>
-                  <small>Use free text with completions</small>
+                  <strong>{t('customItem')}</strong>
+                  <small>{t('freeTextCompletions')}</small>
                 </span>
               </button>
             )}
-            {matches.map(({ entry }) => (
+            {matches.map(({ entry, description }) => (
               <button
                 type="button"
                 key={entry.id}
@@ -211,15 +218,15 @@ export function CatalogPartPicker({ entries, selectedId, selectedStandards, onSe
                   setQuery('');
                 }}
               >
-                <CatalogDrawing entry={entry} />
+                <CatalogDrawing entry={entry} description={description} />
                 <span>
                   <strong>{catalogStandardsTitle(entry)}</strong>
-                  <small>{entry.description}</small>
+                  <small>{description}</small>
                 </span>
-                <em>{entry.category}</em>
+                <em>{categoryLabel(entry.category)}</em>
               </button>
             ))}
-            {matches.length === 0 && <p className="catalog-empty">No catalog parts match.</p>}
+            {matches.length === 0 && <p className="catalog-empty">{t('noCatalogParts')}</p>}
           </div>
         </div>
       )}

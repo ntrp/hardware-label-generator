@@ -1,4 +1,4 @@
-import type { HardwareItem, UnitSystem } from '../types';
+import type { HardwareItem, HardwareSpecKey, UnitSystem } from '../types';
 import { standardFamilies, standardPlaceholderKeys } from './standards';
 
 const mmPerInch = 25.4;
@@ -102,7 +102,11 @@ export const placeholderLabels = {
 
 export type PlaceholderKey = keyof typeof placeholderLabels;
 
-export const getPlaceholderValue = (item: HardwareItem, key: string, unitSystem: UnitSystem) => {
+export type PlaceholderDisplayValue = (key: HardwareSpecKey, value: string) => string;
+
+export const getPlaceholderValue = (item: HardwareItem, key: string, unitSystem: UnitSystem, displaySpecValue?: PlaceholderDisplayValue) => {
+  const display = (specKey: HardwareSpecKey, value: string) => displaySpecValue ? displaySpecValue(specKey, value) : value;
+
   switch (key) {
     case 'standard':
       return standardFamilies.map((family) => item.standardCodes[family]).find(Boolean) ?? item.standard;
@@ -127,17 +131,17 @@ export const getPlaceholderValue = (item: HardwareItem, key: string, unitSystem:
     case 'lengthUnit':
       return item.lengthUnit;
     case 'material':
-      return item.material;
+      return display('material', item.material);
     case 'materialType':
-      return item.materialType;
+      return display('materialType', item.materialType);
     case 'finish':
-      return item.finish;
+      return display('finish', item.finish);
     case 'boltClass':
       return item.boltClass;
     case 'threadPitch':
       return item.threadPitch;
     case 'threadPitchName':
-      return item.threadPitchName;
+      return display('threadPitchName', item.threadPitchName);
     case 'threadPitchUnit':
       return item.threadPitchUnit;
     case 'thickness':
@@ -157,8 +161,8 @@ export const getPlaceholderValue = (item: HardwareItem, key: string, unitSystem:
   }
 };
 
-export const renderTextTemplate = (template: string, item: HardwareItem, unitSystem: UnitSystem) =>
-  template.replace(/\{([a-zA-Z][a-zA-Z0-9]*)\}/g, (_match, key: string) => getPlaceholderValue(item, key, unitSystem));
+export const renderTextTemplate = (template: string, item: HardwareItem, unitSystem: UnitSystem, displaySpecValue?: PlaceholderDisplayValue) =>
+  template.replace(/\{([a-zA-Z][a-zA-Z0-9]*)\}/g, (_match, key: string) => getPlaceholderValue(item, key, unitSystem, displaySpecValue));
 
 export const safeFilePart = (value: string) =>
   value

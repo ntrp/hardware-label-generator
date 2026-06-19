@@ -35,12 +35,13 @@ describe('storage', () => {
     const imported = parseBackup(JSON.stringify(backup));
 
     expect(backup.app).toBe('makers-label-generator');
-    expect(backup.version).toBe(14);
+    expect(backup.version).toBe(15);
     expect(backup.exportedAt).toBe('2026-06-12T00:00:00.000Z');
     expect(imported.hardwareItems).toEqual(defaultAppState.hardwareItems);
     expect(imported.purchaseLinks).toEqual(defaultAppState.purchaseLinks);
     expect(imported.labelSettings).toEqual(defaultAppState.labelSettings);
     expect(imported.customPresets).toEqual(defaultAppState.customPresets);
+    expect(imported.locale).toBe(defaultAppState.locale);
   });
 
   it('rejects invalid backup files', () => {

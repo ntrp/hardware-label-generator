@@ -337,7 +337,8 @@ h3 {
   padding: 0;
 }
 
-.unit-filter {
+.unit-filter,
+.locale-filter {
   min-width: 132px;
   min-height: 38px;
   border-color: #d8dee3;
@@ -346,6 +347,29 @@ h3 {
   color: #27313a;
   font-size: 13px;
   font-weight: 800;
+}
+
+.select-with-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.select-with-icon svg {
+  position: absolute;
+  left: 10px;
+  z-index: 1;
+  color: #65727f;
+  pointer-events: none;
+}
+
+.select-with-icon select {
+  padding-left: 34px;
+}
+
+.locale-filter {
+  min-width: 128px;
 }
 
 .catalog-picker {

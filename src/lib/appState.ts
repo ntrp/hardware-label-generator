@@ -2,6 +2,7 @@ import type { AppState, HardwareItem, LabelSettings } from '../types';
 import { constrainLabelSettings, isBuiltInPresetId, presetAppliesToCategory, presetToLabelSettings } from './labelLayout';
 import { builtInLabelPresets } from './defaults';
 import { categoryDefaultPreset } from './specs';
+import { normalizeLocale } from './i18n';
 
 export const constrainHardwareItemLabelSettings = (item: HardwareItem): HardwareItem => ({
   ...item,
@@ -10,6 +11,7 @@ export const constrainHardwareItemLabelSettings = (item: HardwareItem): Hardware
 
 export const constrainAppState = (state: AppState): AppState => ({
   ...state,
+  locale: normalizeLocale(state.locale),
   labelSettings: constrainLabelSettings(state.labelSettings),
   hardwareItems: state.hardwareItems.map(constrainHardwareItemLabelSettings)
 });

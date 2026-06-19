@@ -7,21 +7,26 @@ import { createId, defaultAppState, defaultHardwareItem } from '../lib/defaults'
 import { effectivePurchaseLink, exportZip, type ExportFormat } from '../lib/export';
 import { labelPresetIdentityForSettings, labelPresetNameForSettings } from '../lib/labelLayout';
 import { renderLabelSvg } from '../lib/svg';
+import { useI18n } from '../lib/i18n';
 import {
   getCatalogEntryForItem,
-  getHardwareDescription,
-  getHardwareSpecLine
+  getHardwareDisplaySpecLine
 } from './hardware/hardwareLogic';
 import type { HardwareItem } from '../types';
 
 export function HardwareListPanel() {
   const { selectedId, setSelectedId, setState, state } = useAppState();
+  const { catalogDescription, categoryLabel, displaySpecValue, t } = useI18n();
   const [zipFormats, setZipFormats] = useState<ExportFormat[]>(['svg', 'png', 'lbx']);
   const [printSvgs, setPrintSvgs] = useState<string[]>([]);
   const [exportPreviewOpen, setExportPreviewOpen] = useState(false);
   const selectedItem = state.hardwareItems.find((item) => item.id === selectedId) ?? state.hardwareItems[0];
   const labelPresetNameForItem = (item: HardwareItem) => labelPresetNameForSettings(item.labelSettings, state.customPresets, state.unitSystem);
   const labelPresetIdentityForItem = (item: HardwareItem) => labelPresetIdentityForSettings(item.labelSettings, state.customPresets, state.unitSystem);
+  const descriptionForItem = (item: HardwareItem) => {
+    const catalogEntry = getCatalogEntryForItem(item);
+    return catalogEntry ? catalogDescription(catalogEntry.description) : categoryLabel(item.category);
+  };
   const resolvedPreview = resolveEffectiveHardwareItems(state.hardwareItems, { labelIdentityForItem: labelPresetIdentityForItem });
 
   const addItem = () => {
@@ -70,7 +75,7 @@ export function HardwareListPanel() {
   };
 
   const resetHardwareList = () => {
-    const confirmed = window.confirm('Reset the hardware list and saved purchase links to the starter item?');
+    const confirmed = window.confirm(t('resetListConfirm'));
     if (!confirmed) return;
 
     const hardwareItems = defaultAppState.hardwareItems.map((item) => ({ ...item }));
@@ -86,12 +91,12 @@ export function HardwareListPanel() {
   const showPrintSheet = async () => {
     const resolved = resolveEffectiveHardwareItems(state.hardwareItems, { labelIdentityForItem: labelPresetIdentityForItem });
     if (resolved.duplicateCount > 0) {
-      window.alert(`${resolved.duplicateCount} duplicate batch ${resolved.duplicateCount === 1 ? 'part was' : 'parts were'} removed before printing.`);
+      window.alert(t('parts', { count: resolved.duplicateCount }));
     }
     const svgs = await Promise.all(
       resolved.items.map((item) => {
         const catalogEntry = getCatalogEntryForItem(item);
-        return renderLabelSvg(item, item.labelSettings, effectivePurchaseLink(state.purchaseLinks, item), catalogEntry?.unitSystem ?? item.unitSystem);
+        return renderLabelSvg(item, item.labelSettings, effectivePurchaseLink(state.purchaseLinks, item), catalogEntry?.unitSystem ?? item.unitSystem, { displaySpecValue });
       })
     );
     setPrintSvgs(svgs);
@@ -100,7 +105,7 @@ export function HardwareListPanel() {
 
   const exportAll = async () => {
     const resolved = resolveEffectiveHardwareItems(state.hardwareItems, { labelIdentityForItem: labelPresetIdentityForItem });
-    await exportZip(resolved.items, state.labelSettings, state.purchaseLinks, zipFormats);
+    await exportZip(resolved.items, state.labelSettings, state.purchaseLinks, zipFormats, displaySpecValue);
   };
 
   if (!selectedItem) {
@@ -112,7 +117,7 @@ export function HardwareListPanel() {
       <aside className="panel hardware-list">
         <div className="panel-title">
           <Archive size={18} />
-          <h2>Hardware</h2>
+          <h2>{t('hardware')}</h2>
         </div>
         <div className="listbox">
           {state.hardwareItems.map((item) => (
@@ -121,16 +126,16 @@ export function HardwareListPanel() {
                 <span className="hardware-card-title">
                   <strong>{item.standard}</strong>
                 </span>
-                <span className="hardware-description">{getHardwareDescription(item)}</span>
+                <span className="hardware-description">{descriptionForItem(item)}</span>
                 <small>
-                  {item.batch.enabled ? <span className="hardware-batch-badge">Batch</span> : getHardwareSpecLine(item)}
+                  {item.batch.enabled ? <span className="hardware-batch-badge">{t('batch')}</span> : getHardwareDisplaySpecLine(item, displaySpecValue)}
                 </small>
               </button>
               <div className="hardware-card-actions">
                 <button
                   type="button"
                   className="icon-button small hardware-clone"
-                  aria-label={`Clone ${item.size} ${item.standard}`}
+                  aria-label={`${t('clone')} ${item.size} ${item.standard}`}
                   onClick={() => cloneHardwareItem(item.id)}
                 >
                   <Copy size={15} />
@@ -138,8 +143,8 @@ export function HardwareListPanel() {
                 <button
                   type="button"
                   className="icon-button small hardware-remove"
-                  title="Remove hardware item"
-                  aria-label={`Remove ${item.size} ${item.standard}`}
+                  title={t('remove')}
+                  aria-label={`${t('remove')} ${item.size} ${item.standard}`}
                   onClick={() => removeHardwareItem(item.id)}
                   disabled={state.hardwareItems.length === 1}
                 >
@@ -151,15 +156,15 @@ export function HardwareListPanel() {
         </div>
         <div className="button-row">
           <button type="button" onClick={addItem}>
-            <Plus size={16} /> Add
+            <Plus size={16} /> {t('add')}
           </button>
           <button type="button" className="secondary" onClick={resetHardwareList}>
-            <RotateCcw size={16} /> Reset
+            <RotateCcw size={16} /> {t('resetList')}
           </button>
         </div>
         <div className="zip-box hardware-export-box">
           <h3>
-            <FileArchive size={16} /> Export all
+            <FileArchive size={16} /> {t('exportAll')}
           </h3>
           <div className="check-row">
             {(['svg', 'png', 'lbx'] as ExportFormat[]).map((format) => (
@@ -177,10 +182,10 @@ export function HardwareListPanel() {
           </div>
           <div className="hardware-export-actions">
             <button type="button" onClick={() => setExportPreviewOpen(true)}>
-              <FileArchive size={16} /> Export
+              <FileArchive size={16} /> {t('export')}
             </button>
             <button type="button" className="secondary" onClick={showPrintSheet}>
-              <Printer size={16} /> Print
+              <Printer size={16} /> {t('print')}
             </button>
           </div>
         </div>
@@ -190,6 +195,7 @@ export function HardwareListPanel() {
           result={resolvedPreview}
           formats={zipFormats}
           labelPresetNameForItem={labelPresetNameForItem}
+          descriptionForItem={descriptionForItem}
           purchaseLinks={state.purchaseLinks}
           onClose={() => setExportPreviewOpen(false)}
           onConfirm={() => {
@@ -207,14 +213,16 @@ interface ExportPreviewModalProps {
   result: EffectiveHardwareItemsResult;
   formats: ExportFormat[];
   labelPresetNameForItem: (item: EffectiveHardwareItemsResult['items'][number]) => string;
+  descriptionForItem: (item: HardwareItem) => string;
   purchaseLinks: Record<string, string>;
   onClose: () => void;
   onConfirm: () => void;
 }
 
-function ExportPreviewModal({ result, formats, labelPresetNameForItem, purchaseLinks, onClose, onConfirm }: ExportPreviewModalProps) {
+function ExportPreviewModal({ result, formats, labelPresetNameForItem, descriptionForItem, purchaseLinks, onClose, onConfirm }: ExportPreviewModalProps) {
+  const { displaySpecValue, t } = useI18n();
   const formatList = formats.map((format) => format.toLowerCase()).join(', ');
-  const presetGroups = groupExportPreviewItems(result.items, labelPresetNameForItem);
+  const presetGroups = groupExportPreviewItems(result.items, labelPresetNameForItem, descriptionForItem);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const selectedItem = result.items[selectedIndex] ?? result.items[0];
   const [selectedPreviewSvg, setSelectedPreviewSvg] = useState('');
@@ -240,7 +248,8 @@ function ExportPreviewModal({ result, formats, labelPresetNameForItem, purchaseL
       selectedItem,
       selectedItem.labelSettings,
       effectivePurchaseLink(purchaseLinks, selectedItem),
-      catalogEntry?.unitSystem ?? selectedItem.unitSystem
+      catalogEntry?.unitSystem ?? selectedItem.unitSystem,
+      { displaySpecValue }
     ).then((svg) => {
       if (!cancelled) setSelectedPreviewSvg(svg);
     });
@@ -248,7 +257,7 @@ function ExportPreviewModal({ result, formats, labelPresetNameForItem, purchaseL
     return () => {
       cancelled = true;
     };
-  }, [purchaseLinks, selectedItem]);
+  }, [displaySpecValue, purchaseLinks, selectedItem]);
 
   const toggleCollapsedPreset = (presetName: string) => {
     setCollapsedPresets((current) => {
@@ -279,13 +288,13 @@ function ExportPreviewModal({ result, formats, labelPresetNameForItem, purchaseL
       >
         <div className="modal-header">
           <div>
-            <h2 id="export-preview-title">Export preview</h2>
+            <h2 id="export-preview-title">{t('exportPreview')}</h2>
             <p className="modal-subtitle">
-              {result.items.length} effective {result.items.length === 1 ? 'label' : 'labels'} ({formatList} {formats.length === 1 ? 'format' : 'formats'})
-              {result.duplicateCount > 0 ? `, ${result.duplicateCount} duplicate ${result.duplicateCount === 1 ? 'part' : 'parts'} removed` : ''}
+              {t('parts', { count: result.items.length })} ({formatList})
+              {result.duplicateCount > 0 ? `, ${t('parts', { count: result.duplicateCount })}` : ''}
             </p>
           </div>
-          <button type="button" className="icon-button small" aria-label="Close export preview" onClick={onClose}>
+          <button type="button" className="icon-button small" aria-label={t('closeExportPreview')} onClick={onClose}>
             <X size={16} />
           </button>
         </div>
@@ -328,8 +337,8 @@ function ExportPreviewModal({ result, formats, labelPresetNameForItem, purchaseL
                               className={entry.index === selectedIndex ? 'export-preview-row active' : 'export-preview-row'}
                               onClick={() => setSelectedIndex(entry.index)}
                             >
-                              <span title={`${presetGroup.presetName} - ${partGroup.partName} - ${getHardwareSpecLine(entry.item)}`}>
-                                {getHardwareSpecLine(entry.item)}
+                              <span title={`${presetGroup.presetName} - ${partGroup.partName} - ${getHardwareDisplaySpecLine(entry.item, displaySpecValue)}`}>
+                                {getHardwareDisplaySpecLine(entry.item, displaySpecValue)}
                               </span>
                             </button>
                           ))}
@@ -344,7 +353,7 @@ function ExportPreviewModal({ result, formats, labelPresetNameForItem, purchaseL
               <>
                 <div className="export-preview-pane-title">
                   <strong>{labelPresetNameForItem(selectedItem)}</strong>
-                  <span>{getHardwareSpecLine(selectedItem)}</span>
+                  <span>{getHardwareDisplaySpecLine(selectedItem, displaySpecValue)}</span>
                 </div>
                 <div className="export-preview-svg" dangerouslySetInnerHTML={{ __html: selectedPreviewSvg }} />
               </>
@@ -352,7 +361,7 @@ function ExportPreviewModal({ result, formats, labelPresetNameForItem, purchaseL
           </aside>
         </div>
         <div className="modal-actions">
-          <button type="button" onClick={onConfirm}>Confirm</button>
+          <button type="button" onClick={onConfirm}>{t('confirm')}</button>
         </div>
       </div>
     </div>
@@ -361,13 +370,14 @@ function ExportPreviewModal({ result, formats, labelPresetNameForItem, purchaseL
 
 const groupExportPreviewItems = (
   items: EffectiveHardwareItemsResult['items'],
-  labelPresetNameForItem: (item: EffectiveHardwareItemsResult['items'][number]) => string
+  labelPresetNameForItem: (item: EffectiveHardwareItemsResult['items'][number]) => string,
+  descriptionForItem: (item: HardwareItem) => string
 ) => {
   const presetGroups = new Map<string, Map<string, Array<{ item: HardwareItem; index: number }>>>();
 
   items.forEach((item, index) => {
     const presetName = labelPresetNameForItem(item);
-    const partName = `${item.standard} - ${getHardwareDescription(item)}`;
+    const partName = `${item.standard} - ${descriptionForItem(item)}`;
     const partGroups = presetGroups.get(presetName) ?? new Map<string, Array<{ item: HardwareItem; index: number }>>();
     const entries = partGroups.get(partName) ?? [];
     entries.push({ item, index });

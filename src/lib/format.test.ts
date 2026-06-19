@@ -32,6 +32,14 @@ describe('format helpers', () => {
     expect(renderTextTemplate('{threadPitchUnit}', { ...defaultHardwareItem, threadPitch: '20', threadPitchUnit: 'TPI' }, 'imperial')).toBe('TPI');
   });
 
+  it('renders display names for display-aware spec placeholders', () => {
+    expect(
+      renderTextTemplate('{threadPitchName} {material} {materialType} {finish} {boltClass}', defaultHardwareItem, 'metric', (key, value) =>
+        ['threadPitchName', 'material', 'materialType', 'finish'].includes(key) ? `Display ${value}` : value
+      )
+    ).toBe('Display coarse Display stainless steel Display A2 Display plain A2-70');
+  });
+
   it('creates safe file names', () => {
     expect(safeFilePart('DIN 912 / ISO 4762 M3 A2')).toBe('din-912-iso-4762-m3-a2');
   });

@@ -1,6 +1,6 @@
 import type { HardwareItem, LabelSettings, PlacedField, UnitSystem } from '../types';
 import { defaultFrameStyle } from './defaults';
-import { renderTextTemplate } from './format';
+import { renderTextTemplate, type PlaceholderDisplayValue } from './format';
 import { buildQrPayload, createQrPngDataUrl, createQrSvg } from './qr';
 import { isStandardImageSource, missingCatalogAssetDataUrl, standardImageUrlForItem } from './standardImages';
 import { applySvgStrokeWidth, normalizedSvgStrokeWidth } from './svgAssets';
@@ -94,6 +94,7 @@ export interface RenderLabelSvgOptions {
   selectedFieldId?: string | null;
   rasterSafe?: boolean;
   omitImageContent?: boolean;
+  displaySpecValue?: PlaceholderDisplayValue;
 }
 
 export const resolveLabelImageHref = async (field: PlacedField, item: HardwareItem, purchaseLink: string, rasterSafe?: boolean) => {
@@ -276,7 +277,7 @@ const renderField = (
     );
   }
 
-  const value = renderTextTemplate(field.text ?? '', item, unitSystem);
+  const value = renderTextTemplate(field.text ?? '', item, unitSystem, options.displaySpecValue);
 
   if (options.rasterSafe) {
     const textAnchor = field.style.align === 'middle' ? 'middle' : field.style.align === 'end' ? 'end' : 'start';
