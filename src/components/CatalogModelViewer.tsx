@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { RotateCcw } from 'lucide-react';
 import * as THREE from 'three';
 import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -17,8 +18,12 @@ const disposeObject = (object: THREE.Object3D) => {
   });
 };
 
+const isoCameraPosition = new THREE.Vector3(-2.8, 3.2, 2.4);
+const viewTarget = new THREE.Vector3(0, 0, 0);
+
 export function CatalogModelViewer({ modelUrl, label }: CatalogModelViewerProps) {
   const hostRef = useRef<HTMLDivElement | null>(null);
+  const resetViewRef = useRef<(() => void) | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
 
   useEffect(() => {
@@ -31,7 +36,7 @@ export function CatalogModelViewer({ modelUrl, label }: CatalogModelViewerProps)
     scene.background = new THREE.Color(0xf8fafb);
 
     const camera = new THREE.PerspectiveCamera(34, 1, 0.01, 100);
-    camera.position.set(2.4, 2.8, 1.9);
+    camera.position.copy(isoCameraPosition);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, preserveDrawingBuffer: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -49,6 +54,15 @@ export function CatalogModelViewer({ modelUrl, label }: CatalogModelViewerProps)
     controls.dynamicDampingFactor = 0.12;
     controls.minDistance = 1.2;
     controls.maxDistance = 9;
+
+    const resetView = () => {
+      controls.target.copy(viewTarget);
+      camera.position.copy(isoCameraPosition);
+      camera.up.set(0, 0, 1);
+      camera.lookAt(viewTarget);
+      controls.update();
+    };
+    resetViewRef.current = resetView;
 
     scene.add(new THREE.HemisphereLight(0xffffff, 0x9aa6b2, 2.8));
     const keyLight = new THREE.DirectionalLight(0xffffff, 3.4);
@@ -113,9 +127,7 @@ export function CatalogModelViewer({ modelUrl, label }: CatalogModelViewerProps)
         activeModel.position.set(-center.x * scale, -center.y * scale, -center.z * scale);
         scene.add(activeModel);
 
-        camera.position.set(2.6, 2.9, 2.1);
-        controls.target.set(0, 0, 0);
-        controls.update();
+        resetView();
         setStatus('ready');
       },
       undefined,
@@ -127,6 +139,7 @@ export function CatalogModelViewer({ modelUrl, label }: CatalogModelViewerProps)
     return () => {
       disposed = true;
       window.cancelAnimationFrame(frameId);
+      resetViewRef.current = null;
       observer.disconnect();
       controls.dispose();
       if (activeModel) {
@@ -141,6 +154,17 @@ export function CatalogModelViewer({ modelUrl, label }: CatalogModelViewerProps)
   return (
     <div className="catalog-model-viewer" aria-label={label}>
       <div ref={hostRef} className="catalog-model-canvas" />
+      {status === 'ready' && (
+        <button
+          type="button"
+          className="catalog-model-reset"
+          aria-label="Reset 3D view"
+          title="Reset 3D view"
+          onClick={() => resetViewRef.current?.()}
+        >
+          <RotateCcw size={14} />
+        </button>
+      )}
       {status !== 'ready' && (
         <div className="catalog-model-status">
           <span>{status === 'error' ? '3D model unavailable' : 'Loading 3D model'}</span>

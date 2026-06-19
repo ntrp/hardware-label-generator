@@ -430,6 +430,27 @@ h3 {
   touch-action: none;
 }
 
+.catalog-model-reset {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid #cbd5dd;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.88);
+  color: #28323b;
+  box-shadow: 0 1px 4px rgba(23, 31, 38, 0.12);
+}
+
+.catalog-model-reset:hover {
+  background: #fff;
+  border-color: #9caab5;
+}
+
 .catalog-model-status {
   position: absolute;
   inset: 0;
