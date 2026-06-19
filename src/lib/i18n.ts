@@ -27,10 +27,14 @@ export const translate = (locale: AppLocale, key: TranslationKey, values: Record
 };
 
 const upperCaseValues = new Set(['abs', 'epdm', 'fr4', 'g10', 'mp35n', 'peek', 'pfa', 'pom', 'pps', 'ptfe', 'pvc', 'pvdf', 'tpi', 'unc', 'unf']);
+const lowerCaseValues = new Set(['in', 'inch', 'inches', 'mm']);
+const unitValues = new Set(['in', 'inch', 'inches', 'mm', 'mm approx', 'threads/inch', 'tpi']);
 
 const titleCaseValue = (value: string) =>
   value.replace(/[A-Za-z0-9]+(?:[-/][A-Za-z0-9]+)*/g, (part) => {
-    if (upperCaseValues.has(part.toLowerCase())) return part.toUpperCase();
+    const lowerPart = part.toLowerCase();
+    if (upperCaseValues.has(lowerPart)) return part.toUpperCase();
+    if (lowerCaseValues.has(lowerPart)) return lowerPart;
     if (/^[A-Z0-9-/.]+$/.test(part)) return part;
     return part.charAt(0).toUpperCase() + part.slice(1);
   });
@@ -55,6 +59,7 @@ export const specLabel = (locale: AppLocale, key: HardwareSpecKey) => specLabels
 export const displayValue = (locale: AppLocale, value: string) => {
   const normalizedValue = value.trim().toLowerCase();
   if (!normalizedValue) return '';
+  if (unitValues.has(normalizedValue)) return value.trim();
   return capitalizeDisplay(valueLabels[normalizeLocale(locale)][normalizedValue] ?? titleCaseValue(value.trim()));
 };
 
