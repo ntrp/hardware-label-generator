@@ -1,6 +1,6 @@
 import type { ChangeEvent } from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { Download, Github, Info, Link, RotateCcw, Settings, Upload } from 'lucide-react';
+import { Download, Github, Info, LifeBuoy, Link, RotateCcw, Settings, Tags, Upload } from 'lucide-react';
 import { useAppState } from '../app/AppStateContext';
 import { constrainAppState } from '../lib/appState';
 import { downloadBlob } from '../lib/export';
@@ -132,28 +132,36 @@ export function AppTopbar() {
   return (
     <>
       <header className="topbar">
-        <div>
-          <p className="eyebrow">Browser-only organizer labels</p>
-          <h1>Makers Label Generator</h1>
+        <div className="brand-lockup">
+          <span className="brand-mark" aria-hidden="true">
+            <Tags size={20} />
+          </span>
+          <div className="brand-copy">
+            <div className="brand-title-row">
+              <h1>Makers Label Generator</h1>
+              <span className="version-badge">Beta</span>
+            </div>
+            <p className="eyebrow">Browser-only organizer labels</p>
+          </div>
         </div>
         <div className="topbar-actions">
-          <fieldset className="standard-filter unit-filter">
-            <legend>Units</legend>
-            <select value={state.unitSystem} onChange={(event) => updateUnitSystem(event.target.value as AppState['unitSystem'])}>
-              <option value="metric">Metric</option>
-              <option value="imperial">Imperial</option>
-            </select>
-          </fieldset>
-          <a
-            className="icon-link"
-            href="https://github.com/ntrp/hardware-label-generator"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Open GitHub repository"
-            title="Open GitHub repository"
-          >
-            <Github size={18} />
+          <a className="topbar-action-link" href="https://github.com/ntrp/hardware-label-generator" target="_blank" rel="noreferrer">
+            <Github size={16} />
+            GitHub
           </a>
+          <a className="topbar-action-link" href="https://github.com/ntrp/hardware-label-generator/issues/new" target="_blank" rel="noreferrer">
+            <LifeBuoy size={16} />
+            Report issue
+          </a>
+          <select
+            className="unit-filter"
+            aria-label="Units"
+            value={state.unitSystem}
+            onChange={(event) => updateUnitSystem(event.target.value as AppState['unitSystem'])}
+          >
+            <option value="metric">Metric</option>
+            <option value="imperial">Imperial</option>
+          </select>
           <div className="state-menu" ref={stateMenuRef}>
             <button
               className="icon-button"

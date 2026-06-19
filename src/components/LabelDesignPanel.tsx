@@ -350,7 +350,7 @@ export function LabelDesignPanel() {
         <h2>Label design</h2>
       </div>
 
-      <div className="preset-actions design-actions">
+      <div className="preset-actions design-actions" id="label-dimensions">
         <label className="preset-select">
           <span>Preset</span>
           <select value={activePresetValue} onChange={(event) => applyPreset(event.target.value)}>
