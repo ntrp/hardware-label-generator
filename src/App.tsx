@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AppStateProvider } from './app/AppStateContext';
 import { SuccessToast } from './components/AppFeedback';
+import { AppFooter } from './components/AppFooter';
 import { AppTopbar } from './components/AppTopbar';
 import { HardwareFiltersPanel } from './components/HardwareFiltersPanel';
 import { HardwareListPanel } from './components/HardwareListPanel';
@@ -143,6 +144,8 @@ export function App() {
 
           <PreviewPanel />
         </section>
+
+        <AppFooter />
 
         {successToast && <SuccessToast message={successToast} />}
         {pendingSharedState && (
