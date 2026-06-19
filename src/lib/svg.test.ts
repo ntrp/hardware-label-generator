@@ -54,6 +54,44 @@ describe('SVG rendering', () => {
     expect(svg).toContain('stroke-width="0.8" rx="3" stroke-dasharray="2 1.2"');
   });
 
+  it('renders frames behind other interactive elements without frame hit targets', async () => {
+    const svg = await renderLabelSvg(
+      defaultHardwareItem,
+      {
+        ...defaultLabelSettings,
+        fields: [
+          {
+            id: 'field-size',
+            kind: 'text',
+            text: '{size}',
+            x: 3,
+            y: 11,
+            width: 28,
+            height: 10,
+            style: { fontFamily: 'Inter', fontSize: 10, fontWeight: 800, align: 'start', visible: true }
+          },
+          {
+            id: 'field-frame',
+            kind: 'frame',
+            x: 0,
+            y: 0,
+            width: 54,
+            height: 30,
+            style: { fontFamily: 'Inter', fontSize: 7, fontWeight: 700, align: 'start', visible: true },
+            frameStyle: { shape: 'box', strokeWidth: 0.4, radius: 0, lineStyle: 'solid' }
+          }
+        ]
+      },
+      '',
+      'metric',
+      { interactive: true }
+    );
+
+    expect(svg).toContain('class="label-frame" pointer-events="none"');
+    expect(svg).not.toContain('data-field-id="field-frame"');
+    expect(svg.indexOf('class="label-frame"')).toBeLessThan(svg.indexOf('data-field-id="field-size"'));
+  });
+
   it('renders custom image bytes in SVG output', async () => {
     const svg = await renderLabelSvg(
       defaultHardwareItem,

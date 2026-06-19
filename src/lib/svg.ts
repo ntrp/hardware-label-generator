@@ -143,8 +143,12 @@ export const renderLabelSvg = async (
     );
   }
 
-  const fields = settings.fields
-    .filter((field) => field.style.visible)
+  const visibleFields = settings.fields.filter((field) => field.style.visible);
+  const orderedFields = [
+    ...visibleFields.filter((field) => field.kind === 'frame'),
+    ...visibleFields.filter((field) => field.kind !== 'frame')
+  ];
+  const fields = orderedFields
     .map((field) => renderField(field, item, settings, unitSystem, qrSvgDataUri, standardImageHrefs, options))
     .join('\n');
 
@@ -217,6 +221,10 @@ const ellipsizeText = (value: string, maxWidth: number, fontSize: number) => {
 const renderInteractiveWrapper = (field: PlacedField, content: string, options: RenderLabelSvgOptions) => {
   if (!options.interactive) {
     return content;
+  }
+
+  if (field.kind === 'frame') {
+    return `<g class="label-frame" pointer-events="none">${content}</g>`;
   }
 
   return `<g data-field-id="${escapeXml(field.id)}" class="label-field" style="cursor: move">

@@ -1897,5 +1897,7 @@ h3 {
 
   .print-label svg {
     display: block;
+    outline: 0.15mm dashed #9ca3aa;
+    outline-offset: 0;
   }
 }

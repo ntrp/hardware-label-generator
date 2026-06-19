@@ -111,6 +111,8 @@ export function PreviewPanel() {
   const labelSettings = selectedSourceItem.labelSettings;
   const selectedField = labelSettings.fields.find((field) => field.id === selectedFieldId);
   const hoveredField = labelSettings.fields.find((field) => field.id === hoveredFieldId);
+  const selectedPreviewField = selectedField?.kind === 'frame' ? undefined : selectedField;
+  const hoveredPreviewField = hoveredField?.kind === 'frame' ? undefined : hoveredField;
   const selectedCatalogEntry = getCatalogEntryForItem(selectedItem);
   const selectedSpecUnitSystem = selectedCatalogEntry?.unitSystem ?? state.unitSystem;
   const selectedPurchaseLink = selectedItem ? effectivePurchaseLink(state.purchaseLinks, selectedItem) : '';
@@ -314,6 +316,13 @@ export function PreviewPanel() {
     return target?.closest('[data-field-id]')?.getAttribute('data-field-id') ?? null;
   };
 
+  const getSelectablePreviewFieldId = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const fieldId = getPreviewFieldId(event);
+    const field = labelSettings.fields.find((candidate) => candidate.id === fieldId);
+
+    return field && field.kind !== 'frame' ? field.id : null;
+  };
+
   const handlePreviewPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     const fieldId = getPreviewFieldId(event);
     const position = getPreviewPointerPosition(event);
@@ -325,8 +334,8 @@ export function PreviewPanel() {
 
     if (field.kind === 'frame') {
       event.preventDefault();
-      setHoveredFieldId(fieldId);
-      setSelectedFieldId((current) => (current === fieldId ? null : fieldId));
+      setHoveredFieldId(null);
+      setSelectedFieldId(null);
       return;
     }
 
@@ -350,7 +359,7 @@ export function PreviewPanel() {
     const drag = dragRef.current;
 
     if (!drag) {
-      const nextHoveredFieldId = getPreviewFieldId(event);
+      const nextHoveredFieldId = getSelectablePreviewFieldId(event);
       setHoveredFieldId((current) => (current === nextHoveredFieldId ? current : nextHoveredFieldId));
       return;
     }
@@ -593,36 +602,36 @@ export function PreviewPanel() {
               />
             );
           })}
-          {hoveredField && hoveredField.id !== selectedField?.id && (
+          {hoveredPreviewField && hoveredPreviewField.id !== selectedPreviewField?.id && (
             <div
               className="element-outline-box hovered"
               style={{
-                left: `${(hoveredField.x / labelSettings.widthMm) * 100}%`,
-                top: `${(hoveredField.y / labelSettings.heightMm) * 100}%`,
-                width: `${(hoveredField.width / labelSettings.widthMm) * 100}%`,
-                height: `${(hoveredField.height / labelSettings.heightMm) * 100}%`
+                left: `${(hoveredPreviewField.x / labelSettings.widthMm) * 100}%`,
+                top: `${(hoveredPreviewField.y / labelSettings.heightMm) * 100}%`,
+                width: `${(hoveredPreviewField.width / labelSettings.widthMm) * 100}%`,
+                height: `${(hoveredPreviewField.height / labelSettings.heightMm) * 100}%`
               }}
             />
           )}
-          {selectedField && (
+          {selectedPreviewField && (
             <div
               className="element-outline-box selected"
               style={{
-                left: `${(selectedField.x / labelSettings.widthMm) * 100}%`,
-                top: `${(selectedField.y / labelSettings.heightMm) * 100}%`,
-                width: `${(selectedField.width / labelSettings.widthMm) * 100}%`,
-                height: `${(selectedField.height / labelSettings.heightMm) * 100}%`
+                left: `${(selectedPreviewField.x / labelSettings.widthMm) * 100}%`,
+                top: `${(selectedPreviewField.y / labelSettings.heightMm) * 100}%`,
+                width: `${(selectedPreviewField.width / labelSettings.widthMm) * 100}%`,
+                height: `${(selectedPreviewField.height / labelSettings.heightMm) * 100}%`
               }}
             />
           )}
-          {selectedField && selectedField.kind !== 'frame' && (
+          {selectedPreviewField && (
             <div
               className="element-resize-box"
               style={{
-                left: `${(selectedField.x / labelSettings.widthMm) * 100}%`,
-                top: `${(selectedField.y / labelSettings.heightMm) * 100}%`,
-                width: `${(selectedField.width / labelSettings.widthMm) * 100}%`,
-                height: `${(selectedField.height / labelSettings.heightMm) * 100}%`
+                left: `${(selectedPreviewField.x / labelSettings.widthMm) * 100}%`,
+                top: `${(selectedPreviewField.y / labelSettings.heightMm) * 100}%`,
+                width: `${(selectedPreviewField.width / labelSettings.widthMm) * 100}%`,
+                height: `${(selectedPreviewField.height / labelSettings.heightMm) * 100}%`
               }}
             >
               {[
@@ -636,16 +645,16 @@ export function PreviewPanel() {
                   className={handle.className}
                   aria-label={handle.label}
                   title={handle.label}
-                  onPointerDown={(event) => handleElementResizePointerDown(event, selectedField, handle.mode)}
+                  onPointerDown={(event) => handleElementResizePointerDown(event, selectedPreviewField, handle.mode)}
                 />
               ))}
-              {selectedField.kind === 'image' && (
+              {selectedPreviewField.kind === 'image' && (
                 <button
                   type="button"
                   className="element-rotate-handle"
                   aria-label="Rotate selected image"
                   title="Rotate selected image"
-                  onPointerDown={(event) => handleElementRotatePointerDown(event, selectedField)}
+                  onPointerDown={(event) => handleElementRotatePointerDown(event, selectedPreviewField)}
                 >
                   <RotateCw size={13} strokeWidth={2.4} />
                 </button>
