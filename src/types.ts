@@ -18,7 +18,7 @@ export type ImageSource = 'qr' | 'iso' | 'side' | 'top' | 'custom';
 export type FrameShape = 'box' | 'rounded';
 export type FrameLineStyle = 'solid' | 'dashed' | 'dotted';
 
-export type LayoutTemplate = 'compact' | 'two-column' | 'large-size' | 'qr-sidecar' | 'custom';
+export type LayoutTemplate = string;
 export type HardwareSpecKey =
   | 'size'
   | 'length'

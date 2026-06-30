@@ -1,6 +1,6 @@
 import type { AppState, HardwareItem, LabelSettings } from '../types';
 import { constrainLabelSettings, isBuiltInPresetId, presetAppliesToCategory, presetToLabelSettings } from './labelLayout';
-import { builtInLabelPresets } from './defaults';
+import { builtInLabelPresets } from './presets';
 import { categoryDefaultPreset } from './specs';
 import { normalizeLocale } from './i18n';
 

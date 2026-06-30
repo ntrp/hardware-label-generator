@@ -22,8 +22,8 @@ describe('SVG rendering', () => {
       selectedFieldId: 'field-size'
     });
 
-    expect(svg).toContain('data-field-id="field-standard" x="3" y="4" width="29" height="5" fill="transparent" stroke="transparent" stroke-width="0"');
-    expect(svg).toContain('data-field-id="field-size" x="3" y="11" width="28" height="10" fill="transparent" stroke="transparent" stroke-width="0"');
+    expect(svg).toContain('data-field-id="standard" x="2" y="2.3" width="32" height="4" fill="transparent" stroke="transparent" stroke-width="0"');
+    expect(svg).toContain('data-field-id="size" x="2" y="7" width="32" height="7" fill="transparent" stroke="transparent" stroke-width="0"');
     expect(svg).not.toContain('stroke="#747f8a"');
     expect(svg).not.toContain('stroke="#1d72ff"');
   });
@@ -50,7 +50,7 @@ describe('SVG rendering', () => {
       'metric'
     );
 
-    expect(svg).toContain('x="0.4" y="0.4" width="53.2" height="29.2"');
+    expect(svg).toContain('x="0.4" y="0.4" width="53.2" height="23.2"');
     expect(svg).toContain('stroke-width="0.8" rx="3" stroke-dasharray="2 1.2"');
   });
 

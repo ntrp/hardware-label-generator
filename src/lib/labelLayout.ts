@@ -1,5 +1,6 @@
-import { builtInLabelPresets, clonePlacedFields } from './defaults';
+import { clonePlacedFields } from './defaults';
 import { formatLabelSize } from './format';
+import { builtInLabelPresets } from './presets';
 import type { AppState, HardwareCategory, LabelPreset, PlacedField } from '../types';
 
 export const mmToPx = 3.7795275591;
@@ -95,7 +96,7 @@ export const presetToLabelSettings = (preset: LabelPreset, isBuiltIn: boolean): 
   heightMm: preset.heightMm,
   tapeWidthMm: preset.tapeWidthMm,
   marginMm: preset.marginMm,
-  layout: isBuiltIn && ['compact', 'two-column', 'large-size', 'qr-sidecar'].includes(preset.id) ? (preset.id as AppState['labelSettings']['layout']) : 'custom',
+  layout: isBuiltIn ? preset.id : 'custom',
   fields: clonePlacedFields(preset.fields)
 });
 

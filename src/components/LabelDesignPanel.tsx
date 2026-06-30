@@ -24,8 +24,9 @@ import {
   clamp,
   type LabelDimensionKey
 } from '../lib/labelLayout';
-import { builtInLabelPresets, clonePlacedFields, createId, defaultFrameStyle } from '../lib/defaults';
+import { clonePlacedFields, createId, defaultFrameStyle } from '../lib/defaults';
 import { formatLabelSize, placeholderLabels } from '../lib/format';
+import { builtInLabelPresets } from '../lib/presets';
 import { getCategorySpecDefinitions } from '../lib/specs';
 import { useI18n } from '../lib/i18n';
 import { standardFamilies, standardPlaceholderKeys } from '../lib/standards';

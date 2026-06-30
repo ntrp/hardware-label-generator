@@ -42,16 +42,16 @@ export const categorySpecKeys: Record<HardwareCategory, HardwareSpecKey[]> = {
 };
 
 export const categoryDefaultPreset: Record<HardwareCategory, string> = {
-  screw: 'qr-sidecar',
-  bolt: 'qr-sidecar',
-  nut: 'compact',
-  washer: 'washer',
-  rivet: 'compact',
-  pin: 'large-size',
-  anchor: 'compact',
-  insert: 'qr-sidecar',
-  clip: 'large-size',
-  custom: 'compact'
+  screw: 'threaded-24mm-qr',
+  bolt: 'threaded-24mm-qr',
+  nut: 'common-12mm-compact',
+  washer: 'washer-brother-24-dimensions',
+  rivet: 'rivet-brother-18-grip',
+  pin: 'common-24mm-drawing',
+  anchor: 'common-24mm-drawing',
+  insert: 'threaded-24mm-qr',
+  clip: 'clip-brother-12-compact',
+  custom: 'common-24mm-stacked'
 };
 
 export const getCategorySpecDefinitions = (category: HardwareCategory) => categorySpecKeys[category].map((key) => specDefinitions[key]);

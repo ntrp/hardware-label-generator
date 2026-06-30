@@ -1,6 +1,6 @@
 import { standardsCatalog } from '../../data/catalog';
-import { builtInLabelPresets } from '../../lib/defaults';
 import { defaultLengthUnit, formatLength } from '../../lib/format';
+import { builtInLabelPresets } from '../../lib/presets';
 import { defaultFinish, defaultMaterialTreatment, isValidFinish, isValidMaterialTreatment } from '../../lib/materials';
 import { defaultBoltClass, isValidBoltClass } from '../../lib/boltClasses';
 import { defaultImperialThreadPitch } from '../../lib/imperialThreads';
